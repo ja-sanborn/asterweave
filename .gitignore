@@ -155,3 +155,13 @@ vite.config.ts.timestamp-*
 .nx/cache
 .nx/workspace-data
 .nx/migrate-runs
+
+# Asterweave local development artifacts
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
+/build/
+/saves/
+/playtest/
+/temp/
