@@ -38,6 +38,10 @@ The [canonical game-definition contract](contracts/GAME_DEFINITIONS.md) defines 
 
 Creator is an optional development-time module that translates readable authoring definitions into the canonical JSON format, validates references and exports game packages. It is not distributed with finished games.
 
+### Distribution packages and content protection
+
+Keep the readable canonical JSON definition distinct from distributed packages. Optional packaging/export tooling outside the core (usable without Creator) may protect content against casual inspection; unprotected distribution is the default. Host/package loaders unpack and, when applicable, decode or decrypt data outside the core, then validate the canonical definition before initializing runtime state. Package versioning is independent of definition and content versions. Both modes must support offline gameplay. No mandatory DRM, online activation or guarantee of secrecy from an operator who controls the offline client; embedded unlock material is recoverable. See [ADR 0010](decisions/0010-game-packaging-and-content-protection.md). The concrete package format, protection mechanism and loader/export implementation are planned Phase 2 work ([issue #22](https://github.com/ja-sanborn/asterweave/issues/22)); Creator integration follows later.
+
 ## State and saves
 
 Track player location, inventory, entity state, merchant stock, relationships, quests, flags, pending events, narrative position and parser context as appropriate. Use a single authoritative ownership model for item instances.

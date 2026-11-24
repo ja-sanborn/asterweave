@@ -4,6 +4,14 @@ Status: Accepted design; validation and runtime implementation pending. Origin: 
 
 This contract elaborates [ADR 0003](../decisions/0003-canonical-json-game-format.md) and [ADR 0009](../decisions/0009-canonical-game-definition-contract.md). Authors and future Creator tools produce the same JSON document. The runtime consumes data independently of Creator, hosts and distribution packaging.
 
+## Authoring and distribution boundary
+
+Canonical JSON is the readable, unencrypted authoring and interchange format, whether written manually or compiled by Creator. A distributed game package may wrap that data in an optional content-protection representation; package versions, encoding, encryption and keys are not canonical definition fields. Unprotected distribution remains the default. Packaging must not modify the author's source definition or require Creator.
+
+Packaging/export and the host/package loader are outside the runtime core. The loader unpacks and, when applicable, decodes or decrypts the package, then passes canonical data through definition validation before runtime initialization. Both distribution modes must support offline play and yield equivalent definitions. Client-side protection discourages casual inspection and spoilers; it cannot guarantee secrecy when the client has everything needed to unlock the content. No mandatory DRM, online activation or embedded credentials.
+
+See [ADR 0010](../decisions/0010-game-packaging-and-content-protection.md) and [issue #22](https://github.com/ja-sanborn/asterweave/issues/22). Package format, protection algorithms, key management and implementation are deferred to Phase 2; the Foundation schema and fixture are unchanged.
+
 ## Document and versioning
 
 A definition is one UTF-8 JSON object. JSON member order is not semantic; array order is preserved. Use standard JSON (double-quoted keys and strings, no comments or trailing commas). Duplicate member names are prohibited at every level. All objects have closed field sets for the declared format; reject unknown fields and missing required fields. Optional fields are omitted, not null. No implicit coercion, trimming or defaulting of required fields.

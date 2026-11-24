@@ -10,6 +10,8 @@ Status: Accepted
 
 Use a closed, versioned JSON document with formatVersion, game and world. Foundation recognizes exactly format version 1.0.0. Game identity uses author-managed reverse-domain-style IDs and a separate semantic-style content version. World IDs are stable lower camel case, case-sensitive and unique across locations, actors and entities. Use explicit arrays of definitions and directed exit records; Foundation supports north, south, east and west without implicit reverse exits. Actors specify initialLocationId; each entity specifies exactly one typed initialPlacement referencing a location or actor. Do not duplicate inventory or current state in definitions. Require native JavaScript validation and structured JSON Pointer diagnostics. Reject unsupported fields and executable or platform-specific data. Future vocabulary, narrative, rules, events, action configuration, extension requirements and optional calendar sections require explicit later schema contracts; no placeholder fields or arbitrary code. Preserve independent action registration and dispatcher-owned turn progression.
 
+Packaging and optional content protection are separate from the canonical authoring schema; see [ADR 0010](0010-game-packaging-and-content-protection.md). The core receives validated canonical data, not encrypted packages.
+
 ## Alternatives
 
 Unversioned or executable definitions; per-category IDs; implicit reverse exits; direction maps; duplicated ownership lists; permissive unknown fields or premature future schemas.

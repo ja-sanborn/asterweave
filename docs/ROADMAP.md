@@ -12,6 +12,8 @@ All milestones are planned and subject to refinement. [GitHub Issues](https://gi
 - Implement the independent action registry ([FND-10, issue #15](https://github.com/ja-sanborn/asterweave/issues/15)) before FND-06 dispatch.
 - Establish the versioned author guide after integrated Foundation verification ([FND-11, issue #20](https://github.com/ja-sanborn/asterweave/issues/20); planned).
 
+- Establish the authoring/distribution boundary for optional content protection ([ADR 0010](decisions/0010-game-packaging-and-content-protection.md), FND-03 design only).
+
 ## 2. Text adventure
 
 - Implement the basic deterministic command parser, object resolution and error responses.
@@ -20,6 +22,7 @@ All milestones are planned and subject to refinement. [GitHub Issues](https://gi
 - Implement optional fictional clock/calendar support ([#18](https://github.com/ja-sanborn/asterweave/issues/18)), coordinated with rules/events and persistence.
 - Implement serialization and restoration.
 - Build a small JSON-authored example and a text-only offline browser host.
+- Design and implement versioned game packaging and optional content protection outside the core ([issue #22](https://github.com/ja-sanborn/asterweave/issues/22)); support unprotected and protected offline distributions without Creator.
 
 ## 3. Interactive narrative
 
@@ -29,7 +32,7 @@ All milestones are planned and subject to refinement. [GitHub Issues](https://gi
 ## 4. Creator
 
 - Design a readable authoring format targeting the canonical JSON schema.
-- Implement compiler, validation, diagnostics, playtesting and export.
+- Implement compiler, validation, diagnostics, playtesting and export, including integration with the Phase 2 packaging workflow.
 - Keep all authoring dependencies outside the player runtime.
 
 ## 5. Extensions and additional hosts
