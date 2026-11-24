@@ -1,6 +1,6 @@
 # Asterweave architecture
 
-Status: initial design; action and game-definition contracts are defined; state/save schemas and runtime implementation remain pending.
+Status: initial design; action, game-definition, containment and physical capacity contracts are defined; state/save schemas and runtime implementation remain pending.
 
 ## Boundaries
 
@@ -14,7 +14,7 @@ The runtime is environment-independent ECMAScript. It must not directly access t
 | Parser | Rule-based command interpretation and contextual object resolution |
 | Choice | Conditional choices and selection validation |
 | Narrative | Dialogue, sequences, branching, call/return and progression |
-| World | Locations, exits, entity identity and ownership |
+| World | Locations, exits, identity, containment, associations and physical capacity |
 | Rules and events | Conditions, effects, triggers and turn scheduling |
 | Persistence | Versioned serialization, restoration and migration |
 
@@ -34,7 +34,7 @@ See the [action/result contract](contracts/ACTIONS_AND_RESULTS.md), [action defi
 
 ## Game packages
 
-The [canonical game-definition contract](contracts/GAME_DEFINITIONS.md) defines the initial world, game identity and format/content versions under [ADR 0009](decisions/0009-canonical-game-definition-contract.md). Foundation supports locations, directed exits, actors and entities with typed initial placements; narrative, vocabulary, rules and optional extension requirements are future schema work. Stable world IDs connect definitions. Definitions are immutable during play; mutable instance state is separate. Native validation and initialization remain FND-05 work. Custom JavaScript extensions may register behavior through explicit contracts. Untrusted executable extensions must not be treated as safe data.
+The [canonical game-definition contract](contracts/GAME_DEFINITIONS.md) defines the initial world, game identity and format/content versions under [ADR 0009](decisions/0009-canonical-game-definition-contract.md). Foundation format 2.0.0 supports locations, directed exits, actors and entities with unified initial containment, lifecycle, spatial associations and optional physical characteristics; narrative, vocabulary, rules and optional extension requirements are future schema work. Stable world IDs connect definitions. Definitions are immutable during play; mutable instance state is separate. Native validation and initialization remain FND-05 work. Custom JavaScript extensions may register behavior through explicit contracts. Untrusted executable extensions must not be treated as safe data.
 
 Creator is an optional development-time module that translates readable authoring definitions into the canonical JSON format, validates references and exports game packages. It is not distributed with finished games.
 
@@ -44,7 +44,7 @@ Keep the readable canonical JSON definition distinct from distributed packages. 
 
 ## State and saves
 
-Track player location, inventory, entity state, merchant stock, relationships, quests, flags, pending events, narrative position and parser context as appropriate. Use a single authoritative ownership model for item instances.
+Track player location, inventory, entity state, merchant stock, relationships, quests, flags, pending events, narrative position and parser context as appropriate. Use one authoritative containment tree rooted at engine-recognized, non-navigable World. Actor locations, inventories and loads are derived. Containment transports descendants; spatial associations do not. Lifecycle and capacity invariants apply to all candidate transitions. See [containment](contracts/WORLD_CONTAINMENT.md), [physical properties](contracts/PHYSICAL_PROPERTIES.md), [ADR 0011](decisions/0011-unified-world-containment.md) and [ADR 0012](decisions/0012-physical-properties-and-capacity.md). Legal ownership, visibility and access are separate game mechanics.
 
 Prefer snapshots of mutable state or deltas against a known game definition. Preserve dynamically created entities, turn counters and random state when relevant. Save envelopes identify game and schema versions. Restoration must validate compatibility; incompatible definitions require migration or a clear error.
 

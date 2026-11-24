@@ -1,8 +1,8 @@
 # Canonical JSON game definitions
 
-Status: Accepted design; validation and runtime implementation pending. Origin: [FND-03, issue #5](https://github.com/ja-sanborn/asterweave/issues/5).
+Status: Accepted design; validation and runtime implementation pending. Origin: [FND-03, issue #5](https://github.com/ja-sanborn/asterweave/issues/5), revised by [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23).
 
-This contract elaborates [ADR 0003](../decisions/0003-canonical-json-game-format.md) and [ADR 0009](../decisions/0009-canonical-game-definition-contract.md). Authors and future Creator tools produce the same JSON document. The runtime consumes data independently of Creator, hosts and distribution packaging.
+This contract elaborates [ADR 0003](../decisions/0003-canonical-json-game-format.md) and [ADR 0009](../decisions/0009-canonical-game-definition-contract.md). [ADRs 0011](../decisions/0011-unified-world-containment.md) and [0012](../decisions/0012-physical-properties-and-capacity.md) supersede the version and placement portions of ADR 0009. Authors and future Creator tools produce the same JSON document. The runtime consumes data independently of Creator, hosts and distribution packaging.
 
 ## Authoring and distribution boundary
 
@@ -10,7 +10,7 @@ Canonical JSON is the readable, unencrypted authoring and interchange format, wh
 
 Packaging/export and the host/package loader are outside the runtime core. The loader unpacks and, when applicable, decodes or decrypts the package, then passes canonical data through definition validation before runtime initialization. Both distribution modes must support offline play and yield equivalent definitions. Client-side protection discourages casual inspection and spoilers; it cannot guarantee secrecy when the client has everything needed to unlock the content. No mandatory DRM, online activation or embedded credentials.
 
-See [ADR 0010](../decisions/0010-game-packaging-and-content-protection.md) and [issue #22](https://github.com/ja-sanborn/asterweave/issues/22). Package format, protection algorithms, key management and implementation are deferred to Phase 2; the Foundation schema and fixture are unchanged.
+See [ADR 0010](../decisions/0010-game-packaging-and-content-protection.md) and [issue #22](https://github.com/ja-sanborn/asterweave/issues/22). Package format, protection algorithms, key management and implementation are deferred to Phase 2; packaging does not change the canonical schema or fixture.
 
 ## Document and versioning
 
@@ -18,11 +18,11 @@ A definition is one UTF-8 JSON object. JSON member order is not semantic; array 
 
 | Field | Required | Type and constraints |
 | --- | --- | --- |
-| formatVersion | Yes | String, exactly `1.0.0` for Foundation |
+| formatVersion | Yes | String, exactly `2.0.0` for Foundation |
 | game | Yes | Game identity object |
 | world | Yes | Initial world object |
 
-Format and content versions use three nonnegative decimal integer components separated by dots, with no leading zero except zero itself, no prefix, suffix or whitespace (grammar: `(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)`, matched against the entire string). Format major revisions represent breaking interpretation changes; minor revisions represent compatible additions for newer readers; patch revisions represent compatible corrections. This does not promise forward compatibility: Foundation recognizes exactly 1.0.0. Future readers must explicitly identify supported versions and reject unsupported versions clearly; migration is not required in Foundation. Content versions are author-managed release identifiers; authors should increment them when changing released definitions. Neither version is the engine package version. Save compatibility and migration policy belong to [FND-04](https://github.com/ja-sanborn/asterweave/issues/6).
+Format and content versions use three nonnegative decimal integer components separated by dots, with no leading zero except zero itself, no prefix, suffix or whitespace (grammar: `(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)`, matched against the entire string). Format major revisions represent breaking interpretation changes; minor revisions represent compatible additions for newer readers; patch revisions represent compatible corrections. This does not promise forward compatibility: Foundation recognizes exactly 2.0.0. Version 2.0.0 replaces the pre-runtime 1.0.0 initialLocationId and initialPlacement fields with unified containment. No 1.0.0 reader or migration is required for Foundation. Future readers must explicitly identify supported versions and reject unsupported versions clearly; migration is not required in Foundation. Content versions are author-managed release identifiers; authors should increment them when changing released definitions. Neither version is the engine package version. Save compatibility and migration policy belong to [FND-04](https://github.com/ja-sanborn/asterweave/issues/6).
 
 ## Game identity
 
@@ -34,7 +34,7 @@ Format and content versions use three nonnegative decimal integer components sep
 
 Each game ID segment and every world ID starts with a lowercase ASCII letter followed by zero or more ASCII letters or digits (segment grammar: `[a-z][A-Za-z0-9]*`, matched against the entire segment). Use lower camel case for world IDs. IDs are case-sensitive and matched exactly; do not normalize or trim them. Authors manage global game identity, e.g. `org.example.lanternHouse`; no domain ownership check or network lookup is required. Retain game identity across releases and retain world IDs for identities that persist. Do not recycle an ID for an unrelated identity in a compatible content release.
 
-Locations, actors and entities share one game-local ID namespace: each ID is unique across all three arrays and distinct from the game ID. The dotted game ID is a separate structural scope. Display names need not be unique and are not references. Action identifiers and future authored vocabulary/narrative identifiers are separate contracts; do not infer their grammar from world IDs.
+Locations, actors and entities share one game-local ID namespace: each ID is unique across all three arrays and distinct from the game ID. The ID world is reserved for the implicit engine-created root; it is not authored. The dotted game ID is a separate structural scope. Display names need not be unique and are not references. Action identifiers and future authored vocabulary/narrative identifiers are separate contracts; do not infer their grammar from world IDs.
 
 ## World
 
@@ -48,55 +48,33 @@ Arrays are dense; no null entries, holes or extra properties. Definitions identi
 
 All required names and titles must be strings containing at least one non-whitespace character; preserve authored text as provided. Optional descriptions are Unicode strings, including empty strings; they are plain authored text, not executable code or presentation directives.
 
+### Common participant fields
+
+All three categories use the following closed common field set, plus exits for locations only.
+
+| Field | Required | Type |
+| --- | --- | --- |
+| id | Yes | Unique world ID, not world |
+| name | Yes | Nonblank string |
+| description | No | String |
+| initialContainment | For active only | Closed object with required parentId and relationship |
+| initialLifecycle | No | active (default), inactive or destroyed |
+| initialAssociations | No; active only | Dense array of closed objects with required targetId and relationship |
+| physical | No | Closed object as defined in [physical properties](PHYSICAL_PROPERTIES.md) |
+
+See [world containment](WORLD_CONTAINMENT.md) for exact relationship vocabulary, hierarchy, reference, lifecycle and association invariants; see [physical properties](PHYSICAL_PROPERTIES.md) for defaults, field types and capacity semantics. Active participants have exactly one initialContainment; inactive and destroyed participants omit it and initialAssociations. World is automatically created, not an authored record. At least one active location and one active actor are required at initialization. Multiple actors are allowed without assuming a default player. Actor, location and entity IDs use the same reference space. No independent inventory, contents or current location field is permitted.
+
 ### Locations and exits
 
-| Location field | Required | Type and constraints |
-| --- | --- | --- |
-| id | Yes | Unique world ID |
-| name | Yes | Nonblank string |
-| description | No | String |
-| exits | Yes | Array of exit objects, may be empty |
-
-| Exit field | Required | Type and constraints |
-| --- | --- | --- |
-| direction | Yes | Exactly north, south, east or west |
-| destinationId | Yes | ID of an existing location |
-
-Each direction occurs at most once in a location's exits. Directions are canonical values, not parser aliases. An exit is directed; a reverse exit exists only if separately authored. Multiple different directions may lead to the same location. Self-loops, disconnected locations and locations without exits are valid; no reachability or geometry constraint is imposed. Foundation has no doors, conditional exits, diagonal or vertical directions. The exit array provides room for later structured fields without changing its shape.
-
-### Actors
-
-| Field | Required | Type and constraints |
-| --- | --- | --- |
-| id | Yes | Unique world ID |
-| name | Yes | Nonblank string |
-| initialLocationId | Yes | ID of an existing location |
-
-Each actor starts at exactly one location. Actors are not placeable entities in this format; they do not have inventory arrays or initialPlacement fields. More than one actor may start at the same location.
-
-### Entities and placement
-
-| Field | Required | Type and constraints |
-| --- | --- | --- |
-| id | Yes | Unique world ID |
-| name | Yes | Nonblank string |
-| description | No | String |
-| initialPlacement | Yes | Placement object |
-
-| Placement field | Required | Type and constraints |
-| --- | --- | --- |
-| kind | Yes | Exactly location or actor |
-| id | Yes | Existing ID of the corresponding kind |
-
-Each entity has exactly one initial placement. A location placement refers directly to a location; an actor placement represents ownership by that actor, not a duplicate location reference. Multiple entities may share a placement. Reject dangling references and wrong-kind references even if an ID exists. No unplaced entities, containers, entity-as-owner references or duplicate authoritative inventory/location contents lists are supported. Ownership is independent of display names. Future containment and dynamic creation require separate contracts.
+Locations additionally require exits, a dense array of closed objects with required direction (north, south, east or west) and destinationId (existing authored location ID, never world). Directions are unique per source. Exits are directed, self-loops and disconnected navigation graphs are permitted, and no reverse exit is implied. An exit may reference an inactive authored location, but movement to it is unavailable until active. Containment does not create exits. Foundation movement requires an immediate active location parent via in, updates containment to the destination and preserves descendants; vehicle boarding and other modes are deferred.
 
 ## Definition and runtime boundary
 
-The definition is immutable during play. Initial locations and placements seed engine-owned mutable state; they are not live state. Initialization must not mutate the caller's data, and subsequent caller mutations must not affect initialized instances. Independent instances must not share mutable state. Runtime state holds the single authoritative current placement for each entity and current location for each actor. Inventory and location contents are derived queries, not second authoritative lists. Runtime representation, snapshots, save envelopes and initial turn policy belong to [FND-04](https://github.com/ja-sanborn/asterweave/issues/6) and implementation to [FND-05](https://github.com/ja-sanborn/asterweave/issues/7). The definition contains no turn counter, save state or session credentials.
+Definitions remain immutable; initialization must not mutate caller data and later caller mutations must not affect instances. Independent instances must not share mutable state. Current containment, lifecycle, associations and mutable physical properties are engine-owned. Derived queries do not duplicate authoritative placement. FND-04 defines state, snapshots, saves, mutable properties and identity scopes; FND-05 validates and initializes. No turn counter, save state or session credentials belong in the definition.
 
 ## Validation and diagnostics
 
-FND-05 implements native ECMAScript validation with no external schema library or platform APIs. Validate the complete definition before initializing state. Reject malformed or unsupported input without exposing partially initialized state. Validate object/array shapes and allowed fields, version and scalar grammar, global identity uniqueness, and typed references and placement invariants. Identity collection precedes reference resolution so forward references are allowed.
+FND-05 implements native ECMAScript validation with no external schema library or platform APIs. Validate the complete definition before initializing state. Reject malformed or unsupported input without exposing partially initialized state. Validate object/array shapes and allowed fields, version and scalar grammar, global identity uniqueness, references, containment cycles and ancestry, lifecycle, associations, physical field ranges and all applicable capacity invariants. Identity collection precedes reference resolution so forward references are allowed.
 
 Only JSON-compatible data is accepted: null, booleans, strings, finite numbers, dense arrays and plain data objects, subject to the narrower field rules above. For parsed JavaScript input reject functions, undefined, symbols, BigInt, nonfinite numbers, cycles, accessors, non-data objects and extra array properties; use own data properties rather than inherited values. Treat keys and IDs as data, not prototype mutation paths; use safe lookup structures such as Map or null-prototype records. No eval, code loading, host objects, network access or filesystem references. JSON text parsing is outside the object-validation contract: native JSON.parse discards repeated member names, so a validator receiving parsed data cannot detect those original repetitions. Authors must not write duplicate member names; this limitation does not relax duplicate world IDs or directions, which are explicit array data.
 
@@ -123,6 +101,12 @@ Use zero-based array indices and JSON Pointer escaping (tilde becomes ~0, slash 
 | DUPLICATE_DIRECTION | Direction already defined at this location |
 | UNKNOWN_REFERENCE | Referenced ID does not exist |
 | INVALID_REFERENCE_KIND | Referenced ID exists but has wrong kind |
+| INVALID_CONTAINMENT | Invalid parent, relationship, capability or root ancestry |
+| CONTAINMENT_CYCLE | Direct or indirect cycle |
+| INVALID_LIFECYCLE | Lifecycle/placement/association conflict |
+| INVALID_ASSOCIATION | Invalid or duplicate association |
+| CAPACITY_EXCEEDED | Individual or cumulative limit violated |
+| UNKNOWN_MEASUREMENT | Required physical score unspecified |
 
 Example (if the first Hallway exit references a missing location):
 
@@ -141,7 +125,7 @@ This is a complete valid Foundation definition, although not yet executable:
 
 ```json
 {
-  "formatVersion": "1.0.0",
+  "formatVersion": "2.0.0",
   "game": {
     "id": "org.example.smallWorld",
     "version": "0.1.0",
@@ -152,6 +136,7 @@ This is a complete valid Foundation definition, although not yet executable:
       {
         "id": "room",
         "name": "Room",
+        "initialContainment": {"parentId":"world","relationship":"in"},
         "exits": []
       }
     ],
@@ -159,7 +144,7 @@ This is a complete valid Foundation definition, although not yet executable:
       {
         "id": "player",
         "name": "Explorer",
-        "initialLocationId": "room"
+        "initialContainment": {"parentId":"room","relationship":"in"}
       }
     ],
     "entities": []
@@ -167,7 +152,7 @@ This is a complete valid Foundation definition, although not yet executable:
 }
 ```
 
-The reusable [Lantern House fixture](../../tests/fixtures/games/minimal-foundation.json) has three locations, one actor and two entities. Entrance and Hallway have reciprocal east/west exits; Hallway has a one-way east exit to Library. A lantern starts at Entrance, and a notebook belongs to the actor. It supports the planned FND-05 validation, FND-07 ownership and FND-09 integration checks.
+The reusable [Lantern House fixture](../../tests/fixtures/games/minimal-foundation.json) has three locations, one actor and two entities. Entrance and Hallway have reciprocal east/west exits; Hallway has a one-way east exit to Library. A lantern starts in Entrance, and a notebook is carried by the actor. The [containment fixture](../../tests/fixtures/games/containment-foundation.json) adds nested locations, actors in vehicles, physical limits, spatial associations and inactive/destroyed entities. It supports the planned FND-05 validation, FND-07 ownership and FND-09 integration checks.
 
 ## Action compatibility and future sections
 
@@ -177,9 +162,9 @@ The fixture supports the existing [action/result contract](ACTIONS_AND_RESULTS.m
 {"actorId":"player","type":"move","args":{"direction":"east"}}
 ```
 
-The actor ID resolves to an actor, and the direction selects an authored exit from that actor's current location. The destination is not caller-selected. Foundation move costs 1/0; unavailable exits are rejected with EXIT_UNAVAILABLE and zero committed turns. Dispatch and registry, not the definition, own execution and turn costs. See [action definitions](ACTION_DEFINITIONS.md), [standard catalog](STANDARD_ACTIONS.md), and [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).
+The actor ID resolves to an active actor, and the direction selects an authored exit from that actor's immediate active location parent. The destination is not caller-selected. Foundation move costs 1/0; unavailable exits are rejected with EXIT_UNAVAILABLE and zero committed turns. Dispatch and registry, not the definition, own execution and turn costs. See [action definitions](ACTION_DEFINITIONS.md), [standard catalog](STANDARD_ACTIONS.md), and [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).
 
-Future conceptual root sections (names tentative, not accepted fields in 1.0.0):
+Future conceptual root sections (names tentative, not accepted fields in 2.0.0):
 
 | Section | Intended responsibility |
 | --- | --- |

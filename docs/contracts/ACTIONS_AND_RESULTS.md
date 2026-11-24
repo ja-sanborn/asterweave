@@ -139,6 +139,10 @@ An unexpected exception returns:
 {"status":"error","actorId":"player","turnsAdvanced":0,"outputs":[],"error":{"code":"EXECUTION_FAILED"}}
 ```
 
+## Containment and movement
+
+World references and relationship semantics follow [world containment](WORLD_CONTAINMENT.md) and [physical properties](PHYSICAL_PROPERTIES.md). Foundation move changes the actor's immediate containment from one active location to another and preserves descendants; exits do not follow containment automatically. A missing usable exit returns EXIT_UNAVAILABLE; structural or capacity rejection returns ACTION_UNAVAILABLE with zero committed turns. No separate actor location or inventory is mutated. Relation arguments are semantic identifiers, not parser tokens; action-specific schemas determine allowed values. Future association, lifecycle and access changes follow the same atomic boundary.
+
 ## Turn and transaction invariants
 
 The dispatcher alone advances turns. It resolves success/failure costs from trusted action definitions, commits the outcome, state and turn delta together, and releases committed outputs only after success of the transaction. Rejected actions and execution errors leave all engine-owned state unchanged, including random state and pending events when introduced. Foundation successful movement costs one turn; invalid or unavailable exits are rejected and cost zero. Future game overrides apply only to completed outcomes. Intermediate scheduled turns must not be skipped; exact event ordering and interruption semantics belong to the future rules/events design. See [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).

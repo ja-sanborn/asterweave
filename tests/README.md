@@ -15,9 +15,11 @@ status. The current smoke test verifies ES module imports and native assertions,
 not engine behavior.
 
 Future runtime tests should cover valid and invalid actions, deterministic
-transitions, ownership and save/restore equivalence where applicable.
+transitions, containment and capacity, and save/restore equivalence where applicable.
 
 The [Lantern House fixture](fixtures/games/minimal-foundation.json) follows the
 [canonical game-definition contract](../docs/contracts/GAME_DEFINITIONS.md).
-It is authored data for FND-05 validation/initialization, FND-07 ownership and
+It is authored data for FND-05 validation/initialization, FND-07 containment and
 FND-09 integration tests; it does not demonstrate implemented gameplay.
+
+The [containment fixture](fixtures/games/containment-foundation.json) adds a single implicit World root, nested locations, safe/money, actor-in-vehicle, loaded backpack, non-containing under association, on relation and inactive/destroyed identities. Both fixtures use format 2.0.0. FND-05 tests invalid roots, IDs, cycles, lifecycle, associations, physical fields and capacity; FND-07 tests descendant movement, atomic rejection, individual and aggregate limits, ancestor weight, unknown measurements and derived queries; FND-09 preserves the Lantern House route and integrates representative transfers. No production validation or gameplay is implemented by these fixtures.

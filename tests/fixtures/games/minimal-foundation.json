@@ -1,5 +1,5 @@
 {
-  "formatVersion": "1.0.0",
+  "formatVersion": "2.0.0",
   "game": {
     "id": "org.example.lanternHouse",
     "version": "0.1.0",
@@ -16,7 +16,11 @@
             "direction": "east",
             "destinationId": "hallway"
           }
-        ]
+        ],
+        "initialContainment": {
+          "parentId": "world",
+          "relationship": "in"
+        }
       },
       {
         "id": "hallway",
@@ -31,37 +35,48 @@
             "direction": "east",
             "destinationId": "library"
           }
-        ]
+        ],
+        "initialContainment": {
+          "parentId": "world",
+          "relationship": "in"
+        }
       },
       {
         "id": "library",
         "name": "Library",
         "description": "Dusty books fill the shelves.",
-        "exits": []
+        "exits": [],
+        "initialContainment": {
+          "parentId": "world",
+          "relationship": "in"
+        }
       }
     ],
     "actors": [
       {
         "id": "player",
         "name": "Explorer",
-        "initialLocationId": "entrance"
+        "initialContainment": {
+          "parentId": "entrance",
+          "relationship": "in"
+        }
       }
     ],
     "entities": [
       {
         "id": "brassLantern",
         "name": "Brass Lantern",
-        "initialPlacement": {
-          "kind": "location",
-          "id": "entrance"
+        "initialContainment": {
+          "parentId": "entrance",
+          "relationship": "in"
         }
       },
       {
         "id": "notebook",
         "name": "Notebook",
-        "initialPlacement": {
-          "kind": "actor",
-          "id": "player"
+        "initialContainment": {
+          "parentId": "player",
+          "relationship": "carried"
         }
       }
     ]
