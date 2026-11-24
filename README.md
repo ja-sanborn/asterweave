@@ -39,6 +39,8 @@ See [Architecture](docs/ARCHITECTURE.md), [action and result contracts](docs/con
 
 See also the [error-handling contract](docs/contracts/ERROR_HANDLING.md) for planned diagnostic, result and exception boundaries.
 
+See also [public API and compatibility](docs/contracts/PUBLIC_API.md), [security model](docs/contracts/SECURITY_MODEL.md) and the [testing strategy](tests/README.md). These establish planned implementation boundaries and development standards, not available runtime capabilities.
+
 ## Repository layout
 
 | Directory | Purpose |

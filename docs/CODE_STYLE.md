@@ -122,6 +122,8 @@ Require finite numbers for JSON data; enforce contract-defined integer ranges, n
 
 ## 16. ES modules and dependencies
 
+Follow the [public API contract](contracts/PUBLIC_API.md). Only explicitly documented public interfaces carry compatibility guarantees; do not expose engine-owned construction or mutable internals through unrestricted exports. Document public compatibility changes and deprecations; internal exports do not become public merely by being exported from a module.
+
 Use explicit relative .js extensions. Group imports consistently: external/platform imports where permitted, then internal imports, with blank lines as useful. Prefer named exports; default exports MAY be justified. Import immediate collaborators directly, avoid unnecessary internal barrels, and expose a small public facade. No circular dependencies, mutable exported globals, hidden service locators or core imports of platform adapters. Avoid import-time side effects.
 
 ## 17. Asynchronous programming
@@ -212,13 +214,19 @@ Keep authored definitions detached and immutable and current state engine-owned 
 
 ## 22. Security and external data
 
+Follow the [security model](contracts/SECURITY_MODEL.md) and its explicit trust boundaries. Validate gameplay authority independently of identifiers; do not treat semantic text as safe executable or presentation syntax. Host-specific authentication, rendering and storage protections belong outside core.
+
 Validate definitions, actions and saves at their respective boundaries. Inspect own data descriptors and reject unsupported types, accessors, inherited application data, cycles and non-data objects according to normative contracts. Do not execute caller getters during ordinary object validation. Arbitrary Proxy traps cannot be guaranteed side-effect-free; catch inspection failures and prefer parsed JSON from loaders. Use safe indexes and copies; treat arbitrary keys as data, not prototype mutation paths. Do not substitute JSON.stringify for validation. Executable extensions are trusted code, not safe data. Never execute data as code or retain caller-owned mutable references.
 
 ## 23. Performance and resource consumption
 
+Keep resource ownership explicit, avoid retained references and shared mutable resources, and release owned subscriptions or resources when introduced. Do not rely on garbage-collection timing. Distinguish semantic engine limits from operational host limits; introduce explicit budgets or disposal interfaces only when justified under the security model.
+
 Favor correctness and clarity before optimization. Use iterative hierarchy traversal where depth is unbounded, explicit visited-state tracking for cycle detection, appropriate identity indexes and safe arithmetic. Bound resource consumption appropriately; avoid duplicate computations and unnecessary allocation. Add caching, pooling or concurrency only when justified by evidence and compatible with deterministic behavior and state authority.
 
 ## 24. Testing and maintenance
+
+Follow the authoritative [testing strategy](../tests/README.md), including contract, security and architecture verification, lightweight native test doubles where useful, independent cases and implementation-story completion criteria.
 
 Use native node:test and node:assert/strict with the existing npm ci and npm test workflow. Name tests for expected behavior; use Arrange, Act, Assert where useful. Mirror source domains, keep reusable fixtures separate, test domain modules independently and avoid external services for core tests. Cover positive and negative cases, boundaries, invariants, deterministic behavior and isolation as applicable; test hosts separately. Prefer meaningful behavioral coverage over an arbitrary fixed percentage. Report actual check results and limitations. Maintain documentation alongside behavior and preserve licensing.
 

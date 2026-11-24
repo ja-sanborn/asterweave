@@ -4,6 +4,8 @@ Asterweave is in its initial design phase. Discuss substantial changes through G
 
 ## Development principles
 
+Follow the [public API contract](docs/contracts/PUBLIC_API.md), [security model](docs/contracts/SECURITY_MODEL.md) and [testing strategy](tests/README.md). Review changes to documented interfaces for compatibility, including before 1.0.0. Satisfy the testing strategy's definition of done for implementation stories; preserve trust boundaries and report actual verification results.
+
 Follow the [error-handling contract](docs/contracts/ERROR_HANDLING.md) and [ADR 0017](docs/decisions/0017-error-handling-and-diagnostics.md) alongside the coding standards. Include applicable negative-path tests and preserve documented failure semantics.
 
 - Keep runtime code in standard JavaScript without third-party core runtime dependencies.

@@ -26,6 +26,14 @@ Follow [ADR 0016](decisions/0016-modular-architecture-and-design-patterns.md) an
 
 Locations, actors and entities share a common world-participant model. Authored objects are data, not individual JavaScript classes, and container capability is a property. Domain objects must not duplicate authoritative mutable state. Definition validation, baseline mapping and effective-state invariant validation are distinct responsibilities; initialization, future transactions and restoration reuse the same domain validators without coupling them to serialized representations or orchestration. Concrete module interfaces remain subject to implementation-story approval.
 
+## Public API and compatibility
+
+Follow [ADR 0018](decisions/0018-public-api-and-compatibility.md) and the [public API contract](contracts/PUBLIC_API.md). One primary facade exposes explicitly documented interfaces; supported factories control construction of engine-owned objects. Internal exports are not automatically public. Engine releases use semantic versioning; pre-1.0 changes are documented and data-format versions remain independent. Concrete interfaces are decided in their owning stories.
+
+## Security and resource ownership
+
+Follow [ADR 0019](decisions/0019-security-and-trust-boundaries.md) and the [security model](contracts/SECURITY_MODEL.md). Treat external data as untrusted, validate authorization and invariants, isolate state and commit atomically. Executable extensions are trusted code, not sandboxed data. Hosts own authentication, storage, network and presentation protections. Use safe algorithms and explicit resource ownership; introduce concrete limits and disposal interfaces only when justified.
+
 ## Error handling and diagnostics
 
 Follow [ADR 0017](decisions/0017-error-handling-and-diagnostics.md) and the [error-handling contract](contracts/ERROR_HANDLING.md). Distinguish data validation, operation rejection, intentional gameplay failure, execution failure, programming error and platform failure. Domain modules detect findings independently; orchestration aggregates and translates them into existing operation-specific contracts. Expected failures use structured diagnostics or results, while unexpected failures may use native exceptions internally. Preserve atomicity and fail closed if committed integrity cannot be guaranteed. Hosts own reporting and logging; no core logger or global error bus in Foundation. Concrete public initialization and recovery interfaces remain in their owning implementation stories.
@@ -69,6 +77,8 @@ Design action and state contracts for multiple actors now, but implement one pla
 Visual and audio presentation are optional extensions. The engine emits semantic results, not rendered graphics.
 
 ## Testing
+
+The [testing strategy](../tests/README.md) establishes unit, contract, integration, security and architecture verification, meaningful behavioral coverage and implementation-story completion criteria. Use review and native automated checks where useful.
 
 Test the runtime headlessly with game fixtures, action sequences, invalid commands, rule enforcement, save/restore equivalence and deterministic replay where applicable. Test host adapters separately.
 

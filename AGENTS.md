@@ -4,6 +4,8 @@ Asterweave is an independent, open-source interactive fiction engine created by 
 
 ## Architecture and code
 
+Follow [public API and compatibility](docs/contracts/PUBLIC_API.md) and [security model](docs/contracts/SECURITY_MODEL.md) under ADRs [0018](docs/decisions/0018-public-api-and-compatibility.md) and [0019](docs/decisions/0019-security-and-trust-boundaries.md). Keep one primary public facade, engine-controlled construction, explicit documented compatibility and independent version authorities. Enforce trust boundaries, safe resource ownership and host responsibilities. Follow the [testing strategy](tests/README.md), including architecture and security checks and its definition of done.
+
 Follow [ADR 0017](docs/decisions/0017-error-handling-and-diagnostics.md) and the [error-handling contract](docs/contracts/ERROR_HANDLING.md). Preserve operation-specific diagnostics/results, domain-owned codes, atomic failure, fail-closed integrity and host-owned reporting. Test applicable failure paths; do not introduce core logging or speculative exception frameworks.
 
 Follow the authoritative [coding standards](docs/CODE_STYLE.md) and [ADR 0016 — modular architecture and design patterns](docs/decisions/0016-modular-architecture-and-design-patterns.md), including domain-oriented files, encapsulation, JSDoc headers and member documentation, independently testable domain logic and acyclic dependencies.
