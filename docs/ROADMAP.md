@@ -4,11 +4,12 @@ All milestones are planned and subject to refinement. [GitHub Issues](https://gi
 
 ## 1. Foundation
 
-- Define module boundaries and versioned state/save schemas (FND-04 pending).
+- Establish [unified containment](contracts/WORLD_CONTAINMENT.md) and [physical capacity](contracts/PHYSICAL_PROPERTIES.md) ([FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23); design defined; canonical format 2.0.0).
+- Define module boundaries and versioned state/save schemas (FND-04 pending; follows FND-12).
 - Establish the [canonical JSON game-definition contract](contracts/GAME_DEFINITIONS.md) and reusable fixture ([FND-03, issue #5](https://github.com/ja-sanborn/asterweave/issues/5); design defined, validation and initialization tracked in FND-05).
 - Establish [action/result and action definition contracts](contracts/ACTIONS_AND_RESULTS.md) and the [standard action reference catalog](contracts/STANDARD_ACTIONS.md) ([FND-02, issue #4](https://github.com/ja-sanborn/asterweave/issues/4); design only, implementation tracked separately).
 - Establish ES module development conventions and automated tests ([FND-01, issue #3](https://github.com/ja-sanborn/asterweave/issues/3); completed).
-- Implement state, entities, ownership, world navigation and action dispatch.
+- Implement state, identity, unified containment and capacity, world navigation and action dispatch.
 - Implement the independent action registry ([FND-10, issue #15](https://github.com/ja-sanborn/asterweave/issues/15)) before FND-06 dispatch.
 - Establish the versioned author guide after integrated Foundation verification ([FND-11, issue #20](https://github.com/ja-sanborn/asterweave/issues/20); planned).
 
@@ -17,7 +18,7 @@ All milestones are planned and subject to refinement. [GitHub Issues](https://gi
 ## 2. Text adventure
 
 - Implement the basic deterministic command parser, object resolution and error responses.
-- Add inventory, doors, containers, conditions and turn-based events; implement standard actions through focused stories as capabilities are designed.
+- Add player-facing inventory/container actions, doors, lifecycle operations, perception, conditions and turn-based events; implement standard actions through focused stories as capabilities are designed.
 - Implement configurable standard actions ([#16](https://github.com/ja-sanborn/asterweave/issues/16)) and declarative custom actions ([#17](https://github.com/ja-sanborn/asterweave/issues/17)).
 - Implement optional fictional clock/calendar support ([#18](https://github.com/ja-sanborn/asterweave/issues/18)), coordinated with rules/events and persistence.
 - Implement serialization and restoration.

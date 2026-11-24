@@ -17,7 +17,7 @@ This specification elaborates [ADR 0002](../decisions/0002-unified-action-contra
 | args | Yes | JSON object, possibly empty; fields and types governed by the action definition. |
 | requestId | No | Nonempty opaque string for correlation only; does not grant authority or imply deduplication. |
 
-Use JSON-compatible data only: null, booleans, strings, finite numbers, arrays and plain data objects. Reject cycles, functions, accessors, undefined, nonfinite numbers and non-data objects. Required IDs must be nonempty strings; do not coerce or trim inputs to make them valid. Reject unknown envelope fields and unrecognized arguments unless the specific definition explicitly permits them. Do not accept turn costs, raw command syntax, UI events, credentials, handler references or platform-specific metadata. Resolve actor authority, visibility, ownership and other prerequisites in the engine, not just in the caller. Hosts must authenticate/authorize callers separately.
+Use JSON-compatible data only: null, booleans, strings, finite numbers, arrays and plain data objects. Reject cycles, functions, accessors, undefined, nonfinite numbers and non-data objects. Required IDs must be nonempty strings; do not coerce or trim inputs to make them valid. Reject unknown envelope fields and unrecognized arguments unless the specific definition explicitly permits them. Do not accept turn costs, raw command syntax, UI events, credentials, handler references or platform-specific metadata. Resolve actor authority, visibility, containment and other prerequisites in the engine, not just in the caller. Hosts must authenticate/authorize callers separately.
 
 Arguments use descriptive lower camel case keys. Use stable IDs rather than display names or live objects: targetId for a primary entity, objectId for a manipulated item where a separate target is needed, destinationId for a destination, instrumentId for a tool, recipientId for a receiving actor, topicId/choiceId for authored topics/choices. A relation is a canonical semantic value (e.g. in, on, under, behind), not a parser token. Direction is a canonical exit identifier as agreed with the game definition; Foundation uses north, south, east, west and may support other explicitly defined directions. See the [catalog](STANDARD_ACTIONS.md). Action inputs and outputs must be detached from mutable runtime state.
 
@@ -138,6 +138,10 @@ An unexpected exception returns:
 ```json
 {"status":"error","actorId":"player","turnsAdvanced":0,"outputs":[],"error":{"code":"EXECUTION_FAILED"}}
 ```
+
+## Containment and movement
+
+World references and relationship semantics follow [world containment](WORLD_CONTAINMENT.md) and [physical properties](PHYSICAL_PROPERTIES.md). Foundation move changes the actor's immediate containment from one active location to another and preserves descendants; exits do not follow containment automatically. A missing usable exit returns EXIT_UNAVAILABLE; structural or capacity rejection returns ACTION_UNAVAILABLE with zero committed turns. No separate actor location or inventory is mutated. Relation arguments are semantic identifiers, not parser tokens; action-specific schemas determine allowed values. Future association, lifecycle and access changes follow the same atomic boundary.
 
 ## Turn and transaction invariants
 

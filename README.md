@@ -8,7 +8,7 @@ Inspired by classic parser adventures such as Zork, branching fiction, gamebooks
 
 ## Project status
 
-Asterweave is establishing its headless runtime foundation. Action, result and canonical game-definition contracts are defined as architecture; the gameplay capabilities below are planned, not implemented. There is no playable release yet.
+Asterweave is establishing its headless runtime foundation. Action, result, canonical game-definition, world containment and physical capacity contracts are defined as architecture; the gameplay capabilities below are planned, not implemented. There is no playable release yet.
 
 ## Design goals
 
@@ -35,7 +35,7 @@ The command parser, choice engine and narrative systems submit actions to the sa
 
 The first milestone is a small, playable text-only adventure running offline in a browser. Online hosting, multiplayer and graphical presentation are future extensions, not prerequisites.
 
-See [Architecture](docs/ARCHITECTURE.md), [action and result contracts](docs/contracts/ACTIONS_AND_RESULTS.md), [action definitions](docs/contracts/ACTION_DEFINITIONS.md), [standard action catalog](docs/contracts/STANDARD_ACTIONS.md), [canonical game definitions](docs/contracts/GAME_DEFINITIONS.md), and [Roadmap](docs/ROADMAP.md) for the design. [Future considerations](docs/FUTURE_CONSIDERATIONS.md) records nonbinding initiatives.
+See [Architecture](docs/ARCHITECTURE.md), [action and result contracts](docs/contracts/ACTIONS_AND_RESULTS.md), [action definitions](docs/contracts/ACTION_DEFINITIONS.md), [standard action catalog](docs/contracts/STANDARD_ACTIONS.md), [canonical game definitions](docs/contracts/GAME_DEFINITIONS.md), [world containment](docs/contracts/WORLD_CONTAINMENT.md), [physical properties](docs/contracts/PHYSICAL_PROPERTIES.md), and [Roadmap](docs/ROADMAP.md) for the design. [Future considerations](docs/FUTURE_CONSIDERATIONS.md) records nonbinding initiatives.
 
 ## Repository layout
 
