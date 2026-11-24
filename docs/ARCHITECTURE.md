@@ -1,6 +1,6 @@
 # Asterweave architecture
 
-Status: initial design; contracts and schemas are not yet finalized.
+Status: initial design; action contracts are defined, other schemas and runtime implementation remain pending.
 
 ## Boundaries
 
@@ -10,7 +10,7 @@ The runtime is environment-independent ECMAScript. It must not directly access t
 
 | Module | Responsibility |
 | --- | --- |
-| Core | Lifecycle, action dispatch, validation, state transitions |
+| Core | Lifecycle, action registry, dispatch, validation, atomic state transitions |
 | Parser | Rule-based command interpretation and contextual object resolution |
 | Choice | Conditional choices and selection validation |
 | Narrative | Dialogue, sequences, branching, call/return and progression |
@@ -22,10 +22,15 @@ These are logical boundaries; physical module organization will evolve as contra
 
 ## Action flow
 
-    Host input -> Command parser or choice selection -> Action dispatcher
-      -> Rules and world/state transition -> Structured output -> Host
+    Host input -> Parser, choice, narrative or direct action submission
+      -> Action dispatcher -> Registry resolution and validation
+      -> Atomic rules/world transition and turn progression -> Semantic result -> Host
 
 Actions identify an actor, action type and relevant targets. The runtime validates availability and permissions, not merely syntax. Output carries semantic information and an intended audience; hosts decide how to render or deliver it.
+
+The action-driven design distinguishes standard, extension and game-defined action types. The registry resolves supported definitions and trusted handlers; it is independent of dispatch. Completed results distinguish gameplay success and failure, while rejected actions and execution errors commit no state or turns. The dispatcher exclusively selects configured success/failure costs and commits state and progression atomically. Foundation movement consumes one turn on success; invalid or unavailable exits consume none. Committed turns advance abstract game time; an optional clock/calendar translates them into fictional dates and durations. Intermediate scheduled turns cannot be skipped; interruption semantics are deferred.
+
+See the [action/result contract](contracts/ACTIONS_AND_RESULTS.md), [action definitions](contracts/ACTION_DEFINITIONS.md), [standard action catalog](contracts/STANDARD_ACTIONS.md), and ADRs [0006](decisions/0006-atomic-action-execution-and-turn-progression.md), [0007](decisions/0007-extensible-and-configurable-action-definitions.md), and [0008](decisions/0008-game-time-and-calendar-separation.md). These define design only; runtime support remains planned.
 
 ## Game packages
 
