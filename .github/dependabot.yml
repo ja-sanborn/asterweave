@@ -1,0 +1,10 @@
+# Asterweave dependency version updates
+# The core runtime has no third-party dependencies.
+# Monitor GitHub Actions when workflows are introduced.
+# Add npm monitoring only when package manifests are introduced.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
