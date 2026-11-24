@@ -1,0 +1,31 @@
+name: User story / feature
+description: Propose a feature, architectural task or technical enabler.
+title: ""
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: User story
+      description: As a player, author, developer or maintainer, I want something so that I receive a benefit.
+      placeholder: As an author, I want ... so that ...
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and scope
+      description: Describe requirements, constraints, dependencies and out-of-scope work.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List observable, testable outcomes.
+      placeholder: |
+        - [ ] Given ..., when ..., then ...
+    validations:
+      required: true
+  - type: textarea
+    id: design
+    attributes:
+      label: Design considerations
+      description: Relevant contracts, architecture, alternatives or related issues.
