@@ -1,6 +1,6 @@
 # Roadmap
 
-All milestones are planned and subject to refinement.
+All milestones are planned and subject to refinement. [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues) are the actionable user-story backlog for these milestones.
 
 ## 1. Foundation
 

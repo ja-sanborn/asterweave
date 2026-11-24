@@ -51,7 +51,7 @@ See [Architecture](docs/ARCHITECTURE.md) and [Roadmap](docs/ROADMAP.md) for the 
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). The project is currently establishing its foundations, so substantial architectural changes should be discussed before implementation.
+See [CONTRIBUTING.md](CONTRIBUTING.md). [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues) track user stories, technical tasks and defects. AI coding agents should follow [AGENTS.md](AGENTS.md). The project is currently establishing its foundations, so substantial architectural changes should be discussed before implementation.
 
 ## License and attribution
 

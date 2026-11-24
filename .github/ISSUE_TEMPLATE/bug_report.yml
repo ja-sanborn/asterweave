@@ -1,0 +1,29 @@
+name: Bug report
+description: Report incorrect behavior. Report security vulnerabilities privately instead.
+body:
+  - type: markdown
+    attributes:
+      value: "For security vulnerabilities, follow [SECURITY.md](https://github.com/ja-sanborn/asterweave/blob/main/SECURITY.md). Do not disclose vulnerabilities here."
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment and additional context
+      description: Include relevant browser or runtime details and sanitized logs.
