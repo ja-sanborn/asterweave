@@ -20,6 +20,12 @@ The runtime is environment-independent ECMAScript. It must not directly access t
 
 These are logical boundaries; physical module organization will evolve as contracts are defined. The parser and choice modules are optional where a game does not need them.
 
+## Modular implementation
+
+Follow [ADR 0016](decisions/0016-modular-architecture-and-design-patterns.md) and [coding standards](CODE_STYLE.md). Organize cohesive domain types in separate modules; use native classes for encapsulation where appropriate and pure functions for domain calculations and validation. Prefer composition, explicit dependencies and acyclic module boundaries. A public facade hides internal organization; platform adapters depend on core contracts, not the reverse.
+
+Locations, actors and entities share a common world-participant model. Authored objects are data, not individual JavaScript classes, and container capability is a property. Domain objects must not duplicate authoritative mutable state. Definition validation, baseline mapping and effective-state invariant validation are distinct responsibilities; initialization, future transactions and restoration reuse the same domain validators without coupling them to serialized representations or orchestration. Concrete module interfaces remain subject to implementation-story approval.
+
 ## Action flow
 
     Host input -> Parser, choice, narrative or direct action submission

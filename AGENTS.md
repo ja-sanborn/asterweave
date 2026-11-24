@@ -4,6 +4,8 @@ Asterweave is an independent, open-source interactive fiction engine created by 
 
 ## Architecture and code
 
+Follow the authoritative [coding standards](docs/CODE_STYLE.md) and [ADR 0016 — modular architecture and design patterns](docs/decisions/0016-modular-architecture-and-design-patterns.md), including domain-oriented files, encapsulation, JSDoc headers and member documentation, independently testable domain logic and acyclic dependencies.
+
 - Use standard ECMAScript, ES modules and zero third-party core runtime dependencies. Node.js is permitted for development and compatible hosts.
 - Keep `src/` independent of DOM, storage, networking, filesystem, graphics and Node-specific APIs. Put platform integration in `hosts/`, authoring tools in `creator/`, optional mechanics and presentation in `extensions/`, examples in `examples/` and tests in `tests/`.
 - Use deterministic, explicit actions with actor identity. Commands and choices share the action dispatcher; neither owns world logic. Return semantic results, not rendered interfaces.

@@ -62,7 +62,7 @@ Node.js is for development and compatible hosts, not a requirement for standalon
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues) track user stories, technical tasks and defects. AI coding agents should follow [AGENTS.md](AGENTS.md). The project is currently establishing its foundations, so substantial architectural changes should be discussed before implementation.
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the [coding standards](docs/CODE_STYLE.md). [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues) track user stories, technical tasks and defects. AI coding agents should follow [AGENTS.md](AGENTS.md). The project is currently establishing its foundations, so substantial architectural changes should be discussed before implementation.
 
 ## License and attribution
 

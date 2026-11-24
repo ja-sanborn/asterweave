@@ -22,10 +22,7 @@ in `.nvmrc` and `package.json`. With nvm, run `nvm install` and `nvm use`.
 From the repository root, run `npm ci` and `npm test`. Commit the lockfile
 when changing the manifest. No third-party npm dependencies are required.
 
-Use ES modules with explicit relative `.js` import extensions, single-quoted
-JavaScript strings, semicolons, descriptive English identifiers, and prefer
-`const` over `let` where practical. Follow `.editorconfig`: UTF-8, LF,
-four-space JavaScript indentation and two-space JSON/YAML indentation.
+Follow [coding standards](docs/CODE_STYLE.md) for source organization, naming, formatting, license headers, JSDoc, validation and maintainability. Follow [ADR 0016](docs/decisions/0016-modular-architecture-and-design-patterns.md) for modular architecture and design patterns.
 Use native `node:test` and `node:assert/strict`; see [test guidance](tests/README.md).
 CI runs on Linux for pull requests targeting main and pushes to main.
 Do not introduce additional tooling or dependencies without discussion.
