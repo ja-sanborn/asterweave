@@ -52,3 +52,5 @@ Visual and audio presentation are optional extensions. The engine emits semantic
 ## Testing
 
 Test the runtime headlessly with game fixtures, action sequences, invalid commands, rule enforcement, save/restore equivalence and deterministic replay where applicable. Test host adapters separately.
+
+Development uses Node.js 26 LTS, npm and the native test runner, with no third-party npm dependencies. These tools do not enter the runtime or standalone game distributions. See [ADR 0005](decisions/0005-development-and-testing-tooling.md).

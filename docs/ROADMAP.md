@@ -5,7 +5,7 @@ All milestones are planned and subject to refinement. [GitHub Issues](https://gi
 ## 1. Foundation
 
 - Define module boundaries, action/result contracts and versioned game and save schemas.
-- Establish ES module development conventions and automated tests.
+- Establish ES module development conventions and automated tests ([FND-01, issue #3](https://github.com/ja-sanborn/asterweave/issues/3); infrastructure introduced, CI verification tracked in the pull request).
 - Implement state, entities, ownership, world navigation and action dispatch.
 
 ## 2. Text adventure
