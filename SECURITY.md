@@ -1,38 +1,25 @@
 # Security Policy
 
-> *Version 1: 2026-11-23*
-
 ## Supported Versions
 
-I release security updates for the following versions:
-
-| Version        | Supported |
-|----------------|-----------|
-| latest         | ✅         |
-| < last major > | ❌         |
-
-Please upgrade to the latest release to ensure you have the most recent fixes.
+Asterweave Interactive Fiction Engine is currently in initial development and has no supported production releases. Security fixes will be considered for the current development branch on a best-effort basis. A release support policy will be established when stable releases become available.
 
 ## Reporting a Vulnerability
 
-⚠️ Please **do not open public GitHub issues** for security vulnerabilities. ⚠️
+Please do not open public GitHub issues for security vulnerabilities.
 
-If you discover a vulnerability in Allyaria Editor:
+Use [GitHub Private Vulnerability Reporting](https://github.com/ja-sanborn/asterweave/security/advisories/new) to report suspected vulnerabilities privately. Include a description, reproduction steps, affected versions or commit IDs, potential impact, and suggested mitigations if available. Do not include credentials or unrelated personal data.
 
-- Use the **[GitHub Private Vulnerability Reporting](../../security/advisories/new)** feature on this repo.
+## Security Scope
 
-When reporting, please include:
+Relevant concerns include unsafe handling of game definitions and save files, unintended execution of untrusted content, state validation failures with security impact, and security issues in hosts, authoring tools and extensions maintained by this project.
 
-- A clear description of the issue
-- Steps to reproduce
-- Affected version(s)
-- Any suggested fixes or mitigations
+Executable JavaScript extensions are trusted code, not sandboxed data. Offline game packages and saves are not designed to prevent players from inspecting or modifying their own local content. Future online hosts must enforce authentication, authorization, server-authoritative state and appropriate message privacy.
 
 ## Response Process
 
-- I will do my best to acknowledge your report within **48 hours**.
-- I'm a sole maintainer, so please allow for up to a week to respond.
-- Once confirmed, I will prepare a fix and coordinate a release.
-- A public advisory will be published after a patch is available.
+- As a sole maintainer, I aim to acknowledge reports within 48 hours, but responses may take up to a week or longer.
+- Confirmed vulnerabilities will be assessed and fixes prioritized according to impact and available resources.
+- Disclosure and any public advisory will be coordinated with the reporter where appropriate. No fixed remediation deadline is guaranteed.
 
-Thank you for helping to keep Asterweave safe for everyone.
+Thank you for helping keep Asterweave safe for everyone.
