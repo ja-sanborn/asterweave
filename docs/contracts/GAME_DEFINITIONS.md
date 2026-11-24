@@ -1,8 +1,8 @@
 # Canonical JSON game definitions
 
-Status: Accepted design; validation and runtime implementation pending. Origin: [FND-03, issue #5](https://github.com/ja-sanborn/asterweave/issues/5), revised by [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23).
+Status: Accepted design; validation and runtime implementation pending. Origin: [FND-03, issue #5](https://github.com/ja-sanborn/asterweave/issues/5), revised by [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23) and [FND-04, issue #6](https://github.com/ja-sanborn/asterweave/issues/6).
 
-This contract elaborates [ADR 0003](../decisions/0003-canonical-json-game-format.md) and [ADR 0009](../decisions/0009-canonical-game-definition-contract.md). [ADRs 0011](../decisions/0011-unified-world-containment.md) and [0012](../decisions/0012-physical-properties-and-capacity.md) supersede the version and placement portions of ADR 0009. Authors and future Creator tools produce the same JSON document. The runtime consumes data independently of Creator, hosts and distribution packaging.
+This contract elaborates [ADR 0003](../decisions/0003-canonical-json-game-format.md) and [ADR 0009](../decisions/0009-canonical-game-definition-contract.md). [ADRs 0011](../decisions/0011-unified-world-containment.md) and [0012](../decisions/0012-physical-properties-and-capacity.md) supersede the version and placement portions of ADR 0009. [ADRs 0013](../decisions/0013-namespaced-properties-and-runtime-state.md)–[0015](../decisions/0015-state-isolation-and-persistence.md) elaborate state and supersede the accepted format version. Authors and future Creator tools produce the same JSON document. The runtime consumes data independently of Creator, hosts and distribution packaging.
 
 ## Authoring and distribution boundary
 
@@ -18,17 +18,18 @@ A definition is one UTF-8 JSON object. JSON member order is not semantic; array 
 
 | Field | Required | Type and constraints |
 | --- | --- | --- |
-| formatVersion | Yes | String, exactly `2.0.0` for Foundation |
+| formatVersion | Yes | String, exactly `3.0.0` for Foundation |
 | game | Yes | Game identity object |
 | world | Yes | Initial world object |
 
-Format and content versions use three nonnegative decimal integer components separated by dots, with no leading zero except zero itself, no prefix, suffix or whitespace (grammar: `(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)`, matched against the entire string). Format major revisions represent breaking interpretation changes; minor revisions represent compatible additions for newer readers; patch revisions represent compatible corrections. This does not promise forward compatibility: Foundation recognizes exactly 2.0.0. Version 2.0.0 replaces the pre-runtime 1.0.0 initialLocationId and initialPlacement fields with unified containment. No 1.0.0 reader or migration is required for Foundation. Future readers must explicitly identify supported versions and reject unsupported versions clearly; migration is not required in Foundation. Content versions are author-managed release identifiers; authors should increment them when changing released definitions. Neither version is the engine package version. Save compatibility and migration policy belong to [FND-04](https://github.com/ja-sanborn/asterweave/issues/6).
+Format and content versions use three nonnegative decimal integer components separated by dots, with no leading zero except zero itself, no prefix, suffix or whitespace (grammar: `(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)`, matched against the entire string). Format major revisions represent breaking interpretation changes; minor revisions represent compatible additions for newer readers; patch revisions represent compatible corrections. This does not promise forward compatibility: Foundation recognizes exactly 3.0.0. Version 2.0.0 replaced the pre-runtime 1.0.0 initialLocationId and initialPlacement fields with unified containment. Version 3.0.0 adds required game.namespace and optional initial properties and relationships. No 1.0.0 or 2.0.0 reader or migration is required for Foundation. Future readers must explicitly identify supported versions and reject unsupported versions clearly; migration is not required in Foundation. Content versions are author-managed release identifiers; authors should increment them when changing released definitions. Neither version is the engine package version. Save compatibility and migration policy belong to [FND-04](https://github.com/ja-sanborn/asterweave/issues/6).
 
 ## Game identity
 
 | Field | Required | Type and constraints |
 | --- | --- | --- |
 | id | Yes | Stable reverse-domain-style identifier, at least two dot-separated segments |
+| namespace | Yes | Stable machine-readable namespace, not asterweave; see [properties](PROPERTIES.md) |
 | version | Yes | Content version string using the version grammar above |
 | title | Yes | Nonblank Unicode string |
 
@@ -43,6 +44,8 @@ Locations, actors and entities share one game-local ID namespace: each ID is uni
 | locations | Yes | Array of location objects, at least one |
 | actors | Yes | Array of actor objects, at least one |
 | entities | Yes | Array of entity objects, may be empty |
+| initialProperties | No | Qualified property map; see [properties](PROPERTIES.md) |
+| initialRelationships | No | Dense array of initial directed relationship records |
 
 Arrays are dense; no null entries, holes or extra properties. Definitions identify individual initial instances, not reusable templates. Multiple actor definitions are allowed; Foundation does not imply multiplayer, actor authentication, NPC behavior or a default player. The caller supplies actor identity explicitly.
 
@@ -61,8 +64,13 @@ All three categories use the following closed common field set, plus exits for l
 | initialLifecycle | No | active (default), inactive or destroyed |
 | initialAssociations | No; active only | Dense array of closed objects with required targetId and relationship |
 | physical | No | Closed object as defined in [physical properties](PHYSICAL_PROPERTIES.md) |
+| initialProperties | No | Qualified property map; see [properties](PROPERTIES.md) |
 
 See [world containment](WORLD_CONTAINMENT.md) for exact relationship vocabulary, hierarchy, reference, lifecycle and association invariants; see [physical properties](PHYSICAL_PROPERTIES.md) for defaults, field types and capacity semantics. Active participants have exactly one initialContainment; inactive and destroyed participants omit it and initialAssociations. World is automatically created, not an authored record. At least one active location and one active actor are required at initialization. Multiple actors are allowed without assuming a default player. Actor, location and entity IDs use the same reference space. No independent inventory, contents or current location field is permitted.
+
+### Initial relationship properties
+
+Each initialRelationships entry is a closed object with required from, to and initialProperties. Endpoints follow [runtime state](RUNTIME_STATE.md), reference authored participants or World (not runtime players), and have distinct ordered-pair identity across entries. initialProperties is a nonempty qualified map. No implicit reciprocal relationship or physical containment. Omitted collection means empty. Foundation supports core and game namespaces only; future registered extension namespaces require their own contracts. Initial property maps may contain any JSON value including null; the map itself cannot be null. Reserved engine keys are not allowed in these maps.
 
 ### Locations and exits
 
@@ -70,11 +78,11 @@ Locations additionally require exits, a dense array of closed objects with requi
 
 ## Definition and runtime boundary
 
-Definitions remain immutable; initialization must not mutate caller data and later caller mutations must not affect instances. Independent instances must not share mutable state. Current containment, lifecycle, associations and mutable physical properties are engine-owned. Derived queries do not duplicate authoritative placement. FND-04 defines state, snapshots, saves, mutable properties and identity scopes; FND-05 validates and initializes. No turn counter, save state or session credentials belong in the definition.
+Definitions remain immutable; initialization must not mutate caller data and later caller mutations must not affect instances. Independent instances must not share mutable state. Current containment, lifecycle, associations and mutable physical properties are engine-owned. Derived queries do not duplicate authoritative placement. [FND-04 state](RUNTIME_STATE.md), [properties](PROPERTIES.md) and [save data](SAVE_DATA.md) define override semantics, player control and snapshots; FND-05 validates and initializes. No turn counter, save state or session credentials belong in the definition.
 
 ## Validation and diagnostics
 
-FND-05 implements native ECMAScript validation with no external schema library or platform APIs. Validate the complete definition before initializing state. Reject malformed or unsupported input without exposing partially initialized state. Validate object/array shapes and allowed fields, version and scalar grammar, global identity uniqueness, references, containment cycles and ancestry, lifecycle, associations, physical field ranges and all applicable capacity invariants. Identity collection precedes reference resolution so forward references are allowed.
+FND-05 implements native ECMAScript validation with no external schema library or platform APIs. Validate the complete definition before initializing state. Reject malformed or unsupported input without exposing partially initialized state. Validate object/array shapes and allowed fields, version and scalar grammar, global identity uniqueness, references, containment cycles and ancestry, lifecycle, associations, physical field ranges and all applicable capacity invariants, game namespace, qualified initial property maps and directed relationship references. Identity collection precedes reference resolution so forward references are allowed.
 
 Only JSON-compatible data is accepted: null, booleans, strings, finite numbers, dense arrays and plain data objects, subject to the narrower field rules above. For parsed JavaScript input reject functions, undefined, symbols, BigInt, nonfinite numbers, cycles, accessors, non-data objects and extra array properties; use own data properties rather than inherited values. Treat keys and IDs as data, not prototype mutation paths; use safe lookup structures such as Map or null-prototype records. No eval, code loading, host objects, network access or filesystem references. JSON text parsing is outside the object-validation contract: native JSON.parse discards repeated member names, so a validator receiving parsed data cannot detect those original repetitions. Authors must not write duplicate member names; this limitation does not relax duplicate world IDs or directions, which are explicit array data.
 
@@ -125,9 +133,10 @@ This is a complete valid Foundation definition, although not yet executable:
 
 ```json
 {
-  "formatVersion": "2.0.0",
+  "formatVersion": "3.0.0",
   "game": {
     "id": "org.example.smallWorld",
+    "namespace": "smallWorld",
     "version": "0.1.0",
     "title": "Small World"
   },
@@ -164,7 +173,7 @@ The fixture supports the existing [action/result contract](ACTIONS_AND_RESULTS.m
 
 The actor ID resolves to an active actor, and the direction selects an authored exit from that actor's immediate active location parent. The destination is not caller-selected. Foundation move costs 1/0; unavailable exits are rejected with EXIT_UNAVAILABLE and zero committed turns. Dispatch and registry, not the definition, own execution and turn costs. See [action definitions](ACTION_DEFINITIONS.md), [standard catalog](STANDARD_ACTIONS.md), and [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).
 
-Future conceptual root sections (names tentative, not accepted fields in 2.0.0):
+Future conceptual root sections (names tentative, not accepted fields in 3.0.0):
 
 | Section | Intended responsibility |
 | --- | --- |
@@ -179,3 +188,5 @@ Future conceptual root sections (names tentative, not accepted fields in 2.0.0):
 Future schema revisions define supported fields and compatibility explicitly. Do not add empty placeholders or arbitrary extension bags now. [Issue #16](https://github.com/ja-sanborn/asterweave/issues/16) defines standard overrides; [#17](https://github.com/ja-sanborn/asterweave/issues/17) defines declarative actions. Preserve existing action namespaces, trusted handler separation and independent success/failure costs under [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md). JSON must never select arbitrary executable code or replace trusted handlers. [Issue #18](https://github.com/ja-sanborn/asterweave/issues/18) owns optional time configuration under [ADR 0008](../decisions/0008-game-time-and-calendar-separation.md); committed turns remain authoritative.
 
 No parser, narrative, rules, events, calendar, Creator, host or runtime validation is implemented by this specification. The future author guide ([FND-11](https://github.com/ja-sanborn/asterweave/issues/20)) will document verified usage after integrated Foundation testing.
+
+The [state fixture](../../tests/fixtures/games/state-foundation.json) illustrates initial properties and relationships; its synthetic [save](../../tests/fixtures/saves/state-foundation.json) is a contract example, not executable save functionality.
