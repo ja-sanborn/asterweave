@@ -8,7 +8,7 @@ Inspired by classic parser adventures such as Zork, branching fiction, gamebooks
 
 ## Project status
 
-Asterweave is in initial architecture and design. The capabilities below are planned, not implemented. There is no playable release yet.
+Asterweave is establishing its headless runtime foundation. The capabilities below are planned, not implemented. There is no playable release yet.
 
 ## Design goals
 
@@ -48,6 +48,17 @@ See [Architecture](docs/ARCHITECTURE.md) and [Roadmap](docs/ROADMAP.md) for the 
 | `examples/` | Example game definitions |
 | `tests/` | Automated engine and integration tests |
 | `docs/` | Architecture and project documentation |
+
+## Development quick start
+
+Install Node.js 26 LTS with its bundled npm. If using nvm, run `nvm install` and `nvm use` from the repository root.
+
+```sh
+npm ci
+npm test
+```
+
+Node.js is for development and compatible hosts, not a requirement for standalone games. See [testing](tests/README.md) and [contributing](CONTRIBUTING.md).
 
 ## Contributing
 
