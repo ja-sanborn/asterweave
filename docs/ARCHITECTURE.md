@@ -1,6 +1,6 @@
 # Asterweave architecture
 
-Status: initial design; action contracts are defined, other schemas and runtime implementation remain pending.
+Status: initial design; action and game-definition contracts are defined; state/save schemas and runtime implementation remain pending.
 
 ## Boundaries
 
@@ -34,7 +34,7 @@ See the [action/result contract](contracts/ACTIONS_AND_RESULTS.md), [action defi
 
 ## Game packages
 
-A versioned JSON definition describes the initial world, entities, narrative, vocabulary, rules and optional extension requirements. Stable IDs connect definitions. Definitions are immutable during play; mutable instance state is separate. Custom JavaScript extensions may register behavior through explicit contracts. Untrusted executable extensions must not be treated as safe data.
+The [canonical game-definition contract](contracts/GAME_DEFINITIONS.md) defines the initial world, game identity and format/content versions under [ADR 0009](decisions/0009-canonical-game-definition-contract.md). Foundation supports locations, directed exits, actors and entities with typed initial placements; narrative, vocabulary, rules and optional extension requirements are future schema work. Stable world IDs connect definitions. Definitions are immutable during play; mutable instance state is separate. Native validation and initialization remain FND-05 work. Custom JavaScript extensions may register behavior through explicit contracts. Untrusted executable extensions must not be treated as safe data.
 
 Creator is an optional development-time module that translates readable authoring definitions into the canonical JSON format, validates references and exports game packages. It is not distributed with finished games.
 

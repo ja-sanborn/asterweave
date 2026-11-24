@@ -4,11 +4,13 @@ All milestones are planned and subject to refinement. [GitHub Issues](https://gi
 
 ## 1. Foundation
 
-- Define module boundaries and versioned game and save schemas.
+- Define module boundaries and versioned state/save schemas (FND-04 pending).
+- Establish the [canonical JSON game-definition contract](contracts/GAME_DEFINITIONS.md) and reusable fixture ([FND-03, issue #5](https://github.com/ja-sanborn/asterweave/issues/5); design defined, validation and initialization tracked in FND-05).
 - Establish [action/result and action definition contracts](contracts/ACTIONS_AND_RESULTS.md) and the [standard action reference catalog](contracts/STANDARD_ACTIONS.md) ([FND-02, issue #4](https://github.com/ja-sanborn/asterweave/issues/4); design only, implementation tracked separately).
 - Establish ES module development conventions and automated tests ([FND-01, issue #3](https://github.com/ja-sanborn/asterweave/issues/3); completed).
 - Implement state, entities, ownership, world navigation and action dispatch.
 - Implement the independent action registry ([FND-10, issue #15](https://github.com/ja-sanborn/asterweave/issues/15)) before FND-06 dispatch.
+- Establish the versioned author guide after integrated Foundation verification ([FND-11, issue #20](https://github.com/ja-sanborn/asterweave/issues/20); planned).
 
 ## 2. Text adventure
 
