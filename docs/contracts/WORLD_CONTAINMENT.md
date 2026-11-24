@@ -38,7 +38,7 @@ Optional initialAssociations is an array of closed objects with required targetI
 {"targetId":"rug","relationship":"under"}
 ```
 
-Prefer standard engine relationships when semantics fit; synonyms are vocabulary, not new structural relationships. Future extension or game-defined identifiers may use owned namespaces following [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md). Each definition must explicitly classify containment versus association and comply with core invariants. Format 2.0.0 accepts only the standard identifiers; custom registration and authoring are deferred.
+Prefer standard engine relationships when semantics fit; synonyms are vocabulary, not new structural relationships. Future extension or game-defined identifiers may use owned namespaces following [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md). Each definition must explicitly classify containment versus association and comply with core invariants. Format 3.0.0 accepts only the standard identifiers; custom registration and authoring are deferred.
 
 ## Lifecycle
 
@@ -55,3 +55,5 @@ The engine owns current containment, lifecycle and associations. Immutable initi
 FND-04 specifies state/snapshot/save structures and mutable properties, including gameplay-relevant associations, lifecycle and actor knowledge. Restore must preserve current authoritative records, not recreate consumed objects or reset placements. FND-05 validates/initializes; FND-07 implements internal containment and capacity; FND-08 implements movement; FND-09 integrates. Player-facing container actions, perception, locks, dynamic creation, multiplayer, networking and storage are not introduced by this contract.
 
 See [containment fixture](../../tests/fixtures/games/containment-foundation.json) and [Lantern House](../../tests/fixtures/games/minimal-foundation.json).
+
+FND-04 maps authored structural values to reserved asterweave properties and stores only current differences, including explicit removal of containment when an active participant leaves World. See [properties](PROPERTIES.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md). No duplicate authoritative values; core validation remains mandatory.

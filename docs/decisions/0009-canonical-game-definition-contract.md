@@ -19,3 +19,5 @@ Unversioned or executable definitions; per-category IDs; implicit reverse exits;
 ## Consequences
 
 The [game-definition contract](../contracts/GAME_DEFINITIONS.md) is normative for Foundation; the [fixture](../../tests/fixtures/games/minimal-foundation.json) is reusable for downstream verification. FND-04 owns runtime state and save contracts; FND-05 owns validation and initialization implementation. Strict version acceptance avoids silent unsupported behavior but requires explicit future compatibility policy. Arrays permit duplicate-ID and direction detection after JSON parsing. No runtime or new dependency is introduced. This elaborates rather than supersedes ADR 0003 and preserves ADRs 0001–0008.
+
+FND-04 [ADR 0013](0013-namespaced-properties-and-runtime-state.md) supersedes the accepted format version with 3.0.0; the historical decision above is retained. See the current [canonical contract](../contracts/GAME_DEFINITIONS.md).

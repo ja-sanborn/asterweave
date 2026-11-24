@@ -45,3 +45,5 @@ Example: backpack size 3, weight 2 contains a notebook size 2, weight 2. Its dir
 ## Scope
 
 Initial values live in the canonical definition; FND-04 defines which values can change and how to preserve them. FND-05 validates initial values and all finite limits; FND-07 enforces them during internal containment transfers and derives loads. FND-09 verifies integration. No capacity-related action, physics, detailed geometry, inventory UI, dynamic lifecycle implementation or new dependency is introduced by this design. See [fixture](../../tests/fixtures/games/containment-foundation.json).
+
+FND-04 maps authored structural values to reserved asterweave properties and stores only current differences, including explicit removal of containment when an active participant leaves World. See [properties](PROPERTIES.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md). No duplicate authoritative values; core validation remains mandatory.

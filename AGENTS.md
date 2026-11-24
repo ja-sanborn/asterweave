@@ -28,3 +28,5 @@ GitHub Issues are the authoritative development backlog and user stories. Read t
 Preserve LICENSE, NOTICE, AUTHORS.md and applicable MPL notices. Include MPL Exhibit A notices and SPDX-License-Identifier: MPL-2.0 in covered source files. Preserve required notices in distributions. Never commit credentials, unpublished private stories, local saves or generated builds. Report vulnerabilities privately according to SECURITY.md.
 
 The repository is the durable source of truth. Surface conflicts between issues, architecture and implementation before proceeding. Prioritize small, working, tested increments over feature breadth.
+
+State contracts: use immutable baseline plus normalized overrides, qualified component-owned properties and six gameplay scopes; no persistent instance ID, human knowledge tracking or gameplay undo. Preserve engine-owned transactions and detached recursively read-only snapshots. See [properties](docs/contracts/PROPERTIES.md), [runtime state](docs/contracts/RUNTIME_STATE.md) and [save data](docs/contracts/SAVE_DATA.md).

@@ -1,0 +1,135 @@
+{
+  "formatVersion": "3.0.0",
+  "game": {
+    "id": "org.example.stateFoundation",
+    "namespace": "stateFoundation",
+    "version": "0.1.0",
+    "title": "State Foundation"
+  },
+  "world": {
+    "initialProperties": {
+      "stateFoundation.powerRestored": false
+    },
+    "initialRelationships": [
+      {
+        "from": {
+          "scope": "actor",
+          "id": "guide"
+        },
+        "to": {
+          "scope": "actor",
+          "id": "adventurer"
+        },
+        "initialProperties": {
+          "stateFoundation.trust": 1
+        }
+      }
+    ],
+    "locations": [
+      {
+        "id": "entrance",
+        "name": "Entrance",
+        "initialContainment": {
+          "parentId": "world",
+          "relationship": "in"
+        },
+        "exits": [
+          {
+            "direction": "east",
+            "destinationId": "cellar"
+          }
+        ]
+      },
+      {
+        "id": "cellar",
+        "name": "Cellar",
+        "initialContainment": {
+          "parentId": "world",
+          "relationship": "in"
+        },
+        "initialProperties": {
+          "stateFoundation.isDark": true
+        },
+        "exits": [
+          {
+            "direction": "west",
+            "destinationId": "entrance"
+          }
+        ]
+      }
+    ],
+    "actors": [
+      {
+        "id": "adventurer",
+        "name": "Adventurer",
+        "initialContainment": {
+          "parentId": "entrance",
+          "relationship": "in"
+        }
+      },
+      {
+        "id": "guide",
+        "name": "Guide",
+        "initialContainment": {
+          "parentId": "cellar",
+          "relationship": "in"
+        }
+      }
+    ],
+    "entities": [
+      {
+        "id": "brassLantern",
+        "name": "Brass Lantern",
+        "initialContainment": {
+          "parentId": "adventurer",
+          "relationship": "carried"
+        },
+        "physical": {
+          "size": 2,
+          "weight": 2
+        },
+        "initialProperties": {
+          "stateFoundation.isLit": false,
+          "stateFoundation.fuel": 100,
+          "stateFoundation.label": "borrowed",
+          "stateFoundation.target": "cellar",
+          "stateFoundation.details": {
+            "colors": [
+              "brass"
+            ],
+            "working": true
+          }
+        }
+      },
+      {
+        "id": "safe",
+        "name": "Safe",
+        "initialContainment": {
+          "parentId": "cellar",
+          "relationship": "in"
+        },
+        "physical": {
+          "isContainer": true,
+          "size": 4,
+          "weight": 4
+        },
+        "initialProperties": {
+          "stateFoundation.locked": true,
+          "stateFoundation.open": false
+        }
+      },
+      {
+        "id": "apple",
+        "name": "Apple",
+        "initialContainment": {
+          "parentId": "adventurer",
+          "relationship": "carried"
+        },
+        "physical": {
+          "size": 1,
+          "weight": 1
+        }
+      }
+    ]
+  }
+}
