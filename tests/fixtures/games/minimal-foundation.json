@@ -1,0 +1,69 @@
+{
+  "formatVersion": "1.0.0",
+  "game": {
+    "id": "org.example.lanternHouse",
+    "version": "0.1.0",
+    "title": "Lantern House"
+  },
+  "world": {
+    "locations": [
+      {
+        "id": "entrance",
+        "name": "Entrance",
+        "description": "A quiet stone entryway.",
+        "exits": [
+          {
+            "direction": "east",
+            "destinationId": "hallway"
+          }
+        ]
+      },
+      {
+        "id": "hallway",
+        "name": "Hallway",
+        "description": "Portraits line the walls.",
+        "exits": [
+          {
+            "direction": "west",
+            "destinationId": "entrance"
+          },
+          {
+            "direction": "east",
+            "destinationId": "library"
+          }
+        ]
+      },
+      {
+        "id": "library",
+        "name": "Library",
+        "description": "Dusty books fill the shelves.",
+        "exits": []
+      }
+    ],
+    "actors": [
+      {
+        "id": "player",
+        "name": "Explorer",
+        "initialLocationId": "entrance"
+      }
+    ],
+    "entities": [
+      {
+        "id": "brassLantern",
+        "name": "Brass Lantern",
+        "initialPlacement": {
+          "kind": "location",
+          "id": "entrance"
+        }
+      },
+      {
+        "id": "notebook",
+        "name": "Notebook",
+        "initialPlacement": {
+          "kind": "actor",
+          "id": "player"
+        }
+      }
+    ]
+  }
+}

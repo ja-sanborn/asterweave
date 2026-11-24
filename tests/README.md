@@ -16,3 +16,8 @@ not engine behavior.
 
 Future runtime tests should cover valid and invalid actions, deterministic
 transitions, ownership and save/restore equivalence where applicable.
+
+The [Lantern House fixture](fixtures/games/minimal-foundation.json) follows the
+[canonical game-definition contract](../docs/contracts/GAME_DEFINITIONS.md).
+It is authored data for FND-05 validation/initialization, FND-07 ownership and
+FND-09 integration tests; it does not demonstrate implemented gameplay.

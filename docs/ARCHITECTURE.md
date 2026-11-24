@@ -1,6 +1,6 @@
 # Asterweave architecture
 
-Status: initial design; action contracts are defined, other schemas and runtime implementation remain pending.
+Status: initial design; action and game-definition contracts are defined; state/save schemas and runtime implementation remain pending.
 
 ## Boundaries
 
@@ -34,9 +34,13 @@ See the [action/result contract](contracts/ACTIONS_AND_RESULTS.md), [action defi
 
 ## Game packages
 
-A versioned JSON definition describes the initial world, entities, narrative, vocabulary, rules and optional extension requirements. Stable IDs connect definitions. Definitions are immutable during play; mutable instance state is separate. Custom JavaScript extensions may register behavior through explicit contracts. Untrusted executable extensions must not be treated as safe data.
+The [canonical game-definition contract](contracts/GAME_DEFINITIONS.md) defines the initial world, game identity and format/content versions under [ADR 0009](decisions/0009-canonical-game-definition-contract.md). Foundation supports locations, directed exits, actors and entities with typed initial placements; narrative, vocabulary, rules and optional extension requirements are future schema work. Stable world IDs connect definitions. Definitions are immutable during play; mutable instance state is separate. Native validation and initialization remain FND-05 work. Custom JavaScript extensions may register behavior through explicit contracts. Untrusted executable extensions must not be treated as safe data.
 
 Creator is an optional development-time module that translates readable authoring definitions into the canonical JSON format, validates references and exports game packages. It is not distributed with finished games.
+
+### Distribution packages and content protection
+
+Keep the readable canonical JSON definition distinct from distributed packages. Optional packaging/export tooling outside the core (usable without Creator) may protect content against casual inspection; unprotected distribution is the default. Host/package loaders unpack and, when applicable, decode or decrypt data outside the core, then validate the canonical definition before initializing runtime state. Package versioning is independent of definition and content versions. Both modes must support offline gameplay. No mandatory DRM, online activation or guarantee of secrecy from an operator who controls the offline client; embedded unlock material is recoverable. See [ADR 0010](decisions/0010-game-packaging-and-content-protection.md). The concrete package format, protection mechanism and loader/export implementation are planned Phase 2 work ([issue #22](https://github.com/ja-sanborn/asterweave/issues/22)); Creator integration follows later.
 
 ## State and saves
 
