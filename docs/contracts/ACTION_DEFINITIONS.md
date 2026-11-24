@@ -8,6 +8,8 @@ See [action/result envelopes](ACTIONS_AND_RESULTS.md), [standard catalog](STANDA
 
 Standard action identifiers are unqualified lower camel case names reserved for the engine catalog (e.g. move, lieDown). Extension identifiers use a registered namespace and a dot, e.g. combat.attack; game-defined actions use the reserved game namespace, e.g. game.hackTerminal. Namespace segments and action names begin with a lowercase ASCII letter followed by ASCII letters or digits; names are case-sensitive. No empty segments, whitespace or ambiguous normalization. Reserve game for game-defined actions and unqualified names for standards. A registration must reject duplicate full identifiers and conflicting namespace ownership; a game cannot replace a trusted handler by configuring its name.
 
+The reserved game action namespace is specific to action identifiers. It is distinct from the author-selected game.namespace for qualified properties in [PROPERTIES.md](PROPERTIES.md). Do not assume the namespaces are interchangeable; any future unification requires an explicit decision in the applicable story.
+
 A registry is scoped to a runtime instance or an immutable definition set with isolated effective registrations. It resolves an action definition and trusted handler by exact type. Registry infrastructure does not depend on the dispatcher. The dispatcher consumes registry lookup and validation capabilities; movement supplies its actual handler later. Catalog entries are not registrations and do not imply implementation or availability.
 
 ## Definition metadata

@@ -30,3 +30,7 @@ Contributors use one supported Node.js major version and a shared test command.
 Additional platforms and tooling can be evaluated when needed. Node.js remains
 development tooling (and an option for compatible hosts), not a requirement for
 the core or standalone games. Test coverage and runtime interfaces are deferred.
+
+## Subsequent decisions
+
+The [coding standards](../CODE_STYLE.md) and [testing strategy](../../tests/README.md) elaborate development and verification requirements without changing the toolchain. [ADR 0018](0018-public-api-and-compatibility.md) establishes public API and release compatibility principles; concrete runtime interfaces remain implementation-story decisions.

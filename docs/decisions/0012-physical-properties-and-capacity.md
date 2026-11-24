@@ -13,3 +13,7 @@ Real-world units or geometry; no core capacities; a single capacity limit that c
 
 ## Consequences
 The [physical contract](../contracts/PHYSICAL_PROPERTIES.md) is normative. Initial properties are authored in canonical format 2.0.0; mutable state belongs to FND-04. FND-05 validates and FND-07 enforces structural capacity; FND-09 verifies integration. Player-facing actions and advanced physical mechanics remain future work. No runtime or dependency is introduced.
+
+## Subsequent decisions
+
+The reference to format 2.0.0 above is historical. [ADR 0013](0013-namespaced-properties-and-runtime-state.md) establishes format 3.0.0 and maps initial physical fields into reserved engine properties without superseding the capacity invariants. See [canonical definitions](../contracts/GAME_DEFINITIONS.md) and [properties](../contracts/PROPERTIES.md).

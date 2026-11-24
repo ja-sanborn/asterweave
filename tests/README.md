@@ -1,5 +1,7 @@
 # Testing strategy
 
+See the [documentation index](../docs/README.md) for the authoritative reading paths, contracts and decisions.
+
 Run tests from the repository root with Node.js 26 LTS and its bundled npm:
 
 ```sh

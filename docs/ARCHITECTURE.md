@@ -1,6 +1,6 @@
 # Asterweave architecture
 
-Status: initial design; action, game-definition, containment and physical capacity contracts are defined; state/save contracts are defined; runtime implementation remains pending.
+Status: accepted foundational design and development standards; runtime implementation remains pending. See the [documentation index](README.md) and [contract catalog](contracts/README.md).
 
 ## Boundaries
 
@@ -62,7 +62,7 @@ Keep the readable canonical JSON definition distinct from distributed packages. 
 
 ## State and saves
 
-Track player location, inventory, entity state, merchant stock, relationships, quests, flags, pending events, narrative position and parser context as appropriate. Use one authoritative containment tree rooted at engine-recognized, non-navigable World. Actor locations, inventories and loads are derived. Containment transports descendants; spatial associations do not. Lifecycle and capacity invariants apply to all candidate transitions. See [containment](contracts/WORLD_CONTAINMENT.md), [physical properties](contracts/PHYSICAL_PROPERTIES.md), [ADR 0011](decisions/0011-unified-world-containment.md) and [ADR 0012](decisions/0012-physical-properties-and-capacity.md). Legal ownership, visibility and access are separate game mechanics.
+Derive actor location and inventory from authoritative containment; players and actors are distinct. Track entity state and relationships, and future merchant stock, quests, flags, pending events, narrative position and parser context only as their contracts require. Use one authoritative containment tree rooted at engine-recognized, non-navigable World. Actor locations, inventories and loads are derived. Containment transports descendants; spatial associations do not. Lifecycle and capacity invariants apply to all candidate transitions. See [containment](contracts/WORLD_CONTAINMENT.md), [physical properties](contracts/PHYSICAL_PROPERTIES.md), [ADR 0011](decisions/0011-unified-world-containment.md) and [ADR 0012](decisions/0012-physical-properties-and-capacity.md). Legal ownership, visibility and access are separate game mechanics.
 
 Store only normalized current overrides against the immutable baseline and supported dynamic data. Six gameplay scopes: world, location, entity, actor, player and directional relationship. Namespaces identify the engine, game or extension. Players and actors are distinct; no persistent instance ID. Save format 1.0.0 requires exact game/content/definition version matching and complete candidate validation before atomic replacement. Future capabilities define dynamic state, randomness and event persistence when developed. See [properties](contracts/PROPERTIES.md), [runtime state](contracts/RUNTIME_STATE.md) and [save data](contracts/SAVE_DATA.md).
 
@@ -80,6 +80,6 @@ Visual and audio presentation are optional extensions. The engine emits semantic
 
 The [testing strategy](../tests/README.md) establishes unit, contract, integration, security and architecture verification, meaningful behavioral coverage and implementation-story completion criteria. Use review and native automated checks where useful.
 
-Test the runtime headlessly with game fixtures, action sequences, invalid commands, rule enforcement, save/restore equivalence and deterministic replay where applicable. Test host adapters separately.
+Test the runtime headlessly with game fixtures, action sequences, invalid commands, rule enforcement, save/restore equivalence and deterministic execution and test reproducibility where applicable, without requiring action-history replay for persistence. Test host adapters separately.
 
 Development uses Node.js 26 LTS, npm and the native test runner, with no third-party npm dependencies. These tools do not enter the runtime or standalone game distributions. See [ADR 0005](decisions/0005-development-and-testing-tooling.md).

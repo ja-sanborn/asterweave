@@ -1,6 +1,6 @@
 # 0009 — Canonical game-definition contract
 
-Status: Accepted; version and placement/schema portions superseded by [ADR 0011](0011-unified-world-containment.md) and [ADR 0012](0012-physical-properties-and-capacity.md). The current normative contract is format 2.0.0. Historical decision below is retained.
+Status: Accepted; version and placement/schema portions superseded by [ADR 0011](0011-unified-world-containment.md) and [ADR 0012](0012-physical-properties-and-capacity.md). [ADR 0013](0013-namespaced-properties-and-runtime-state.md) subsequently supersedes the format version; the current normative contract is format 3.0.0. Historical decision below is retained.
 
 ## Context
 
