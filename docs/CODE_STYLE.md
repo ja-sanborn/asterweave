@@ -130,15 +130,38 @@ Runtime execution is synchronous by default, especially Foundation domain valida
 
 ## 18. Error handling
 
+Follow the normative [error-handling contract](contracts/ERROR_HANDLING.md) and [ADR 0017](decisions/0017-error-handling-and-diagnostics.md). Preserve operation-specific failure contracts.
+
 | Failure | Contract |
 | --- | --- |
-| Invalid definition | Structured definition diagnostics |
-| Invalid action | Rejected action result |
+| Invalid definition or configuration | Structured validation diagnostics |
+| Invalid or unauthorized action | Rejected action result |
 | Intentional gameplay failure | Completed/failure result |
-| Unexpected execution failure | Error result at appropriate boundary |
+| Unexpected execution failure | Safe documented error result or exception at the appropriate boundary |
 | Programmer contract violation | Appropriate JavaScript exception |
+| Platform failure | Host-owned handling |
 
-Throw Error objects or appropriate subclasses, not strings. Catch only when handling, translating or propagating a failure; never silently swallow errors. Do not use exceptions for routine expected validation failures. Preserve deterministic diagnostic ordering, safe messages and atomic failure semantics. Do not expose stacks, secrets or internal state to gameplay callers.
+- Use guard clauses and early returns for expected invalid input. Do not use exceptions for routine validation findings. Aggregate independent diagnostics deterministically; suppress dependent cascades and stop unsafe branches.
+- Use domain-owned stable uppercase snake case codes. Never compare diagnostic message text for control flow. Use nonblank safe English diagnostic messages initially.
+- Throw native Error objects or justified subclasses, not strings or primitives. An optional AsterweaveError base is permitted when useful; do not create a subclass for every code.
+- Prefer the catch variable name `error`. Catch only at meaningful recovery or translation boundaries; otherwise let exceptions propagate. Never silently swallow errors or use empty catch blocks. Handle arbitrary thrown values safely, without assuming an Error instance.
+- When wrapping an exception to add meaningful context, preserve its original value with native `cause`. Do not repeatedly wrap without purpose.
+- Use `finally` for necessary cleanup; never return from it or deliberately suppress an existing exception or intended result. Design cleanup to avoid replacing the primary failure; handle cleanup failure explicitly.
+- Document applicable thrown exceptions with JSDoc `@throws`, and document structured failure results, side effects and atomicity guarantees.
+- Do not expose raw exception objects, causes, stacks, secrets, unsafe object representations or writable internals through public results. Translate at orchestration boundaries, not in reusable domain validators.
+- Preserve committed state, turns and output boundaries on rejected/error operations; fail closed if integrity cannot be guaranteed.
+- Do not use console logging for operational reporting in core. Hosts and development tools own reporting and presentation.
+- Test relevant negative paths, diagnostic ordering, exception translation/chaining, isolation, safe output and atomic failure behavior.
+
+Example of meaningful internal exception translation (illustrative, not a required API):
+
+```javascript
+try {
+    performInternalOperation();
+} catch (error) {
+    throw new Error('Internal operation failed.', { cause: error });
+}
+```
 
 ## 19. File headers, documentation and comments
 

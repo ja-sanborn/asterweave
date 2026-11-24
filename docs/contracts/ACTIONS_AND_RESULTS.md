@@ -54,6 +54,8 @@ A completed failure is an intentionally resolved gameplay attempt, not a validat
 
 ### Error vocabulary
 
+Follow the common [error-handling contract](ERROR_HANDLING.md). Preserve this operation-specific error record and code vocabulary; definition diagnostic fields are not required here. Orchestration translates domain findings into these codes, and unexpected exceptions are translated at the dispatcher boundary without exposing internal causes or stacks.
+
 The error object requires a stable code string and may contain JSON-compatible safe details. Initial codes:
 
 | Code | Status | Meaning |

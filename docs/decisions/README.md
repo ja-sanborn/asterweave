@@ -7,3 +7,5 @@ Use sequential filenames such as `0001-platform-independent-runtime.md`. Each re
 Initial records capture already documented design principles, not implemented functionality.
 
 [ADR 0016 — Modular architecture and design patterns](0016-modular-architecture-and-design-patterns.md) establishes project-wide implementation boundaries and complements the existing domain contracts. See also [coding standards](../CODE_STYLE.md).
+
+[ADR 0017 — Error handling and diagnostics](0017-error-handling-and-diagnostics.md) establishes common failure semantics and boundaries. See the [error-handling contract](../contracts/ERROR_HANDLING.md).

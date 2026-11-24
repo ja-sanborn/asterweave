@@ -4,6 +4,8 @@ Asterweave is in its initial design phase. Discuss substantial changes through G
 
 ## Development principles
 
+Follow the [error-handling contract](docs/contracts/ERROR_HANDLING.md) and [ADR 0017](docs/decisions/0017-error-handling-and-diagnostics.md) alongside the coding standards. Include applicable negative-path tests and preserve documented failure semantics.
+
 - Keep runtime code in standard JavaScript without third-party core runtime dependencies.
 - Isolate platform-specific APIs in hosts and adapters.
 - Keep graphics and authoring tools outside the runtime core.

@@ -37,6 +37,8 @@ The first milestone is a small, playable text-only adventure running offline in 
 
 See [Architecture](docs/ARCHITECTURE.md), [action and result contracts](docs/contracts/ACTIONS_AND_RESULTS.md), [action definitions](docs/contracts/ACTION_DEFINITIONS.md), [standard action catalog](docs/contracts/STANDARD_ACTIONS.md), [canonical game definitions](docs/contracts/GAME_DEFINITIONS.md), [world containment](docs/contracts/WORLD_CONTAINMENT.md), [physical properties](docs/contracts/PHYSICAL_PROPERTIES.md), [properties](docs/contracts/PROPERTIES.md), [runtime state](docs/contracts/RUNTIME_STATE.md), [save data](docs/contracts/SAVE_DATA.md), and [Roadmap](docs/ROADMAP.md) for the design. [Future considerations](docs/FUTURE_CONSIDERATIONS.md) records nonbinding initiatives.
 
+See also the [error-handling contract](docs/contracts/ERROR_HANDLING.md) for planned diagnostic, result and exception boundaries.
+
 ## Repository layout
 
 | Directory | Purpose |
