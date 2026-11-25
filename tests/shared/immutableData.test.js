@@ -12,7 +12,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { copyJsonData, immutableCopy } from '../../src/shared/immutableData.js';
+import { copyJsonData, freezeDetachedJsonData, immutableCopy } from '../../src/shared/immutableData.js';
 
 test('creates mutable detached copies without changing the source', () => {
     const original = { values: [1, { value: null }] };
@@ -45,4 +45,21 @@ test('preserves primitives and special own keys', () => {
     const copy = immutableCopy(JSON.parse('{"__proto__":{"x":1}}'));
     assert.ok(Object.isFrozen(copy.__proto__));
     assert.equal(Object.getPrototypeOf(copy), Object.prototype);
+});
+
+test('freezes an inspected detached tree in place without copying or freezing the source', () => {
+    const original = { nested: [{ value: null }] };
+    const detached = copyJsonData(original);
+    const nested = detached.nested;
+    const leaf = nested[0];
+    assert.equal(freezeDetachedJsonData(detached), detached);
+    assert.equal(detached.nested, nested);
+    assert.equal(detached.nested[0], leaf);
+    assert.ok(Object.isFrozen(detached));
+    assert.ok(Object.isFrozen(nested));
+    assert.ok(Object.isFrozen(leaf));
+    assert.equal(Object.isFrozen(original.nested), false);
+    original.nested[0].value = true;
+    assert.equal(leaf.value, null);
+    assert.equal(freezeDetachedJsonData(null), null);
 });

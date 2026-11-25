@@ -13,7 +13,7 @@
 import { isIdentifier } from '../shared/identifiers.js';
 
 /** @type {ReadonlyArray<string>} Recognized standard catalog names, not registrations. */
-const STANDARD_ACTION_TYPES = Object.freeze([
+export const STANDARD_ACTION_TYPES = Object.freeze([
     'move', 'enter', 'exit', 'climb', 'jump', 'swim',
     'cross', 'follow', 'board', 'disembark', 'look', 'examine',
     'search', 'find', 'read', 'listen', 'smell', 'touch',

@@ -33,8 +33,17 @@ export function copyJsonData(value) {
  * @throws {TypeError} If the internal data contract is violated.
  */
 export function immutableCopy(value) {
-    const copy = copyJsonData(value);
-    const pending = [copy];
+    return freezeDetachedJsonData(copyJsonData(value));
+}
+
+/**
+ * Recursively freezes an already inspected, exclusively engine-owned JSON tree in place.
+ * Never pass caller-owned, uninspected or cyclic data to this internal helper.
+ * @param {*} value - Detached data from successful inspection or copying.
+ * @returns {*} The same recursively frozen value.
+ */
+export function freezeDetachedJsonData(value) {
+    const pending = [value];
     while (pending.length > 0) {
         const current = pending.pop();
         if (current !== null && typeof current === 'object') {
@@ -44,5 +53,5 @@ export function immutableCopy(value) {
             Object.freeze(current);
         }
     }
-    return copy;
+    return value;
 }

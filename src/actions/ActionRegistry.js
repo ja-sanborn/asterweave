@@ -77,7 +77,8 @@ export class ActionRegistry {
             } else if (isReservedActionNamespace(namespace)) {
                 addActionFinding(collector, 'namespace', 'RESERVED_NAMESPACE', '', 'Action namespace is reserved.');
             } else if (this.#namespaceOwners.has(namespace)) {
-                addActionFinding(collector, 'namespace', 'NAMESPACE_CONFLICT', '', 'Action namespace is already owned.');
+                addActionFinding(collector, 'namespace', 'NAMESPACE_CONFLICT', '',
+                    'Action namespace is already owned.');
             }
             if (collector.size > 0) {
                 return actionRegistryResult(collector);

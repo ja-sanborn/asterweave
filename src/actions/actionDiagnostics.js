@@ -6,7 +6,7 @@
  */
 
 /**
- * @fileoverview Internal action registry operation findings and results.
+ * @fileoverview Internal action operation findings and registry results.
  * @module actions/actionDiagnostics
  */
 
@@ -21,7 +21,7 @@ export function createActionCollector() {
 }
 
 /**
- * Adds a structured registry finding.
+ * Adds a structured action-domain finding.
  * @param {DiagnosticCollector} collector - Operation collector.
  * @param {string} source - Input or lifecycle source.
  * @param {string} code - Domain-owned diagnostic code.

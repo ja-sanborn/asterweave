@@ -14,16 +14,18 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
+    STANDARD_ACTION_TYPES,
     classifyActionType,
     isReservedActionNamespace,
     isStandardActionType,
 } from '../../src/actions/actionIdentifiers.js';
 
-test('recognizes every documented standard catalog identifier', () => {
+test('recognizes exactly the documented standard catalog identifiers', () => {
     const catalog = readFileSync(new URL('../../docs/contracts/STANDARD_ACTIONS.md', import.meta.url), 'utf8');
     const names = [...catalog.matchAll(/^\| ([a-z][A-Za-z0-9]*) \|.*\| (?:Foundation planned|Reference only) \|$/gm)]
         .map((match) => match[1]);
-    assert.equal(names.length, 82);
+    assert.deepEqual([...STANDARD_ACTION_TYPES].sort(), [...names].sort());
+    assert.ok(Object.isFrozen(STANDARD_ACTION_TYPES));
     assert.equal(new Set(names).size, names.length);
     for (const name of names) {
         assert.equal(isStandardActionType(name), true, name);
