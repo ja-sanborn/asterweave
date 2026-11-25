@@ -72,3 +72,7 @@ FND-05 verifies that documented defaults and explicit equivalent authored values
 ## Diagnostic source verification
 
 FND-05 verifies required source values (definition and options), identical definition source/path semantics across standalone validation and initialization, argument-relative JSON Pointer escaping and root paths, one aggregated diagnostics collection with definition findings first, deterministic within-source order, duplicate suppression, independent safe configuration checks and suppression of checks with invalid definition prerequisites. Verify serialized validation diagnostics preserve source. Action error envelopes remain unchanged. These are test requirements, not implemented tests.
+
+## Effective state snapshot verification
+
+FND-05 verifies the public facade's metadata and turn-zero getters and getStateSnapshot() against the [effective state snapshot contract](../docs/contracts/RUNTIME_STATE.md#effective-state-snapshot). Cover required root fields and record shapes, empty arrays, all six scopes, inactive/destroyed identities, effective defaults and qualified values, null versus absence, deterministic ID/relationship/key order, preserved semantic array order, detached recursive immutability, independent games, native JSON serialization and absence of internal state/override records or redundant derived fields. FND-06 verifies the same snapshot interface after committed mutations and reset, including point-in-time isolation, overrides and removals. These are verification requirements, not implemented tests.

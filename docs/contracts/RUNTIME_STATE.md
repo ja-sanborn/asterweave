@@ -43,6 +43,28 @@ Snapshots are detached, recursively read-only effective values, including unchan
 
 World asterweave.turn starts at 0, is a nonnegative safe integer and advances exclusively through dispatcher-selected completed outcome costs. Reject overflow atomically. Zero-turn completed actions may change state; real-world elapsed time does not advance gameplay. Restore/reset may replace the counter administratively. All actors share it. Future events, RNG and calendar state preserve deterministic continuation when implemented.
 
+## Effective state snapshot
+
+FND-05 establishes the public getStateSnapshot() method for initial effective state inspection. FND-06 extends the same interface to committed gameplay state; do not introduce a temporary or incompatible snapshot schema. Construct snapshots on demand as detached, recursively read-only, ordinary JSON-compatible data. A snapshot is neither a canonical definition nor a save file.
+
+The root has the following required fields:
+
+| Field | Shape |
+| --- | --- |
+| game | Record containing id, title, namespace, version (content version), formatVersion (definition format version) |
+| world | Record containing properties |
+| locations | Array of records containing id, properties, exits |
+| actors | Array of records containing id, properties |
+| entities | Array of records containing id, properties |
+| players | Array of records containing id, properties |
+| relationships | Array of records containing from, to, properties |
+
+All fields are required; empty collections are empty arrays. Properties are maps of all applicable effective qualified values, including resolved engine defaults, unchanged baseline values and current overrides. Missing or removed values are omitted; explicit null, false and zero are preserved. Do not include override records or removal markers. The structural id identifies the record; where the property contract defines asterweave.id, its effective value agrees with that identity. Location exits are detached immutable Foundation definition data, preserving authored array order. Include inactive and destroyed participant identities. Directed relationships use the typed endpoints defined above; omit records with no effective relationship properties.
+
+Sort each participant and player collection by ascending case-sensitive ECMAScript code-unit ID order. Sort relationships by source scope, source ID (absent for World), destination scope, then destination ID, using the same ordering. Construct property maps in code-unit key order; preserve semantic array order, including controlled actors, exits and arrays within property values. JSON object member order is not semantic. Containment is represented by the effective qualified property, not an additional placement field. Do not include derived inventories, effective actor location, recursive contents, physical loads or reverse actor-to-player lookup as independent snapshot fields.
+
+Snapshots support native JSON serialization, contain no live engine objects, credentials or host session data, and have no independently versioned format. Compatibility follows engine API SemVer. Full snapshots are trusted inspection data, not authorized player-visible descriptions; hosts must enforce audience boundaries. Future derived queries and player perception interfaces are separate contracts.
+
 ## Knowledge and future capabilities
 
 No core knowledge/discovery subsystem, human player knowledge tracking or gameplay undo/back navigation. Player-controlled actors do not track knowledge by default. NPC or fictional character knowledge is optional game/extension state; actual world changes persist. Visibility/accessibility are evaluated by gameplay rules. Interaction/narrative context is persisted only where a future gameplay contract requires it; host state remains outside. Transaction rollback is not gameplay undo. Restore earlier independent saves to return to earlier state. Visual novel backward navigation is out of scope.

@@ -16,6 +16,12 @@ Use supported queries and detached recursively read-only snapshots for inspectio
 
 Concrete signatures, module entry path, exports, construction interfaces and lifecycle operations are defined and tested by their owning stories. No new interface or capability is specified merely by naming this boundary.
 
+## FND-05 facade and inspection
+
+The named Asterweave class export in src/Asterweave.js is the primary public facade. Static validateGame(definition) returns ValidationResult; static initializeGame(definition, options) returns InitializationResult. Both are synchronous, accept parsed canonical data (not JSON text), and share definition validation. Initialization always validates, creates independent game state, and exposes a game only on success. Construction is engine-controlled; each instance owns one independent game.
+
+Instance getters gameId, gameVersion (authored content version) and turn return their documented scalar values directly. Instance getStateSnapshot() returns the detached, recursively read-only domain-organized effective state record defined in [runtime state](RUNTIME_STATE.md#effective-state-snapshot). It is constructed on demand and supports native JSON serialization. This trusted inspection interface is not a save interface or player perception API. FND-05 introduces initial inspection; FND-06 retains the same schema for subsequent committed state. No separate snapshot format version is introduced. Compatibility is governed by engine API SemVer.
+
 ## Operation result interfaces
 
 Follow [ADR 0020](../decisions/0020-standardized-operation-result-architecture.md). Fallible public operations use operation-specific read-only result interfaces with common status semantics; ordinary getters and calculations return documented values. Concrete result classes and factories are internal. Supported serializable results implement toJSON and return detached JSON-compatible records; derived predicates are excluded and unavailable fields follow the operation envelope. ValidationResult supports serialization; InitializationResult explicitly throws TypeError from toJSON in every status. Serialization is not authorization and must never expose a live game reference. See the error-handling contract for result invariants.
