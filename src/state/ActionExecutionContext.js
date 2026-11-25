@@ -58,6 +58,20 @@ export class ActionExecutionContext {
     }
 
     /**
+     * Establishes dedicated operation authority.
+     * @param {string} operation - Protected operation name.
+     * @returns {object} Authorized transaction.
+     */
+    #operationAuthority(operation) {
+        const transaction = this.#active();
+        if (!this.#grants.operations.includes(operation)) {
+            transaction.invalidate();
+            throw new TypeError('Unauthorized protected operation.');
+        }
+        return transaction;
+    }
+
+    /**
      * Establishes dedicated player operation authority.
      * @param {string} operation - Protected operation name.
      * @param {string} playerId - Player identity.
@@ -65,12 +79,7 @@ export class ActionExecutionContext {
      * @returns {boolean} Domain eligibility.
      */
     #playerOperation(operation, playerId, actorId) {
-        const transaction = this.#active();
-        if (!this.#grants.operations.includes(operation)) {
-            transaction.invalidate();
-            throw new TypeError('Unauthorized player operation.');
-        }
-        return transaction.playerOperation(operation, playerId, actorId);
+        return this.#operationAuthority(operation).playerOperation(operation, playerId, actorId);
     }
 
     /**
@@ -134,6 +143,42 @@ export class ActionExecutionContext {
      * @returns {boolean} Eligibility.
      */
     clearSelection(playerId) { return this.#playerOperation('clearSelection', playerId); }
+
+    /**
+     * Relocates a physical participant.
+     * @param {string} id - Subject.
+     * @param {string} targetId - Parent or target.
+     * @param {string} relationship - Relationship.
+     * @returns {object} Semantic operation result.
+     */
+    relocate(id, targetId, relationship) {
+        return this.#operationAuthority('relocate')
+            .worldOperation('relocate', id, targetId, relationship);
+    }
+
+    /**
+     * Establishes a directed physical association.
+     * @param {string} id - Subject.
+     * @param {string} targetId - Parent or target.
+     * @param {string} relationship - Relationship.
+     * @returns {object} Semantic operation result.
+     */
+    establishAssociation(id, targetId, relationship) {
+        return this.#operationAuthority('establishAssociation')
+            .worldOperation('establishAssociation', id, targetId, relationship);
+    }
+
+    /**
+     * Removes a directed physical association.
+     * @param {string} id - Subject.
+     * @param {string} targetId - Parent or target.
+     * @param {string} relationship - Relationship.
+     * @returns {object} Semantic operation result.
+     */
+    removeAssociation(id, targetId, relationship) {
+        return this.#operationAuthority('removeAssociation')
+            .worldOperation('removeAssociation', id, targetId, relationship);
+    }
 
     /**
      * @param {object} output - Semantic output.

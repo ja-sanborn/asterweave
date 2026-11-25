@@ -10,6 +10,7 @@
  * @module actions/ActionRegistry
  */
 
+import { WORLD_OPERATIONS } from '../world/worldOperations.js';
 import { immutableCopy } from '../shared/immutableData.js';
 import { isRecord } from '../shared/recordShape.js';
 import { isSynchronousAssociation } from './executableAssociations.js';
@@ -33,7 +34,7 @@ function validGrants(grants) {
                 || !Array.isArray(grants.namespaces) || !Array.isArray(grants.operations)
                 || grants.namespaces.some((name) => !isIdentifier(name) || name === 'asterweave')
                 || grants.operations.some((name) => !['grantControl', 'revokeControl',
-                    'selectActor', 'clearSelection'].includes(name))
+                    'selectActor', 'clearSelection', ...WORLD_OPERATIONS].includes(name))
                 || new Set(grants.namespaces).size !== grants.namespaces.length
                 || new Set(grants.operations).size !== grants.operations.length);
 }

@@ -10,6 +10,7 @@
  * @module state/StateTransaction
  */
 
+import { planWorldOperation } from '../world/planWorldOperation.js';
 import { EffectiveStateReader } from './EffectiveStateReader.js';
 import { isGamePropertyKey } from './validateProperties.js';
 import { validateSemanticOutput, validateDetachedSemanticOutput } from './validateSemanticOutput.js';
@@ -164,6 +165,32 @@ export class StateTransaction {
      * @param {string} key - Qualified key.
      */
     stagePropertyReset(address, key) { this.#stage('reset', address, key); }
+
+    /**
+     * Plans and stages an authorized world operation using the latest candidate.
+     * @param {string} operation - Protected operation.
+     * @param {string} id - Subject.
+     * @param {string} targetId - Parent or target.
+     * @param {string} relationship - Relationship.
+     * @returns {object} Detached semantic result.
+     */
+    worldOperation(operation, id, targetId, relationship) {
+        return this.#perform(() => {
+            const { reader, overrides } = this.#candidate;
+            const { result, changes } = planWorldOperation(
+                reader.readEffectiveState(), operation, id, targetId, relationship,
+            );
+            for (const { address, key, value } of changes) {
+                const initial = reader.getInitialProperty(address, key);
+                if (value === undefined) {
+                    overrides.remove(address, key, initial);
+                } else {
+                    overrides.set(address, key, value, initial);
+                }
+            }
+            return result;
+        });
+    }
 
     /**
      * Delegates a protected control/selection operation to the candidate Player.
