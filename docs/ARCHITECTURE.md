@@ -36,7 +36,7 @@ Definition validation uses an ordered pipeline and an internal GameDefinitionMap
 
 ## Public API and compatibility
 
-Follow [ADR 0018](decisions/0018-public-api-and-compatibility.md) and the [public API contract](contracts/PUBLIC_API.md). One primary facade exposes explicitly documented interfaces; supported factories control construction of engine-owned objects. Internal exports are not automatically public. Engine releases use semantic versioning; pre-1.0 changes are documented and data-format versions remain independent. Concrete interfaces are decided in their owning stories.
+Follow [ADR 0018](decisions/0018-public-api-and-compatibility.md) and the [public API contract](contracts/PUBLIC_API.md). One primary facade exposes explicitly documented interfaces; supported factories control construction of engine-owned objects. Internal exports are not automatically public. Engine releases use semantic versioning; pre-1.0 changes are documented and data-format versions remain independent. Concrete interfaces require explicit design, review and documentation.
 
 ## Security and resource ownership
 

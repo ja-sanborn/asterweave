@@ -23,4 +23,4 @@ Use [Semantic Versioning 2.0.0](https://semver.org/) for engine releases, with p
 
 Public interfaces, semantic behavior, errors, defaults and compatibility must be intentionally documented and tested. Internal refactoring can remain independent of public contracts. Release decisions do not automatically change data formats. See the normative [public API contract](../contracts/PUBLIC_API.md) and [security model](../contracts/SECURITY_MODEL.md).
 
-Concrete entry point paths, signatures, classes, export lists and lifecycle interfaces are decided in their owning stories after explicit implementation-design authorization. This record introduces no implementation or package changes.
+Concrete entry point paths, signatures, classes, export lists and lifecycle interfaces require explicit implementation-design authorization. This record introduces no implementation or package changes.

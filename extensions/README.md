@@ -6,4 +6,4 @@ Executable JavaScript extensions are trusted code selected by the implementing d
 
 Read the [documentation index](../docs/README.md), [public API](../docs/contracts/PUBLIC_API.md), [action definitions](../docs/contracts/ACTION_DEFINITIONS.md), [properties](../docs/contracts/PROPERTIES.md), [security model](../docs/contracts/SECURITY_MODEL.md) and [coding standards](../docs/CODE_STYLE.md).
 
-Extension contracts and implementations are introduced through their owning stories; no extensions are implemented yet.
+Extension capabilities require explicitly defined contracts before implementation; no extensions are implemented yet.
