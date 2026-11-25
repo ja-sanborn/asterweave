@@ -13,3 +13,5 @@ Duplicated mutable snapshots, mandatory declarations for all custom properties, 
 
 ## Consequences
 See [properties](../contracts/PROPERTIES.md) and [canonical definitions](../contracts/GAME_DEFINITIONS.md). FND-05/FND-06 implement initial validation and state; no runtime introduced here. Supersedes accepted format version portions of ADRs 0009/0011; preserves containment/physical contracts.
+
+[ADR 0021](0021-standard-navigation-vocabulary.md) advances the canonical definition format to 3.1.0 for the navigation vocabulary expansion; this ADR's property and state decisions remain in effect.

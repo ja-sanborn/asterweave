@@ -2,7 +2,7 @@
   "saveFormatVersion": "1.0.0",
   "gameId": "org.example.stateFoundation",
   "gameVersion": "0.1.0",
-  "gameFormatVersion": "3.0.0",
+  "gameFormatVersion": "3.1.0",
   "state": {
     "overrides": [
       {

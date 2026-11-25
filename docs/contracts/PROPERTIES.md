@@ -12,7 +12,7 @@ Values support booleans, finite numbers, strings, dense arrays, plain data objec
 
 ## Authored baseline
 
-Canonical format 3.0.0 adds required game.namespace and optional initialProperties maps to world and each authored participant; optional world.initialRelationships supplies directed initial relationship properties. Maps contain qualified game-owned keys (and registered extension keys when supported), never asterweave keys. Omitted map means empty. No generic property-declaration or arbitrary extension section. Structural fields remain the sole authored source of engine values, mapped as follows:
+Canonical format 3.0.0 introduced (retained in 3.1.0) required game.namespace and optional initialProperties maps to world and each authored participant; optional world.initialRelationships supplies directed initial relationship properties. Maps contain qualified game-owned keys (and registered extension keys when supported), never asterweave keys. Omitted map means empty. No generic property-declaration or arbitrary extension section. Structural fields remain the sole authored source of engine values, mapped as follows:
 
 | Engine property (asterweave prefix) | Initial source / effective default | Mutability |
 | --- | --- | --- |

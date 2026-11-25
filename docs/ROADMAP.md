@@ -4,7 +4,7 @@ Milestones are subject to refinement. Accepted design, implemented capability an
 
 ## 1. Foundation
 
-- Establish [unified containment](contracts/WORLD_CONTAINMENT.md) and [physical capacity](contracts/PHYSICAL_PROPERTIES.md) ([FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23); design defined; introduced format 2.0.0, superseded by FND-04 format 3.0.0).
+- Establish [unified containment](contracts/WORLD_CONTAINMENT.md) and [physical capacity](contracts/PHYSICAL_PROPERTIES.md) ([FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23); design defined; introduced format 2.0.0, superseded by FND-04 format 3.0.0 and FND-05 navigation expansion to 3.1.0).
 - Establish [properties](contracts/PROPERTIES.md), [runtime state](contracts/RUNTIME_STATE.md) and [save data](contracts/SAVE_DATA.md) ([FND-04, issue #6](https://github.com/ja-sanborn/asterweave/issues/6); design defined, implementation pending).
 - Establish the [canonical JSON game-definition contract](contracts/GAME_DEFINITIONS.md) and reusable fixture ([FND-03, issue #5](https://github.com/ja-sanborn/asterweave/issues/5); design defined, validation and initialization tracked in FND-05).
 - Establish [action/result and action definition contracts](contracts/ACTIONS_AND_RESULTS.md) and the [standard action reference catalog](contracts/STANDARD_ACTIONS.md) ([FND-02, issue #4](https://github.com/ja-sanborn/asterweave/issues/4); design only, implementation tracked separately).

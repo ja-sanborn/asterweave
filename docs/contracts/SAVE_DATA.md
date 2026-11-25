@@ -11,7 +11,7 @@ A save is a UTF-8 JSON object, with closed fields, plain data constraints and du
 | saveFormatVersion | exactly 1.0.0 |
 | gameId | exact authored game.id |
 | gameVersion | exact authored game.version |
-| gameFormatVersion | exact authored formatVersion; initially 3.0.0 |
+| gameFormatVersion | exact authored formatVersion; initially 3.1.0 |
 | state | closed state object |
 
 state requires overrides (dense array, may be empty), optionally players (dense nonempty array, omit when none). Override records follow [runtime state](RUNTIME_STATE.md): unique subject, nonempty values and/or removed, no overlap, duplicate removals, redundant baseline-equal values or removals of absent baseline properties. Each player record is closed {id,properties}, with unique id and complete current properties; maximum one player initially. No separate player override records. Unknown fields/unsupported scopes and namespaces reject. Dynamic game properties are stored in values; dynamic relationship state uses the same record type. Dynamic world participant serialization is deferred until creation capability is designed, and is not accepted by this format. Store no definition copy, derived state, human knowledge, host/session data, save ID, instance ID or action history.
@@ -19,7 +19,7 @@ state requires overrides (dense array, may be empty), optionally players (dense 
 Deterministic serialization orders override records by scope world, location, entity, actor, relationship (then case-sensitive code-unit identity; relationship endpoint order by scope then id, from before to), keys and removed names by code-unit order, player IDs likewise. Preserve semantic array order inside values and control lists. Readers may accept any record/key order if otherwise valid; ordering does not confer authority. Empty optional fields are omitted. No requirement for byte-identical JSON whitespace. Synthetic complete example: [state-foundation save](../../tests/fixtures/saves/state-foundation.json) and [matching definition](../../tests/fixtures/games/state-foundation.json).
 
 ```json
-{"saveFormatVersion":"1.0.0","gameId":"org.example.stateFoundation","gameVersion":"0.1.0","gameFormatVersion":"3.0.0","state":{"overrides":[]}}
+{"saveFormatVersion":"1.0.0","gameId":"org.example.stateFoundation","gameVersion":"0.1.0","gameFormatVersion":"3.1.0","state":{"overrides":[]}}
 ```
 
 ## Compatibility and restore

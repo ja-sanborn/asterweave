@@ -8,7 +8,7 @@ Inspired by classic parser adventures such as Zork, branching fiction, gamebooks
 
 ## Project status
 
-Asterweave is in Foundation development. Development and native test infrastructure are established. The architecture, canonical game-definition format 3.0.0, state/save design and project-wide standards are documented. Runtime validation, initialization, action processing and gameplay remain planned; no playable release exists. The current private package is version 0.0.0. The infrastructure smoke test is not evidence of engine behavior.
+Asterweave is in Foundation development. Development and native test infrastructure are established. The architecture, canonical game-definition format 3.1.0, state/save design and project-wide standards are documented. Runtime validation, initialization, action processing and gameplay remain planned; no playable release exists. The current private package is version 0.0.0. The infrastructure smoke test is not evidence of engine behavior.
 
 ## Design goals
 

@@ -18,11 +18,11 @@ A definition is one UTF-8 JSON object. JSON member order is not semantic; array 
 
 | Field | Required | Type and constraints |
 | --- | --- | --- |
-| formatVersion | Yes | String, exactly `3.0.0` for Foundation |
+| formatVersion | Yes | String, exactly `3.1.0` for Foundation |
 | game | Yes | Game identity object |
 | world | Yes | Initial world object |
 
-Format and content versions use three nonnegative decimal integer components separated by dots, with no leading zero except zero itself, no prefix, suffix or whitespace (grammar: `(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)`, matched against the entire string). Format major revisions represent breaking interpretation changes; minor revisions represent compatible additions for newer readers; patch revisions represent compatible corrections. This does not promise forward compatibility: Foundation recognizes exactly 3.0.0. Version 2.0.0 replaced the pre-runtime 1.0.0 initialLocationId and initialPlacement fields with unified containment. Version 3.0.0 adds required game.namespace and optional initial properties and relationships. No 1.0.0 or 2.0.0 reader or migration is required for Foundation. Future readers must explicitly identify supported versions and reject unsupported versions clearly; migration is not required in Foundation. Content versions are author-managed release identifiers; authors should increment them when changing released definitions. Neither version is the engine package version. Save compatibility and migration policy belong to [FND-04](https://github.com/ja-sanborn/asterweave/issues/6).
+Format and content versions use three nonnegative decimal integer components separated by dots, with no leading zero except zero itself, no prefix, suffix or whitespace (grammar: `(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)`, matched against the entire string). Format major revisions represent breaking interpretation changes; minor revisions represent compatible additions for newer readers; patch revisions represent compatible corrections. This does not promise forward compatibility: Foundation recognizes exactly 3.1.0. Version 2.0.0 replaced the pre-runtime 1.0.0 initialLocationId and initialPlacement fields with unified containment. Version 3.0.0 adds required game.namespace and optional initial properties and relationships. Version 3.1.0 expands the standard navigation vocabulary without changing the exit record shape or existing direction semantics (see [ADR 0021](../decisions/0021-standard-navigation-vocabulary.md)). No 1.0.0, 2.0.0 or 3.0.0 reader or migration is required for Foundation. Future readers must explicitly identify supported versions and reject unsupported versions clearly; migration is not required in Foundation. Content versions are author-managed release identifiers; authors should increment them when changing released definitions. Neither version is the engine package version. Save compatibility and migration policy belong to [FND-04](https://github.com/ja-sanborn/asterweave/issues/6).
 
 ## Game identity
 
@@ -74,7 +74,9 @@ Each initialRelationships entry is a closed object with required from, to and in
 
 ### Locations and exits
 
-Locations additionally require exits, a dense array of closed objects with required direction (north, south, east or west) and destinationId (existing authored location ID, never world). Directions are unique per source. Exits are directed, self-loops and disconnected navigation graphs are permitted, and no reverse exit is implied. An exit may reference an inactive authored location, but movement to it is unavailable until active. Containment does not create exits. Foundation movement requires an immediate active location parent via in, updates containment to the destination and preserves descendants; vehicle boarding and other modes are deferred.
+Locations additionally require exits, a dense array of closed objects with required direction (one of the twelve standard identifiers below) and destinationId (existing authored location ID, never world). Directions are unique per source. Exits are directed, self-loops and disconnected navigation graphs are permitted, and no reverse exit is implied. An exit may reference an inactive authored location, but movement to it is unavailable until active. Containment does not create exits. Foundation movement requires an immediate active location parent via in, updates containment to the destination and preserves descendants; vehicle boarding and other modes are deferred.
+
+The standard navigation identifiers are north, south, east, west, northeast, northwest, southeast, southwest, up, down, in and out. Match exactly and case-sensitively. Parser abbreviations and aliases are not canonical identifiers. Definition validation and future movement share a domain-owned immutable standard vocabulary. Directions are semantic exit identifiers, not coordinates or containment relationships. No automatic inverse exit or geometric interpretation is implied. Custom identifiers require a future explicit registration and ownership contract; reject them in 3.1.0. Conditional availability, hidden exits, door-controlled traversal and state-dependent destinations remain future navigation capabilities; the current exit record retains a fixed destination.
 
 ## Definition and runtime boundary
 
@@ -145,7 +147,7 @@ This is a complete valid Foundation definition, although not yet executable:
 
 ```json
 {
-  "formatVersion": "3.0.0",
+  "formatVersion": "3.1.0",
   "game": {
     "id": "org.example.smallWorld",
     "namespace": "smallWorld",
@@ -185,7 +187,7 @@ The fixture supports the existing [action/result contract](ACTIONS_AND_RESULTS.m
 
 The actor ID resolves to an active actor, and the direction selects an authored exit from that actor's immediate active location parent. The destination is not caller-selected. Foundation move costs 1/0; unavailable exits are rejected with EXIT_UNAVAILABLE and zero committed turns. Dispatch and registry, not the definition, own execution and turn costs. See [action definitions](ACTION_DEFINITIONS.md), [standard catalog](STANDARD_ACTIONS.md), and [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).
 
-Future conceptual root sections (names tentative, not accepted fields in 3.0.0):
+Future conceptual root sections (names tentative, not accepted fields in 3.1.0):
 
 | Section | Intended responsibility |
 | --- | --- |
