@@ -44,9 +44,26 @@ function sourceFiles(directory) {
  * @returns {Array<string>} Static import and re-export specifiers.
  */
 function dependencies(source) {
-    return [...source.matchAll(/^(?:import|export)\s+(?:[^;]*?\sfrom\s+)?['"]([^'"]+)['"]/gm)]
+    return [...withoutJsdoc(source).matchAll(/^(?:import|export)\s+(?:[^;]*?\sfrom\s+)?['"]([^'"]+)['"]/gm)]
         .map((match) => match[1]);
 }
+
+/**
+ * Excludes standalone and inline JSDoc blocks from convention checks.
+ * The checks are not a general ECMAScript lexer or security sandbox.
+ * @param {string} source - Runtime module text.
+ * @returns {string} Source without JSDoc type annotations.
+ */
+function withoutJsdoc(source) {
+    return source.replace(/\/\*\*[\s\S]*?\*\//g, '');
+}
+
+test('architecture scanner distinguishes JSDoc type references from executable imports', () => {
+    const documented = "/** @type {import('./example.js').Example} */\n";
+    assert.doesNotMatch(withoutJsdoc(documented), /\bimport\s*\(/);
+    assert.match(withoutJsdoc(documented + "const value = import('./example.js');"), /\bimport\s*\(/);
+    assert.deepEqual(dependencies(documented + "import { Example } from './example.js';"), ['./example.js']);
+});
 
 /**
  * Determines a module's architectural domain.
@@ -63,7 +80,7 @@ test('core static dependencies remain relative, explicit and inside runtime sour
     for (const file of files) {
         const source = readFileSync(file, 'utf8');
         assert.match(source, /SPDX-License-Identifier: MPL-2.0/);
-        assert.doesNotMatch(source, /\bimport\s*\(/, file);
+        assert.doesNotMatch(withoutJsdoc(source), /\bimport\s*\(/, file);
         for (const dependency of dependencies(source)) {
             assert.ok(dependency.startsWith('.'), file + ': ' + dependency);
             assert.ok(dependency.endsWith('.js'), file + ': ' + dependency);
