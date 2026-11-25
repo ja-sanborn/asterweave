@@ -150,7 +150,9 @@ test('empty capacity permits zero load and nonactive participants have no load',
 
 test('capacity diagnostics preserve independent rooted findings on invalid branches', () => {
     const state = fixture();
-    state.entities[0].properties['asterweave.containment'].parentId = 'book';
+    state.entities[0].properties['asterweave.containment'] = {
+        parentId: 'book', relationship: 'in',
+    };
     state.actors[0].properties['asterweave.weightCapacity'] = 2;
     const result = findings(state);
     assert.ok(result.some(({ code }) => code === WORLD_CODES.CONTAINMENT_CYCLE));
