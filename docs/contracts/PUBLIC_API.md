@@ -1,6 +1,6 @@
 # Public API and compatibility
 
-Status: Accepted design; implementation pending. Origin: [ADR 0018](../decisions/0018-public-api-and-compatibility.md), [FND-05 (#7)](https://github.com/ja-sanborn/asterweave/issues/7).
+Status: Accepted contract; FND-05 facade and initial inspection implemented on the feature branch, final review outstanding. No production release. Origin: [ADR 0018](../decisions/0018-public-api-and-compatibility.md), [FND-05 (#7)](https://github.com/ja-sanborn/asterweave/issues/7).
 
 ## Consumer boundary
 
@@ -21,6 +21,21 @@ Concrete signatures, module entry path, exports, construction interfaces and lif
 The named Asterweave class export in src/Asterweave.js is the primary public facade. Static validateGame(definition) returns ValidationResult; static initializeGame(definition, options) returns InitializationResult. Both are synchronous, accept parsed canonical data (not JSON text), and share definition validation. Initialization options are optional and follow the closed configuration contract in [runtime state](RUNTIME_STATE.md#players-and-actors). Initialization always validates, creates independent game state, and exposes a game only on success. Construction is engine-controlled; each instance owns one independent game.
 
 Instance getters gameId, gameVersion (authored content version) and turn return their documented scalar values directly. Instance getStateSnapshot() returns the detached, recursively read-only domain-organized effective state record defined in [runtime state](RUNTIME_STATE.md#effective-state-snapshot). It is constructed on demand and supports native JSON serialization. This trusted inspection interface is not a save interface or player perception API. FND-05 introduces initial inspection; FND-06 retains the same schema for subsequent committed state. No separate snapshot format version is introduced. Compatibility is governed by engine API SemVer.
+
+### Initial usage
+
+```javascript
+import { Asterweave } from './src/Asterweave.js';
+
+const validation = Asterweave.validateGame(definition);
+const result = Asterweave.initializeGame(definition);
+if (result.isCompleted) {
+    const game = result.game;
+    const snapshot = game.getStateSnapshot();
+}
+```
+
+The caller supplies parsed canonical data; the import path is relative to a consumer at the repository root. Validation alone publishes no game. Initialization validates independently even after a successful standalone check. Rejection exposes diagnostics and no game; unexpected failure exposes a safe error and no game. See [error handling](ERROR_HANDLING.md). This interface does not yet execute actions, mutate state, reset, save or restore games.
 
 ## Operation result interfaces
 

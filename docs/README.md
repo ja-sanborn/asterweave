@@ -1,6 +1,6 @@
 # Documentation
 
-Start here for the current technical design and development standards. See the [project README](../README.md) for an introduction. Asterweave is in Foundation development; accepted designs are not evidence of implemented or tested capabilities.
+Start here for the current technical design and development standards. See the [project README](../README.md) for an introduction. Asterweave is in Foundation development; accepted designs are not evidence of implemented or tested capabilities. FND-05 provides initial validation, initialization and inspection on the implementation branch; see the [public API](contracts/PUBLIC_API.md) and [roadmap](ROADMAP.md) for scope and status.
 
 ## Reading paths
 

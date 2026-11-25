@@ -1,6 +1,6 @@
 # Runtime state
 
-Status: Accepted design; implementation pending. Origin: [FND-04 (#6)](https://github.com/ja-sanborn/asterweave/issues/6). See [properties](PROPERTIES.md), [save data](SAVE_DATA.md), ADRs [0013](../decisions/0013-namespaced-properties-and-runtime-state.md), [0014](../decisions/0014-player-identity-and-state-scopes.md) and [0015](../decisions/0015-state-isolation-and-persistence.md).
+Status: Accepted contract; FND-05 isolated initial state, explicit player configuration and effective snapshots implemented, final review outstanding. Transactions, mutations and reset remain FND-06 work; save/restore remains Phase 2. Origin: [FND-04 (#6)](https://github.com/ja-sanborn/asterweave/issues/6). See [properties](PROPERTIES.md), [save data](SAVE_DATA.md), ADRs [0013](../decisions/0013-namespaced-properties-and-runtime-state.md), [0014](../decisions/0014-player-identity-and-state-scopes.md) and [0015](../decisions/0015-state-isolation-and-persistence.md).
 
 ## Authority and scopes
 

@@ -1,6 +1,6 @@
 # Asterweave architecture
 
-Status: accepted foundational design and development standards; runtime implementation remains pending. See the [documentation index](README.md) and [contract catalog](contracts/README.md).
+Status: accepted foundational design and development standards; FND-05 initial validation, initialization and inspection are implemented on the feature branch; final audit and review remain outstanding. Gameplay and persistence remain planned. See the [documentation index](README.md) and [contract catalog](contracts/README.md).
 
 ## Boundaries
 
@@ -60,7 +60,7 @@ See the [action/result contract](contracts/ACTIONS_AND_RESULTS.md), [action defi
 
 ## Game packages
 
-The [canonical game-definition contract](contracts/GAME_DEFINITIONS.md) defines the initial world, game identity and format/content versions under [ADR 0009](decisions/0009-canonical-game-definition-contract.md). Foundation format 3.2.0 supports locations, directed exits, actors and entities with unified initial containment, lifecycle, spatial associations and optional physical characteristics; narrative, vocabulary, rules and optional extension requirements are future schema work. Stable world IDs connect definitions. Definitions are immutable during play; mutable instance state is separate. Native validation and initialization remain FND-05 work. Custom JavaScript extensions may register behavior through explicit contracts. Untrusted executable extensions must not be treated as safe data.
+The [canonical game-definition contract](contracts/GAME_DEFINITIONS.md) defines the initial world, game identity and format/content versions under [ADR 0009](decisions/0009-canonical-game-definition-contract.md). Foundation format 3.2.0 supports locations, directed exits, actors and entities with unified initial containment, lifecycle, spatial associations and optional physical characteristics; narrative, vocabulary, rules and optional extension requirements are future schema work. Stable world IDs connect definitions. Definitions are immutable during play; mutable instance state is separate. Native validation and initialization are implemented in FND-05; gameplay remains future work. Custom JavaScript extensions may register behavior through explicit contracts. Untrusted executable extensions must not be treated as safe data.
 
 Creator is an optional development-time module that translates readable authoring definitions into the canonical JSON format, validates references and exports game packages. It is not distributed with finished games.
 

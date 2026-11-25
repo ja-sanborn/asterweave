@@ -1,6 +1,6 @@
 # Namespaced properties
 
-Status: Accepted design; implementation pending. Origin: [FND-04 (#6)](https://github.com/ja-sanborn/asterweave/issues/6). See [ADR 0013](../decisions/0013-namespaced-properties-and-runtime-state.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md).
+Status: Accepted contract; FND-05 initial property mapping, ownership checks and read-only inspection implemented. Mutation and override normalization remain FND-06 work; final FND-05 review outstanding. Origin: [FND-04 (#6)](https://github.com/ja-sanborn/asterweave/issues/6). See [ADR 0013](../decisions/0013-namespaced-properties-and-runtime-state.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md).
 
 ## Ownership and values
 

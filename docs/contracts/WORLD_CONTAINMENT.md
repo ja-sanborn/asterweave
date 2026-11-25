@@ -1,6 +1,6 @@
 # Unified world containment and placement
 
-Status: Accepted design; implementation pending. Origin: [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23). See [ADR 0011](../decisions/0011-unified-world-containment.md), [canonical definitions](GAME_DEFINITIONS.md) and [physical properties](PHYSICAL_PROPERTIES.md).
+Status: Accepted contract; FND-05 initial participant identities and effective containment/lifecycle/association validation implemented, final review outstanding. Transfers, derived queries and gameplay transitions remain later work. Origin: [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23). See [ADR 0011](../decisions/0011-unified-world-containment.md), [canonical definitions](GAME_DEFINITIONS.md) and [physical properties](PHYSICAL_PROPERTIES.md).
 
 ## Identity and hierarchy
 

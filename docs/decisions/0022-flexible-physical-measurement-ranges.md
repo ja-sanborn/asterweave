@@ -1,6 +1,6 @@
 # 0022 — Flexible physical measurement ranges
 
-Status: Accepted; implementation pending.
+Status: Accepted.
 
 ## Context
 
@@ -24,3 +24,7 @@ Advance canonical definition format from 3.1.0 to 3.2.0 as a compatible range ex
 Supersedes only the numeric range restrictions of [ADR 0012](0012-physical-properties-and-capacity.md) and the format version of [ADR 0021](0021-standard-navigation-vocabulary.md). All other containment, navigation, state and capacity decisions remain in effect.
 
 FND-05 verifies expanded numeric bounds, omitted measurements and limits, zero limits, invalid values and safe aggregation; FND-07 reuses the same invariants for candidate transfers. See [physical properties](../contracts/PHYSICAL_PROPERTIES.md), [canonical definitions](../contracts/GAME_DEFINITIONS.md) and [testing strategy](../../tests/README.md). No runtime implementation or new dependency is introduced by this decision.
+
+## Implementation note
+
+FND-05 implements safe-integer physical range and initial capacity validation, with native tests for finite limits, missing measurements and overflow. Final story review remains outstanding. FND-07 owns transfer-time enforcement and derived load queries. The decision above is unchanged.

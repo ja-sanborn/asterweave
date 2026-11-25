@@ -1,6 +1,6 @@
 # Canonical JSON game definitions
 
-Status: Accepted design; validation and runtime implementation pending. Origin: [FND-03, issue #5](https://github.com/ja-sanborn/asterweave/issues/5), revised by [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23) and [FND-04, issue #6](https://github.com/ja-sanborn/asterweave/issues/6).
+Status: Accepted contract; FND-05 validation and initialization implemented on the feature branch, final audit and review outstanding. Origin: [FND-03, issue #5](https://github.com/ja-sanborn/asterweave/issues/5), revised by [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23) and [FND-04, issue #6](https://github.com/ja-sanborn/asterweave/issues/6).
 
 This contract elaborates [ADR 0003](../decisions/0003-canonical-json-game-format.md) and [ADR 0009](../decisions/0009-canonical-game-definition-contract.md). [ADRs 0011](../decisions/0011-unified-world-containment.md) and [0012](../decisions/0012-physical-properties-and-capacity.md) supersede the version and placement portions of ADR 0009. [ADRs 0013](../decisions/0013-namespaced-properties-and-runtime-state.md)–[0015](../decisions/0015-state-isolation-and-persistence.md) elaborate state and supersede the accepted format version. [ADR 0021](../decisions/0021-standard-navigation-vocabulary.md) expands navigation; [ADR 0022](../decisions/0022-flexible-physical-measurement-ranges.md) establishes the current format 3.2.0 and expanded measurement ranges. Authors and future Creator tools produce the same JSON document. The runtime consumes data independently of Creator, hosts and distribution packaging.
 
@@ -143,7 +143,7 @@ Example (if the first Hallway exit references a missing location):
 
 ## Smallest representative game
 
-This is a complete valid Foundation definition, although not yet executable:
+This is a complete Foundation definition suitable for validation and initialization. Gameplay execution remains future work:
 
 ```json
 {

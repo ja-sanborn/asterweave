@@ -1,6 +1,6 @@
 # Engine contracts
 
-These documents specify accepted behavior, not implemented capabilities. Consult the [documentation index](../README.md), [architecture](../ARCHITECTURE.md) and [ADR catalog](../decisions/README.md). Implementation scope and verification are tracked by [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues).
+These documents specify accepted behavior. Implementation status is tracked separately from normative design; FND-05 provides initial validation, initialization and inspection on the feature branch, with final review outstanding. Consult the [documentation index](../README.md), [architecture](../ARCHITECTURE.md) and [ADR catalog](../decisions/README.md). Implementation scope and verification are tracked by [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues).
 
 | Contract | Responsibility | Related ADRs |
 | --- | --- | --- |

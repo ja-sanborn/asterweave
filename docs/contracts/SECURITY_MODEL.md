@@ -1,6 +1,6 @@
 # Security model and trust boundaries
 
-Status: Accepted design; implementation pending. Origin: [ADR 0019](../decisions/0019-security-and-trust-boundaries.md), [FND-05 (#7)](https://github.com/ja-sanborn/asterweave/issues/7). For private vulnerability reporting see [SECURITY.md](../../SECURITY.md).
+Status: Accepted contract; initial data validation, isolation and safe result boundaries implemented in FND-05, final audit outstanding. Gameplay authorization, host protections and persistence security remain later work. Origin: [ADR 0019](../decisions/0019-security-and-trust-boundaries.md), [FND-05 (#7)](https://github.com/ja-sanborn/asterweave/issues/7). For private vulnerability reporting see [SECURITY.md](../../SECURITY.md).
 
 ## Trust boundaries
 

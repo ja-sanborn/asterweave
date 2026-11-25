@@ -1,6 +1,6 @@
 # Error handling and diagnostics
 
-Status: Accepted design; implementation pending. Origin: [FND-05 (#7)](https://github.com/ja-sanborn/asterweave/issues/7), [ADR 0017](../decisions/0017-error-handling-and-diagnostics.md).
+Status: Accepted contract; FND-05 validation/initialization results, diagnostic collection and safe exception translation implemented, final review outstanding. Gameplay transaction failure handling remains future implementation. Origin: [FND-05 (#7)](https://github.com/ja-sanborn/asterweave/issues/7), [ADR 0017](../decisions/0017-error-handling-and-diagnostics.md).
 
 This contract establishes common failure semantics. Operation-specific contracts remain authoritative for exact envelopes, codes and behavior. It does not introduce a universal public error object, change a schema version or implement logging.
 

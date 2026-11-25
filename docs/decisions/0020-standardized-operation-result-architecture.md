@@ -1,6 +1,6 @@
 # 0020 — Standardized operation result architecture
 
-Status: Accepted; implementation pending.
+Status: Accepted.
 
 ## Context
 
@@ -37,3 +37,7 @@ Future ActionResult serialization preserves the existing action result envelope,
 Document and test status predicates, result invariants, immutable detached data, construction control, operation-specific envelopes, serialization field presence and omission, and TypeError for unsupported serialization. Preserve the existing action contracts and exception boundaries. Introduce only the result types needed by each story. No schema version change, implementation, dependency or release is implied.
 
 See [public API](../contracts/PUBLIC_API.md), [error handling](../contracts/ERROR_HANDLING.md), [action results](../contracts/ACTIONS_AND_RESULTS.md), [coding standards](../CODE_STYLE.md) and [testing strategy](../../tests/README.md).
+
+## Implementation note
+
+FND-05 implements the common operation result, validation and initialization result classes and their public boundary translation and serialization tests. Final story review remains outstanding. Action results and save/restore results remain future work under their owning contracts. The decision above is unchanged.
