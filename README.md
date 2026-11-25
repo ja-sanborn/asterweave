@@ -31,7 +31,7 @@ Asterweave is in Foundation development. Development and native test infrastruct
 
 ## Architecture
 
-The planned command parser, choice engine and narrative systems submit actions to a shared, platform-independent core. The core validates requests, applies domain rules, commits state atomically and returns semantic results. Hosts handle input, output, logging, storage and platform security. Creator compiles authoring content to canonical JSON and is not required in finished games.
+In the intended architecture, the command parser, choice engine and narrative systems submit actions to a shared, platform-independent core that validates requests, applies domain rules, commits state atomically and returns semantic results. Hosts handle input, output, logging, storage and platform security. The planned Creator toolkit will compile authoring content to canonical JSON and will not be required in finished games.
 
 The initial Foundation milestone is a headless runtime; the first playable target is a text-only offline browser adventure in Phase 2. Online hosting, multiplayer and graphical presentation are later capabilities.
 

@@ -36,7 +36,7 @@ Definition validation uses an ordered pipeline and an internal GameDefinitionMap
 
 ## Public API and compatibility
 
-Follow [ADR 0018](decisions/0018-public-api-and-compatibility.md) and the [public API contract](contracts/PUBLIC_API.md). One primary facade exposes explicitly documented interfaces; supported factories control construction of engine-owned objects. Internal exports are not automatically public. Engine releases use semantic versioning; pre-1.0 changes are documented and data-format versions remain independent. Concrete interfaces are decided in their owning stories.
+Follow [ADR 0018](decisions/0018-public-api-and-compatibility.md) and the [public API contract](contracts/PUBLIC_API.md). One primary facade exposes explicitly documented interfaces; supported factories control construction of engine-owned objects. Internal exports are not automatically public. Engine releases use semantic versioning; pre-1.0 changes are documented and data-format versions remain independent. Concrete interfaces require explicit design, review and documentation.
 
 ## Security and resource ownership
 
@@ -44,7 +44,7 @@ Follow [ADR 0019](decisions/0019-security-and-trust-boundaries.md) and the [secu
 
 ## Error handling and diagnostics
 
-Follow [ADR 0017](decisions/0017-error-handling-and-diagnostics.md) and the [error-handling contract](contracts/ERROR_HANDLING.md). Distinguish data validation, operation rejection, intentional gameplay failure, execution failure, programming error and platform failure. Domain modules detect findings independently; orchestration aggregates and translates them into existing operation-specific contracts. Expected failures use structured diagnostics or results, while unexpected failures may use native exceptions internally. Preserve atomicity and fail closed if committed integrity cannot be guaranteed. Hosts own reporting and logging; no core logger or global error bus in Foundation. Concrete public initialization and recovery interfaces remain in their owning implementation stories.
+Follow [ADR 0017](decisions/0017-error-handling-and-diagnostics.md) and the [error-handling contract](contracts/ERROR_HANDLING.md). Distinguish data validation, operation rejection, intentional gameplay failure, execution failure, programming error and platform failure. Domain modules detect findings independently; orchestration aggregates and translates them into existing operation-specific contracts. Expected failures use structured diagnostics or results, while unexpected failures may use native exceptions internally. Preserve atomicity and fail closed if committed integrity cannot be guaranteed. Hosts own reporting and logging; no core logger or global error bus in Foundation. Public initialization interfaces follow the [public API contract](contracts/PUBLIC_API.md). Recovery interfaces require explicit design and documentation.
 
 ## Action flow
 

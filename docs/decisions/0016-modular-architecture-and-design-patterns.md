@@ -34,7 +34,7 @@ Use established patterns when they solve a concrete problem, adapting them to st
 | Memento | Future independent versioned saves, without gameplay undo or action-history replay |
 | Adapter / ports and adapters | Hosts, storage and distribution boundaries |
 
-The latter action, transaction and persistence capabilities are implemented only in their respective stories. Patterns are guidance, not requirements to create a class, interface, framework or extension point before it is needed. Avoid global mutable singletons, global event buses, deep inheritance, service locators, active record, authoritative event sourcing, and speculative plugin infrastructure.
+Introduce action, transaction and persistence capabilities only when their applicable contracts and designs are approved. Patterns are guidance, not requirements to create a class, interface, framework or extension point before it is needed. Avoid global mutable singletons, global event buses, deep inheritance, service locators, active record, authoritative event sourcing, and speculative plugin infrastructure.
 
 ## Alternatives
 
@@ -44,4 +44,4 @@ A monolithic core; modules coupled to the canonical JSON layout or mutable runti
 
 Module boundaries and dependencies must be reviewable and domain logic must be independently testable with native tooling. Reuse effective-state invariants across initialization, transactions and future restoration. Keep implementation details behind the public facade and maintain explicit JSDoc contracts. See [architecture](../ARCHITECTURE.md) and [coding standards](../CODE_STYLE.md).
 
-This decision elaborates ADRs 0001–0004 and 0011–0015 without changing the canonical definition or save formats, state ownership or existing feature scope. Concrete interfaces and source files are introduced by approved implementation stories. No runtime implementation is introduced by this record.
+This decision elaborates ADRs 0001–0004 and 0011–0015 without changing the canonical definition or save formats, state ownership or existing feature scope. Concrete interfaces and source files require approved implementation designs. No runtime implementation is introduced by this record.

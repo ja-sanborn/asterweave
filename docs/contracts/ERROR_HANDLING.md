@@ -53,7 +53,7 @@ ValidationResult.toJSON returns a detached record containing status and diagnost
 
 Engine-defined codes use uppercase snake case, documented meanings and stable identifiers. Never repurpose existing codes or branch on human-readable messages. Domains own detection and their vocabularies; shared codes may use common definitions where semantics match. Existing definition and action catalogs remain authoritative. No global enumeration coupling every domain to all others.
 
-Orchestration maps findings into operation-specific codes. For example, CAPACITY_EXCEEDED maps to ACTION_UNAVAILABLE for rejected Foundation movement under the action contract. Validators need not know action statuses, authored JSON paths or save layout. New public codes require documented meaning, ownership and compatibility review in their story. Extension error contracts and naming are deferred.
+Orchestration maps findings into operation-specific codes. For example, CAPACITY_EXCEEDED maps to ACTION_UNAVAILABLE for rejected Foundation movement under the action contract. Validators need not know action statuses, authored JSON paths or save layout. New public codes require documented meaning, ownership and compatibility review. Extension error contracts and naming are deferred.
 
 ## Aggregation and deterministic diagnostics
 
