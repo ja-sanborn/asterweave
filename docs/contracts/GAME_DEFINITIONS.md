@@ -185,7 +185,7 @@ The fixture supports the existing [action/result contract](ACTIONS_AND_RESULTS.m
 {"actorId":"player","type":"move","args":{"direction":"east"}}
 ```
 
-The actor ID resolves to an active actor, and the direction selects an authored exit from that actor's immediate active location parent. The destination is not caller-selected. Foundation move costs 1/0; unavailable exits are rejected with EXIT_UNAVAILABLE and zero committed turns. Dispatch and registry, not the definition, own execution and turn costs. See [action definitions](ACTION_DEFINITIONS.md), [standard catalog](STANDARD_ACTIONS.md), and [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).
+The actor ID resolves to an active actor, and the direction selects an authored exit from that actor's immediate active location parent. The destination is not caller-selected. Foundation move costs 1/0; unavailable exits are rejected with EXIT_UNAVAILABLE and zero committed turns. The action registry owns validated action metadata, including success and failure costs. The future dispatcher selects the applicable cost and owns execution, atomic commitment and turn progression; the canonical game definition does not supply these costs. See [action definitions](ACTION_DEFINITIONS.md), [standard catalog](STANDARD_ACTIONS.md), and [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).
 
 Future conceptual root sections (names tentative, not accepted fields in 3.2.0):
 

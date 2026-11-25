@@ -10,7 +10,7 @@ Argument column describes proposed semantic keys, not final schemas for future h
 
 | Type | Purpose | Arguments | turnCostSuccess | turnCostFail | Status |
 | --- | --- | --- | ---: | ---: | --- |
-| move | Move actor through a directional exit | direction (required) | 1 | 0 | Foundation planned |
+| move | Move actor through a directional exit | direction (required) | 1 | 0 | Metadata implemented; handler planned |
 | enter | Enter a location or entity | targetId | 1 | 0 | Reference only |
 | exit | Leave a location or entity | targetId? | 1 | 0 | Reference only |
 | climb | Climb a target | targetId, direction? | 1 | 0 | Reference only |
