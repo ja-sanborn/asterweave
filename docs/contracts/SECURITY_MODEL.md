@@ -34,6 +34,8 @@ Actor IDs are not authorization credentials. Validate gameplay control for playe
 
 Executable JavaScript extensions are trusted by the implementing developer and can execute with their environment's privileges. Do not allow data to load arbitrary executable code. No sandbox guarantee or untrusted extension execution is provided. Supported extension access is separately contracted when needed.
 
+Action registration is restricted to trusted internal setup with registry-local Symbol capabilities. Extension claims of reserved namespaces game and asterweave are rejected; authorized game registration uses its own registry-local capability. Duplicate identifiers, foreign or forged capabilities and reentrant modifications are rejected; finalization prevents subsequent mutation. Metadata is safely inspected and detached, while executable associations are protected but trusted. This registration authority is not gameplay actor authorization or a sandbox. See [action definitions](ACTION_DEFINITIONS.md) and [ADR 0023](../decisions/0023-action-registry-ownership-and-lifecycle.md).
+
 ## Presentation and offline limitations
 
 Semantic text and data are not inherently safe HTML, Markdown, SQL, shell syntax or executable JavaScript. Hosts must render or escape content appropriately, avoid unsafe interpolation and enforce message privacy. Core does not render UI or perform logging/storage/network I/O.

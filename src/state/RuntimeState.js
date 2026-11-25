@@ -12,6 +12,8 @@
 
 import { GameBaseline } from './GameBaseline.js';
 import { Player } from './Player.js';
+import { WORLD_ID } from '../world/worldRelationships.js';
+import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
 import { World } from '../world/World.js';
 import { immutableCopy } from '../shared/immutableData.js';
 
@@ -38,11 +40,9 @@ export class RuntimeState {
         this.#initialOptions = immutableCopy(options);
         this.#player = Object.hasOwn(this.#initialOptions, 'player')
             ? new Player(this.#initialOptions.player) : undefined;
-        const identities = {
-            locations: this.#baseline.locations.map((entry) => entry.id),
-            actors: this.#baseline.actors.map((entry) => entry.id),
-            entities: this.#baseline.entities.map((entry) => entry.id),
-        };
+        const identities = Object.fromEntries(PARTICIPANT_CATEGORIES.map(({ collection }) => [
+            collection, this.#baseline[collection].map((entry) => entry.id),
+        ]));
         this.#world = new World(identities,
             (id) => this.readWorldProperties(id),
             (id) => this.#baseline.participant(id).exits);
@@ -66,7 +66,7 @@ export class RuntimeState {
 
     /** @returns {number} Authoritative World turn property. */
     get turn() {
-        return this.readWorldProperties('world')['asterweave.turn'];
+        return this.readWorldProperties(WORLD_ID)['asterweave.turn'];
     }
 
     /** @returns {object} Detached immutable original initialization configuration. */
@@ -86,7 +86,7 @@ export class RuntimeState {
      * @returns {object|undefined} Immutable effective property map.
      */
     readWorldProperties(id) {
-        return id === 'world'
+        return id === WORLD_ID
             ? this.#baseline.world.properties : this.#baseline.participant(id)?.properties;
     }
 

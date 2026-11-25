@@ -10,6 +10,9 @@
  * @module definition/GameDefinitionMapper
  */
 
+import { WORLD_ID } from '../world/worldRelationships.js';
+import { PHYSICAL_MEASUREMENTS } from '../world/physicalMeasurements.js';
+import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
 import { copyJsonData } from '../shared/immutableData.js';
 
 /** Maps validated authored prerequisites without repairing or publishing state. */
@@ -27,15 +30,15 @@ export class GameDefinitionMapper {
             world: {
                 properties: {
                     ...gameProperties(world.initialProperties),
-                    'asterweave.id': 'world',
+                    'asterweave.id': WORLD_ID,
                     'asterweave.name': 'World',
                     'asterweave.lifecycle': 'active',
                     'asterweave.turn': 0,
                 },
             },
-            locations: world.locations.map((record) => mapParticipant(record, 'location')),
-            actors: world.actors.map((record) => mapParticipant(record, 'actor')),
-            entities: world.entities.map((record) => mapParticipant(record, 'entity')),
+            ...Object.fromEntries(PARTICIPANT_CATEGORIES.map(({ kind, collection }) => [
+                collection, world[collection].map((record) => mapParticipant(record, kind)),
+            ])),
             players: [],
             relationships: (world.initialRelationships ?? []).map((record) => ({
                 from: record.from,
@@ -67,7 +70,7 @@ function mapParticipant(record, kind) {
     if (Object.hasOwn(record, 'initialContainment')) {
         properties['asterweave.containment'] = record.initialContainment;
     }
-    for (const key of ['size', 'weight', 'maxItemSize', 'maxItemWeight', 'sizeCapacity', 'weightCapacity']) {
+    for (const key of PHYSICAL_MEASUREMENTS) {
         if (record.physical !== undefined && Object.hasOwn(record.physical, key)) {
             properties['asterweave.' + key] = record.physical[key];
         }

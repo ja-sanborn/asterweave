@@ -11,10 +11,8 @@
  */
 
 import { DEFINITION_CODES as C, reportDefinition } from './definitionDiagnostics.js';
+import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
 import { WORLD_ID } from '../world/worldRelationships.js';
-
-/** @type {ReadonlyArray<string>} Participant collections in schema order. */
-const COLLECTIONS = Object.freeze(['locations', 'actors', 'entities']);
 
 /**
  * Enumerates structurally validated participants in authored order.
@@ -22,11 +20,11 @@ const COLLECTIONS = Object.freeze(['locations', 'actors', 'entities']);
  * @returns {Iterable<object>} Participant, category and source pointer records.
  */
 export function* participants(world) {
-    for (const collection of COLLECTIONS) {
+    for (const { collection, kind } of PARTICIPANT_CATEGORIES) {
         for (const [index, participant] of world[collection].entries()) {
             yield {
                 participant,
-                kind: collection.slice(0, -1),
+                kind,
                 path: '/world/' + collection + '/' + index,
             };
         }

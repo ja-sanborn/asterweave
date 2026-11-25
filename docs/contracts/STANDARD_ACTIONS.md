@@ -2,7 +2,7 @@
 
 Status: Accepted reference design; catalog entries do not establish runtime availability.
 
-This extensible reference catalog contains 82 canonical standard action types. It is not exhaustive and does not require a game to include all actions. Only move is scheduled for Foundation; all other entries are reference designs until their capabilities are explicitly implemented. Names and individual default costs establish the design baseline, not a guarantee of availability. Costs apply only to completed gameplay outcomes; rejected and error results always cost zero. See [definitions](ACTION_DEFINITIONS.md) and [results](ACTIONS_AND_RESULTS.md).
+This extensible reference catalog contains 82 canonical standard action types. It is not exhaustive and does not require a game to include all actions. Only move is scheduled for Foundation; all other entries are reference designs until their capabilities are explicitly implemented. The internal registry recognizes these catalog identifiers; only move has reusable definition metadata, and no production action handler is registered yet. Names and individual default costs establish the design baseline, not a guarantee of availability. Costs apply only to completed gameplay outcomes; rejected and error results always cost zero. See [definitions](ACTION_DEFINITIONS.md) and [results](ACTIONS_AND_RESULTS.md).
 
 Argument column describes proposed semantic keys, not final schemas for future handlers. Unmarked keys are expected; ? denotes optional; alternatives must be specified when implemented. IDs reference stable game entities, actors or authored data as appropriate. none means an empty args object. direction and relation use canonical values, text is data, and action in command is a proposed nested intent whose execution/authorization rules are deferred (no direct bypass or recursive dispatch guarantee). Foundation move requires a canonical direction string from the twelve standard identifiers in [canonical definitions](GAME_DEFINITIONS.md#locations-and-exits); its actual exit validation belongs to the world handler. The shared domain-owned vocabulary is used by definition validation and movement. Parser synonyms and prepositions are not canonical action types. See [world containment](WORLD_CONTAINMENT.md) for standard containment and spatial associations and [physical properties](PHYSICAL_PROPERTIES.md) for capacity semantics. Only move is required; other relationship-specific actions remain future work.
 
@@ -10,7 +10,7 @@ Argument column describes proposed semantic keys, not final schemas for future h
 
 | Type | Purpose | Arguments | turnCostSuccess | turnCostFail | Status |
 | --- | --- | --- | ---: | ---: | --- |
-| move | Move actor through a directional exit | direction (required) | 1 | 0 | Foundation planned |
+| move | Move actor through a directional exit | direction (required) | 1 | 0 | Metadata implemented; handler planned |
 | enter | Enter a location or entity | targetId | 1 | 0 | Reference only |
 | exit | Leave a location or entity | targetId? | 1 | 0 | Reference only |
 | climb | Climb a target | targetId, direction? | 1 | 0 | Reference only |

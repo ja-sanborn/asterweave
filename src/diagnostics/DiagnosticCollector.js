@@ -10,6 +10,7 @@
  * @module diagnostics/DiagnosticCollector
  */
 
+import { isIdentifier } from '../shared/identifiers.js';
 import { immutableCopy } from '../shared/immutableData.js';
 
 /**
@@ -17,12 +18,28 @@ import { immutableCopy } from '../shared/immutableData.js';
  * Each instance owns its findings and suppresses identical duplicates.
  */
 export class DiagnosticCollector {
-    /** @type {Array<object>} Definition findings. */
-    #definition = [];
-    /** @type {Array<object>} Options findings. */
-    #options = [];
+    /** @type {Map<string, Array<object>>} Findings in configured source order. */
+    #records = new Map();
     /** @type {Set<string>} Exact diagnostic identities. */
     #seen = new Set();
+
+    /**
+     * Establishes the permitted sources and their diagnostic ordering.
+     * @param {string[]} [sources=['definition', 'options']] - Ordered unique source names.
+     * @throws {TypeError} If the internal source configuration is invalid.
+     */
+    constructor(sources = ['definition', 'options']) {
+        if (!Array.isArray(sources) || sources.length === 0) {
+            throw new TypeError('Invalid diagnostic sources.');
+        }
+        for (const source of sources) {
+            if (!isIdentifier(source)
+                || this.#records.has(source)) {
+                throw new TypeError('Invalid diagnostic sources.');
+            }
+            this.#records.set(source, []);
+        }
+    }
 
     /**
      * Adds a structured error finding, without retaining caller-owned data.
@@ -33,7 +50,7 @@ export class DiagnosticCollector {
      */
     add(diagnostic) {
         const { source, code, severity, path, message } = diagnostic;
-        if (!['definition', 'options'].includes(source)
+        if (!this.#records.has(source)
             || typeof code !== 'string' || !/^[A-Z][A-Z0-9_]*(?![\s\S])/.test(code)
             || severity !== 'error' || typeof path !== 'string'
             || (path !== '' && !path.startsWith('/')) || /~(?![01])/.test(path)
@@ -45,7 +62,7 @@ export class DiagnosticCollector {
             return;
         }
         this.#seen.add(identity);
-        const records = source === 'definition' ? this.#definition : this.#options;
+        const records = this.#records.get(source);
         records.push(Object.freeze({ source, code, severity, path, message }));
     }
 
@@ -58,10 +75,10 @@ export class DiagnosticCollector {
     }
 
     /**
-     * Returns an immutable detached point-in-time snapshot, definition first.
+     * Returns an immutable detached point-in-time snapshot in configured source order.
      * @returns {ReadonlyArray<object>} Ordered diagnostic findings.
      */
     snapshot() {
-        return immutableCopy([...this.#definition, ...this.#options]);
+        return immutableCopy(Array.from(this.#records.values()).flat());
     }
 }

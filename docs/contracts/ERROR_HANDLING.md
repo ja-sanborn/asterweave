@@ -33,13 +33,15 @@ Example:
 }
 ```
 
-The required source identifies the input argument: definition for canonical data and options for initialization configuration. Paths are relative to that argument, consistently across standalone validation and initialization. Future operations define their own supported sources; do not add source to ordinary action errors. Paths identify validated input using JSON Pointer: empty string for root, zero-based array indices, tilde escaped as ~0 and slash as ~1. Missing fields use expected paths; duplicate IDs or directions identify the later occurrence. Messages are nonblank English text initially, not stable machine contracts.
+The required source identifies the input argument: definition for canonical data and options for initialization configuration. Paths are relative to that argument, consistently across standalone validation and initialization. Other operations define their own supported sources; the internal action registry and argument validators use the sources defined in [action definitions](ACTION_DEFINITIONS.md#internal-diagnostics). Do not add source to ordinary public action errors. Paths identify validated input using JSON Pointer: empty string for root, zero-based array indices, tilde escaped as ~0 and slash as ~1. Missing fields use expected paths; duplicate IDs or directions identify the later occurrence. Messages are nonblank English text initially, not stable machine contracts.
 
 Preserve [action results](ACTIONS_AND_RESULTS.md#result-envelope): status completed, rejected or error; outcome success or failure only when completed; error object only for rejected/error, with required code and optional safe JSON-compatible details. Do not require definition diagnostic fields on action errors. Gameplay failure explanations are semantic outputs. The dispatcher uses existing action codes and zero committed turns for rejection/error.
 
 Initialization validates definitions and applicable configuration before publishing a runtime. Failure exposes no partial runtime. Configuration findings use source options and JSON Pointer paths relative to the options argument (for example /player/selectedActor); definition findings use source definition. Both appear in one diagnostics collection. Unexpected initialization failures are translated according to the approved public API, without misrepresenting internal defects as invalid authored data.
 
 [Save restoration](SAVE_DATA.md#compatibility-and-restore) rejects invalid candidates atomically; exact codes and public interfaces remain Phase 2 work. Future Creator diagnostics may reuse the definition convention where appropriate.
+
+Internal action registration and argument validation have their own diagnostic sources and immutable completed/rejected records, specified in [action definitions](ACTION_DEFINITIONS.md). These records are not public ActionResult or initialization diagnostics. Malformed specialized validator returns and unexpected reflective failures are internal exceptions; future dispatch translates them at its operation boundary.
 
 ## Standardized operation results
 

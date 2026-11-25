@@ -4,7 +4,7 @@ This document records nonbinding ideas and open questions. The [roadmap](ROADMAP
 
 ## Reference games and compatibility: original Zork trilogy
 
-Evaluate recreating one or more of Zork I, II and III as future Asterweave reference games and a compatibility proof of concept. The scope (one game, the trilogy, or representative portions), fidelity, distribution and milestone decomposition are undecided. Treat these as possible multi-story initiatives, not a single committed user story.
+Evaluate recreating one or more of Zork I, II and III as future Asterweave reference games and a compatibility proof of concept. The scope (one game, the trilogy, or representative portions), fidelity, distribution and milestone decomposition are undecided. The work may comprise multiple independent compatibility and reference-game deliverables; no implementation scope is committed.
 
 Objectives include vocabulary/synonyms, contextual object resolution, canonical and custom actions, puzzles, ownership, containers, doors, NPC interactions, configurable turn costs and timed events. Prefer reproducing gameplay through game definitions, vocabulary, rules and optional extensions rather than special-casing the core. Document genuinely general engine gaps as separate issues when scoped. Zork is a reference target, not a normative specification or runtime dependency.
 

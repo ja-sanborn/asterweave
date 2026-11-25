@@ -208,7 +208,17 @@ Use shared JSDoc typedefs and callbacks for structured contracts and collaborato
 
 ## 20. Architecture and design patterns
 
-Follow [ADR 0016](decisions/0016-modular-architecture-and-design-patterns.md): high cohesion, loose coupling, single responsibility, substitutability, interface segregation, dependency inversion, encapsulation and composition. Supply collaborators explicitly through parameters or factories; avoid DI frameworks. Use established patterns to solve concrete problems, not speculative abstractions. Keep orchestration separate from domain logic; reuse independently testable effective-state validators across initialization and future transactions/restoration without coupling them to serialized representations.
+Follow [ADR 0016](decisions/0016-modular-architecture-and-design-patterns.md): high cohesion, loose coupling, encapsulation and composition. Apply SOLID principles to standard ECMAScript without requiring class-based interfaces or frameworks:
+
+- Single responsibility: keep each module or type cohesive, with a clear reason to change; orchestration sequences operations rather than implementing domain rules.
+- Open/closed: extend behavior through established narrow contracts where justified, without modifying unrelated modules; do not create speculative extension points.
+- Liskov substitution: interchangeable collaborators and genuine subtypes preserve the accepted behavioral contract and invariants.
+- Interface segregation: expose only the operations and data a collaborator requires; separate read capabilities from mutation authority.
+- Dependency inversion: depend on narrow behavior or data contracts; supply collaborators explicitly through parameters or factories. Do not introduce DI frameworks or service locators.
+
+Apply DRY (Don't Repeat Yourself) to authoritative domain rules, constants, validation and shared algorithms. Reuse cohesive helpers rather than duplicate knowledge; incidental syntactic similarities alone do not justify abstraction. Inspect and detach untrusted data once where practical; freeze only exclusively engine-owned validated trees, and preserve defensive copying at boundaries that require it. Apply KISS (Keep It Simple) and YAGNI (You Aren't Gonna Need It): choose the simplest design satisfying the accepted contract and defer speculative capabilities. Use native classes for meaningful identity, behavior, lifecycle or encapsulation; prefer pure functions for stateless domain logic and composition over unnecessary inheritance. Encapsulation protects invariants and authoritative state, not merely field visibility. Apply established patterns to concrete problems, not as mandatory class structures.
+
+Keep orchestration separate from domain logic; reuse independently testable effective-state validators across initialization and future transactions/restoration without coupling them to serialized representations. Validate at trust boundaries and fail closed when committed integrity is uncertain, as required by the [security model](contracts/SECURITY_MODEL.md).
 
 ## 21. State management and determinism
 
