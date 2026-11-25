@@ -1,6 +1,6 @@
 # Asterweave architecture
 
-This document describes accepted architecture and development standards. Design descriptions do not imply implemented behavior; consult the public API contract for supported interfaces. See the [documentation index](README.md) and [contract catalog](contracts/README.md).
+This document describes accepted architecture and development standards. Design descriptions do not imply implemented behavior; consult the [public API contract](contracts/PUBLIC_API.md) for supported interfaces. See the [documentation index](README.md) and [contract catalog](contracts/README.md).
 
 ## Boundaries
 

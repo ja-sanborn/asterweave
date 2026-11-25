@@ -16,13 +16,13 @@ The initial public operations use ValidationResult and InitializationResult. Bot
 
 Definition and configuration diagnostics include a required source (definition or options), with JSON Pointer paths relative to that input argument. Standalone validation and initialization preserve the same definition paths; initialization aggregates both sources, definition first, with deterministic within-source ordering and cascade suppression. This intentional public diagnostic contract addition does not change action errors or game/save formats. See [error handling](../contracts/ERROR_HANDLING.md).
 
-## Serialization (Decision 13)
+## Serialization
 
 Define serializability per result type. Supported result classes implement the ECMAScript toJSON convention, returning detached JSON-compatible data in the documented operation-specific envelope. JSON.stringify invokes this method; do not rely on property enumerability or private field serialization. Omit derived status predicates and unavailable fields according to the applicable envelope. Serialization never grants authority to disclose data; hosts enforce audience and authorization.
 
 ValidationResult supports serialization: include status and diagnostics, plus error only for error status. InitializationResult does not support serialization in any status: toJSON throws TypeError rather than producing an incomplete record or exposing the live game reference. Other unsupported result types must likewise explicitly reject serialization with TypeError. Game persistence is a separate future save contract.
 
-Future ActionResult serialization preserves the existing action result envelope, including omission rules, ordered semantic outputs and safe operation-specific errors. Future save and restoration result serialization is defined in their owning stories. No generic serialization of operational objects or new transport protocol is introduced.
+Future ActionResult serialization preserves the existing action result envelope, including omission rules, ordered semantic outputs and safe operation-specific errors. Future save and restoration result serialization is defined by their respective operation contracts. No generic serialization of operational objects or new transport protocol is introduced.
 
 ## Alternatives
 

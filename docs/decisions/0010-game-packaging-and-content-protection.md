@@ -22,6 +22,6 @@ Distribute only plain JSON; embed encryption in the canonical schema or runtime 
 
 ## Consequences
 
-Foundation establishes the boundary only; no packaging or encryption code, new canonical fields, runtime implementation or dependencies are introduced. Phase 2 includes package design, implementation, offline host verification, failure handling and author-facing documentation. Creator export integration is later Phase 4 work. The separate state and save contracts define state and save contracts. This record complements ADRs 0001, 0003, 0005 and 0009 without superseding them.
+Foundation establishes the boundary only; no packaging or encryption code, new canonical fields, runtime implementation or dependencies are introduced. Phase 2 includes package design, implementation, offline host verification, failure handling and author-facing documentation. Creator export integration is later Phase 4 work. Runtime state and save data remain separate from distribution packaging. This record complements ADRs 0001, 0003, 0005 and 0009 without superseding them.
 
 See the [canonical definition contract](../contracts/GAME_DEFINITIONS.md) and [architecture](../ARCHITECTURE.md).
