@@ -166,6 +166,9 @@ export class Player {
      */
     removeProperty(key) {
         this.#requireOrdinary(key);
+        if (!Object.hasOwn(this.#record.properties, key)) {
+            return;
+        }
         const properties = { ...this.#record.properties };
         delete properties[key];
         this.#replace(properties);

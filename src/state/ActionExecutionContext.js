@@ -73,36 +73,71 @@ export class ActionExecutionContext {
         return transaction.playerOperation(operation, playerId, actorId);
     }
 
-    /** @param {object} address - Subject. @param {string} key - Key. @returns {object} Presence. */
+    /**
+     * @param {object} address - Subject.
+     * @param {string} key - Key.
+     * @returns {object} Presence.
+     */
     getProperty(address, key) { return this.#active().getProperty(address, key); }
 
-    /** @param {object} address - Subject. @param {string} key - Key. @returns {boolean} Presence. */
+    /**
+     * @param {object} address - Subject.
+     * @param {string} key - Key.
+     * @returns {boolean} Presence.
+     */
     hasProperty(address, key) { return this.#active().hasProperty(address, key); }
 
-    /** @param {object} address - Subject. @param {string} key - Key. @param {*} value - Value. */
+    /**
+     * @param {object} address - Subject.
+     * @param {string} key - Key.
+     * @param {*} value - Value.
+     */
     setProperty(address, key, value) {
         this.#propertyAuthority(key).stagePropertySet(address, key, value);
     }
 
-    /** @param {object} address - Subject. @param {string} key - Key. */
+    /**
+     * @param {object} address - Subject.
+     * @param {string} key - Key.
+     */
     removeProperty(address, key) { this.#propertyAuthority(key).stagePropertyRemoval(address, key); }
 
-    /** @param {object} address - Subject. @param {string} key - Key. */
+    /**
+     * @param {object} address - Subject.
+     * @param {string} key - Key.
+     */
     resetProperty(address, key) { this.#propertyAuthority(key).stagePropertyReset(address, key); }
 
-    /** @param {string} playerId - Player. @param {string} actorId - Actor. @returns {boolean} Eligibility. */
+    /**
+     * @param {string} playerId - Player.
+     * @param {string} actorId - Actor.
+     * @returns {boolean} Eligibility.
+     */
     grantControl(playerId, actorId) { return this.#playerOperation('grantControl', playerId, actorId); }
 
-    /** @param {string} playerId - Player. @param {string} actorId - Actor. @returns {boolean} Eligibility. */
+    /**
+     * @param {string} playerId - Player.
+     * @param {string} actorId - Actor.
+     * @returns {boolean} Eligibility.
+     */
     revokeControl(playerId, actorId) { return this.#playerOperation('revokeControl', playerId, actorId); }
 
-    /** @param {string} playerId - Player. @param {string} actorId - Actor. @returns {boolean} Eligibility. */
+    /**
+     * @param {string} playerId - Player.
+     * @param {string} actorId - Actor.
+     * @returns {boolean} Eligibility.
+     */
     selectActor(playerId, actorId) { return this.#playerOperation('selectActor', playerId, actorId); }
 
-    /** @param {string} playerId - Player. @returns {boolean} Eligibility. */
+    /**
+     * @param {string} playerId - Player.
+     * @returns {boolean} Eligibility.
+     */
     clearSelection(playerId) { return this.#playerOperation('clearSelection', playerId); }
 
-    /** @param {object} output - Semantic output. */
+    /**
+     * @param {object} output - Semantic output.
+     */
     emitOutput(output) { this.#active().stageOutput(output); }
 
     /**

@@ -15,6 +15,16 @@ import { isQualifiedKey } from '../shared/identifiers.js';
 import { PROPERTY_CODES as C } from './propertyDiagnostics.js';
 
 /**
+ * Checks ordinary property ownership under the Foundation namespace contract.
+ * @param {string} key - Candidate qualified key.
+ * @param {string} namespace - Available game namespace.
+ * @returns {boolean} Whether this key belongs to the game.
+ */
+export function isGamePropertyKey(key, namespace) {
+    return namespace !== 'asterweave' && isQualifiedKey(key) && key.startsWith(namespace + '.');
+}
+
+/**
  * Checks authored game-owned keys without interpreting nested JSON values.
  * @param {object} properties - Safe property map.
  * @param {string} namespace - Game-owned namespace.
@@ -22,8 +32,7 @@ import { PROPERTY_CODES as C } from './propertyDiagnostics.js';
  */
 export function validateGameProperties(properties, namespace, report) {
     for (const key of Object.keys(properties).sort()) {
-        if (!isQualifiedKey(key) || !key.startsWith(namespace + '.')
-            || namespace === 'asterweave') {
+        if (!isGamePropertyKey(key, namespace)) {
             report(C.INVALID_VALUE, key, 'Property key must belong to the game namespace.');
         }
     }

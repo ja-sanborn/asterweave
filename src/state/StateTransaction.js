@@ -11,8 +11,8 @@
  */
 
 import { EffectiveStateReader } from './EffectiveStateReader.js';
-import { validatePropertyAddress } from './propertyAddress.js';
-import { validateSemanticOutput } from './validateSemanticOutput.js';
+import { isGamePropertyKey } from './validateProperties.js';
+import { validateSemanticOutput, validateDetachedSemanticOutput } from './validateSemanticOutput.js';
 import { isIdentifier, isQualifiedKey } from '../shared/identifiers.js';
 import { addNonnegative } from '../shared/safeArithmetic.js';
 import { validateEffectiveState, validateStateTransition } from './validateEffectiveState.js';
@@ -111,13 +111,12 @@ export class StateTransaction {
      */
     #stage(operation, input, key, value) {
         return this.#perform(() => {
-            const address = validatePropertyAddress(input);
-            if (address === undefined || !isQualifiedKey(key)
-                || !key.startsWith(this.#namespace + '.')) {
+            if (!isGamePropertyKey(key, this.#namespace)) {
                 throw new TypeError('Invalid ordinary property mutation.');
             }
             const { reader, overrides, player } = this.#candidate;
-            const initial = reader.getInitialProperty(address, key);
+            const address = reader.requireAddress(input);
+            const initial = reader.getInitialPropertyForAddress(address, key);
             if (address.scope === 'player') {
                 if (operation === 'set') {
                     player.setProperty(key, value);
@@ -235,7 +234,7 @@ export class StateTransaction {
                 throw new Error('Invalid candidate state.');
             }
             for (const output of this.#outputs) {
-                validateSemanticOutput(output, this.#candidate.reader);
+                validateDetachedSemanticOutput(output, this.#candidate.reader);
             }
             this.#prepared = Symbol('prepared transaction');
             return this.#prepared;

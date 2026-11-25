@@ -59,3 +59,13 @@ test('completed result rejects malformed output audiences independently of stagi
             turnsAdvanced: 0, outputs: [{ type: 'test.output', audience, data: {} }] }), TypeError);
     }
 });
+
+test('action errors permit detached explicit details but reject undeclared fields', () => {
+    const details = { reason: 'blocked', values: [null, 1] };
+    const result = ActionResult.rejected({ error: { code: 'ACTION_UNAVAILABLE', details } });
+    details.values.push(2);
+    assert.deepEqual(result.error.details.values, [null, 1]);
+    assert.ok(Object.isFrozen(result.error.details.values));
+    assert.throws(() => ActionResult.error({ error: { code: 'EXECUTION_FAILED', stack: 'private' } }), TypeError);
+    assert.throws(() => ActionResult.rejected({ error: { code: 'ACTION_UNAVAILABLE', message: 'private' } }), TypeError);
+});

@@ -13,6 +13,7 @@
 import { immutableCopy } from '../shared/immutableData.js';
 import { isRecord } from '../shared/recordShape.js';
 import { rejectSynchronousReturn } from '../shared/synchronousReturn.js';
+import { validateActionError } from '../shared/validateActionError.js';
 import { ACTION_REJECTION_CODES } from '../shared/operationCodes.js';
 
 /**
@@ -26,11 +27,7 @@ export function validateHandlerOutcome(input) {
     try {
         outcome = immutableCopy(input);
     } catch (error) {
-        try {
-            rejectSynchronousReturn(input, 'Invalid synchronous handler outcome.');
-        } catch (failure) {
-            throw new TypeError('Invalid synchronous handler outcome.', { cause: error });
-        }
+        rejectSynchronousReturn(input, 'Invalid synchronous handler outcome.', error);
     }
     if (!isRecord(outcome) || Object.keys(outcome).length !== 2) {
         throw new TypeError('Invalid handler outcome.');
@@ -38,10 +35,8 @@ export function validateHandlerOutcome(input) {
     if (outcome.status === 'completed' && ['success', 'failure'].includes(outcome.outcome)) {
         return outcome;
     }
-    if (outcome.status === 'rejected' && isRecord(outcome.error)
-        && ACTION_REJECTION_CODES.includes(outcome.error.code)) {
-        // Only the established safe code is promoted; no arbitrary handler detail is exposed.
-        return Object.freeze({ status: 'rejected', error: Object.freeze({ code: outcome.error.code }) });
+    if (outcome.status === 'rejected' && validateActionError(outcome.error, ACTION_REJECTION_CODES)) {
+        return outcome;
     }
     throw new TypeError('Invalid handler outcome.');
 }

@@ -96,7 +96,7 @@ export class ActionDispatcher {
                 return reject('ACTION_UNAVAILABLE');
             }
             const authorized = trusted ? authority === this.#trustedAuthority
-                : this.#state.player?.controls(action.actorId) === true;
+                : this.#state.controllingPlayerId(action.actorId) !== undefined;
             if (!authorized) {
                 return reject('ACTION_FORBIDDEN');
             }
@@ -130,7 +130,7 @@ export class ActionDispatcher {
             invocation.release();
             invocation = undefined;
             if (outcome.status === 'rejected') {
-                return reject(outcome.error.code);
+                return ActionResult.rejected({ ...correlation, error: outcome.error });
             }
             const cost = outcome.outcome === 'success' ? definition.turnCostSuccess : definition.turnCostFail;
             transaction.advanceTurns(cost);

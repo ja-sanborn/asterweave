@@ -6,7 +6,7 @@
  */
 
 /**
- * @fileoverview Independent initial runtime ownership and authoritative effective reads.
+ * @fileoverview Independent runtime ownership and authoritative effective reads.
  * @module state/RuntimeState
  */
 
@@ -73,10 +73,21 @@ export class RuntimeState {
         return this.#world;
     }
 
-    /** @returns {Player|undefined} Internal player, if configured. */
+    /** @returns {object|undefined} Immutable complete player record, if configured. */
     get player() {
         this.#requireReadable();
-        return this.#committed.player;
+        return this.#committed.player?.record;
+    }
+
+    /**
+     * Resolves the controlling player without exposing mutable domain state.
+     * @param {string} actorId - Actor identity.
+     * @returns {string|undefined} Controlling player ID.
+     */
+    controllingPlayerId(actorId) {
+        this.#requireReadable();
+        const player = this.#committed.player;
+        return player?.controls(actorId) ? player.id : undefined;
     }
 
     /** @returns {number} Authoritative World turn property. */
@@ -89,7 +100,7 @@ export class RuntimeState {
         return immutableCopy(this.#initialOptions);
     }
 
-    /** @returns {ReadonlyArray<object>} Initial normalized differences. */
+    /** @returns {ReadonlyArray<object>} Current normalized differences. */
     get overrides() {
         this.#requireReadable();
         return this.#committed.overrides.listOverrides();
@@ -222,18 +233,31 @@ export class RuntimeState {
         if (this.#transaction !== undefined || this.#resetCandidate !== undefined) {
             throw new Error('Runtime candidate already exists.');
         }
+        // Verify retained sources before attempting an isolated reconstruction.
+        try {
+            const baseline = this.#baseline.readState();
+            const configuration = validatePlayerConfiguration(this.#initialOptions, baseline);
+            const originalPlayer = configuration.options?.player === undefined
+                ? undefined : new Player(configuration.options.player).record;
+            if (!validateEffectiveState(baseline, true)
+                || configuration.diagnostics.length !== 0
+                || !areJsonValuesEqual(configuration.options, this.#initialOptions)
+                || !areJsonValuesEqual(originalPlayer, this.#initialPlayer)
+                || baseline.world.properties['asterweave.turn'] !== 0
+                || !this.#verifyIdentities()) {
+                throw new Error('Original state could not be verified.');
+            }
+        } catch (cause) {
+            this.#compromised = true;
+            throw new Error('Retained state integrity could not be established.', { cause });
+        }
         const prepared = this.#createInitialState();
         const view = prepared.reader.readEffectiveState();
-        const configuration = validatePlayerConfiguration(this.#initialOptions, view);
         if (!validateEffectiveState(view, true)
-            || configuration.diagnostics.length !== 0
-            || !areJsonValuesEqual(configuration.options, this.#initialOptions)
             || !areJsonValuesEqual(prepared.player?.record, this.#initialPlayer)
             || prepared.reader.readWorldProperties(WORLD_ID)['asterweave.turn'] !== 0
-            || prepared.overrides.listOverrides().length !== 0
-            || !this.#verifyIdentities()) {
-            this.#compromised = true;
-            throw new Error('Original state could not be verified.');
+            || prepared.overrides.listOverrides().length !== 0) {
+            throw new Error('Invalid isolated reset candidate.');
         }
         this.#resetCandidate = prepared;
     }

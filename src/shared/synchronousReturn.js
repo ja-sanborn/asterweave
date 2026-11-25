@@ -15,15 +15,16 @@
  * Does not invoke arbitrary thenables or await any value.
  * @param {unknown} value - Invalid return.
  * @param {string} message - Internal contract explanation.
+ * @param {*} [inspectionCause] - Original inspection failure, if any.
  * @throws {TypeError} Always.
  */
-export function rejectSynchronousReturn(value, message) {
+export function rejectSynchronousReturn(value, message, inspectionCause) {
     if (value !== null && typeof value === 'object') {
         try {
             Promise.prototype.then.call(value, undefined, () => undefined);
         } catch (cause) {
-            throw new TypeError(message, { cause });
+            throw new TypeError(message, { cause: inspectionCause ?? cause });
         }
     }
-    throw new TypeError(message);
+    throw new TypeError(message, { cause: inspectionCause });
 }

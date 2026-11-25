@@ -12,6 +12,7 @@
 
 import { outputAudienceIds } from '../shared/semanticOutput.js';
 import { OperationResult } from './OperationResult.js';
+import { validateActionError } from '../shared/validateActionError.js';
 import { immutableCopy } from '../shared/immutableData.js';
 import { isRecord } from '../shared/recordShape.js';
 import { isNonnegativeSafeInteger } from '../shared/safeArithmetic.js';
@@ -58,12 +59,12 @@ export class ActionResult extends OperationResult {
             }
         } else {
             const codes = status === 'error' ? ['EXECUTION_FAILED'] : ACTION_REJECTION_CODES;
-            if (!isRecord(data.error) || !codes.includes(data.error.code)) {
+            if (!validateActionError(data.error, codes)) {
                 throw new TypeError('Invalid action error record.');
             }
         }
-        this.#data = immutableCopy(status === 'completed' ? { status, ...data }
-            : { status, ...data, turnsAdvanced: 0, outputs: [] });
+        this.#data = Object.freeze(status === 'completed' ? { status, ...data }
+            : { status, ...data, turnsAdvanced: 0, outputs: Object.freeze([]) });
         Object.freeze(this);
     }
 

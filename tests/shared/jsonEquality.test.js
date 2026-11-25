@@ -30,3 +30,8 @@ test('JSON equality handles deep validated trees iteratively', () => {
     }
     assert.equal(areJsonValuesEqual(left, right), true);
 });
+
+test('two absent optional values compare equal without treating null as absence', () => {
+    assert.equal(areJsonValuesEqual(undefined, undefined), true);
+    assert.equal(areJsonValuesEqual(undefined, null), false);
+});

@@ -11,13 +11,14 @@
  */
 
 import { isRecord } from '../shared/recordShape.js';
-import { isIdentifier, isQualifiedKey, isGameId, isVersion } from '../shared/identifiers.js';
+import { isIdentifier, isGameId, isVersion } from '../shared/identifiers.js';
 import { inspectJsonData } from '../shared/jsonData.js';
 import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
 import { LIFECYCLE_STATES, CONTAINMENT_RELATIONSHIPS, ASSOCIATION_RELATIONSHIPS,
     WORLD_ID } from '../world/worldRelationships.js';
 import { INTRINSIC_MEASUREMENTS, MEASUREMENT_LIMITS } from '../world/physicalMeasurements.js';
 import { isStandardDirection } from '../world/navigationDirections.js';
+import { isGamePropertyKey } from './validateProperties.js';
 import { validatePropertyAddress } from './propertyAddress.js';
 
 /**
@@ -42,8 +43,8 @@ function edgeValid(edge, target, vocabulary) {
  */
 function mapValid(properties, namespace, reserved) {
     return isRecord(properties) && Object.keys(properties).every((key) =>
-        isQualifiedKey(key) && (key.startsWith(namespace + '.')
-            || reserved.some((name) => key === 'asterweave.' + name)));
+        isGamePropertyKey(key, namespace)
+            || reserved.some((name) => key === 'asterweave.' + name));
 }
 
 /**

@@ -10,6 +10,7 @@
  * @module definition/GameDefinitionValidator
  */
 
+import { validateEffectiveStructure } from '../state/validateEffectiveStructure.js';
 import { GameDefinitionMapper } from './GameDefinitionMapper.js';
 import { participants } from './validateIdentity.js';
 import { appendPointer } from '../diagnostics/jsonPointer.js';
@@ -91,6 +92,11 @@ export class GameDefinitionValidator {
         for (const [index, entry] of candidate.relationships.entries()) {
             checkMap(entry.properties, namespace,
                 '/world/initialRelationships/' + index + '/initialProperties', collector);
+        }
+        // Authored findings retain their existing precedence. A structurally invalid
+        // mapped candidate with no authored findings is an internal mapping defect.
+        if (collector.size === 0 && !validateEffectiveStructure(candidate)) {
+            throw new Error('Invalid normalized definition candidate.');
         }
         return {
             candidate: collector.size === 0 ? candidate : undefined,

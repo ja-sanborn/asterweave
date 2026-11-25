@@ -40,3 +40,10 @@ test('ordinary player values reset independently of protected control', () => {
     assert.equal(Object.hasOwn(player.record.properties, 'game.note'), false);
     assert.throws(() => player.setProperty('asterweave.controlledActors', []), TypeError);
 });
+
+test('removing an absent ordinary property retains the immutable record', () => {
+    const player = new Player({ id: 'player', controlledActors: [] });
+    const before = player.record;
+    player.removeProperty('game.missing');
+    assert.equal(player.record, before);
+});

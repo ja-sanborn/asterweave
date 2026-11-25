@@ -12,6 +12,7 @@
 
 import { GameDefinitionValidator } from '../definition/GameDefinitionValidator.js';
 import { validatePlayerConfiguration } from '../state/validatePlayerConfiguration.js';
+import { validateEffectiveState } from '../state/validateEffectiveState.js';
 import { RuntimeState } from '../state/RuntimeState.js';
 import { ActionDispatcher } from './ActionDispatcher.js';
 import { RuntimeResetter } from './RuntimeResetter.js';
@@ -38,6 +39,9 @@ export class GameInitializer {
             return { state: undefined, registry: undefined, diagnostics };
         }
         const state = new RuntimeState(validated.candidate, configuration.options);
+        if (!validateEffectiveState(state.readEffectiveState(), true)) {
+            throw new Error('Invalid initialized effective state.');
+        }
         const { registry } = ActionRegistry.create();
         // Only real executable handlers may be registered in production.
         const finalized = registry.finalize();

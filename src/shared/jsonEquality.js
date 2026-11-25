@@ -12,6 +12,7 @@
 
 /**
  * Compares validated JSON values without recursion or serialization.
+ * Two absent optional values (undefined) also compare equal; undefined is not JSON data.
  * @param {*} left - Inspected JSON value.
  * @param {*} right - Inspected JSON value.
  * @returns {boolean} Structural equality.

@@ -23,9 +23,19 @@ import { resolveEndpoint } from './resolvePropertySubject.js';
  */
 export function validateSemanticOutput(input, view) {
     const output = immutableCopy(input);
+    validateDetachedSemanticOutput(output, view);
+    return output;
+}
+
+/**
+ * Rechecks an engine-owned, recursively immutable semantic output.
+ * @param {object} output - Previously detached output.
+ * @param {object} view - Candidate identity view.
+ * @throws {TypeError} For invalid output or audience.
+ */
+export function validateDetachedSemanticOutput(output, view) {
     const ids = outputAudienceIds(output);
     if (ids.some((id) => resolveEndpoint(view, { scope: 'actor', id }) === undefined)) {
         throw new TypeError('Invalid output audience identity.');
     }
-    return output;
 }

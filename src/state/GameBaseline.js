@@ -100,4 +100,8 @@ export class GameBaseline {
     relationship(address) {
         return addressLeaf(this.#relationships, address);
     }
+    /** @returns {object} Recursively immutable original effective state. */
+    readState() {
+        return this.#data;
+    }
 }

@@ -88,7 +88,7 @@ export class EffectiveStateReader {
      * @returns {object} Validated detached address.
      * @throws {TypeError} For invalid or unknown subjects.
      */
-    #requireAddress(input) {
+    requireAddress(input) {
         const address = validatePropertyAddress(input);
         if (address === undefined || resolvePropertySubject(this, address) === undefined) {
             throw new TypeError('Invalid property subject.');
@@ -131,7 +131,17 @@ export class EffectiveStateReader {
      * @returns {object} Immutable presence entry.
      */
     getInitialProperty(input, key) {
-        return entry(this.#initialProperties(this.#requireAddress(input)), key);
+        return this.getInitialPropertyForAddress(this.requireAddress(input), key);
+    }
+
+    /**
+     * Reads an initial property after this reader has validated the detached address.
+     * @param {object} address - Previously validated immutable existing address.
+     * @param {string} key - Property key.
+     * @returns {object} Immutable presence entry.
+     */
+    getInitialPropertyForAddress(address, key) {
+        return entry(this.#initialProperties(address), key);
     }
 
     /**
@@ -141,7 +151,7 @@ export class EffectiveStateReader {
      * @returns {object} Immutable presence entry.
      */
     getProperty(input, key) {
-        const address = this.#requireAddress(input);
+        const address = this.requireAddress(input);
         return this.#read(address, key, this.#initialProperties(address));
     }
 
@@ -161,7 +171,7 @@ export class EffectiveStateReader {
      * @returns {object} Immutable map.
      */
     getProperties(input) {
-        const address = this.#requireAddress(input);
+        const address = this.requireAddress(input);
         if (address.scope === 'player') {
             return this.#player.record.properties;
         }

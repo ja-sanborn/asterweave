@@ -22,24 +22,30 @@ import { ActionDispatcher } from '../../src/core/ActionDispatcher.js';
  * Creates a trusted test-only runtime.
  * @param {Function} handler - Test handler.
  * @param {boolean} [grant] - Whether to grant ordinary mutation authority.
+ * @param {object} [settings] - Trusted test metadata and player configuration.
  * @returns {object} Test collaborators.
  */
-function setup(handler, grant = true) {
+function setup(handler, grant = true, settings = {}) {
     const definition = JSON.parse(readFileSync(new URL('../fixtures/games/state-foundation.json',
         import.meta.url), 'utf8'));
+    if (settings.inactiveGuide) {
+        definition.world.actors[1].initialLifecycle = 'inactive';
+        delete definition.world.actors[1].initialContainment;
+    }
     const state = new RuntimeState(new GameDefinitionValidator().validate(definition).candidate,
-        { player: { id: 'player', controlledActors: ['adventurer'] } });
+        settings.options ?? { player: { id: 'player', controlledActors: ['adventurer'] } });
     const { registry, gameOwner, grantOwner } = ActionRegistry.create();
     assert.equal(registry.register(gameOwner, { type: 'game.test', enabled: true,
-        turnCostSuccess: 1, turnCostFail: 2, arguments: {} }, handler).status, 'completed');
+        turnCostSuccess: 1, turnCostFail: 2, arguments: {}, ...settings.metadata }, handler).status, 'completed');
     if (grant) {
         registry.establishMutationGrants(grantOwner, 'game.test',
             { namespaces: ['stateFoundation'], operations: [] });
     }
     registry.finalize();
-    const dispatcher = new ActionDispatcher(state, registry);
+    const authority = Symbol('test trusted authority');
+    const dispatcher = new ActionDispatcher(state, registry, authority);
     const action = { actorId: 'adventurer', type: 'game.test', args: {} };
-    return { state, dispatcher, action };
+    return { state, dispatcher, action, authority };
 }
 
 test('completed failure commits intentional state, registered cost and ordered outputs', () => {
@@ -144,4 +150,96 @@ test('duplicate valid outputs preserve emission order and detach payloads', () =
     const result = dispatcher.dispatchPlayerAction(action);
     assert.equal(result.status, 'completed');
     assert.deepEqual(result.outputs.map(({ data }) => data.value), [[1], [1], [1, 2]]);
+});
+
+test('trusted submission is independent of player presence and rejects incorrect authority', () => {
+    let calls = 0;
+    const { state, dispatcher, action, authority } = setup(() => {
+        calls++;
+        return { status: 'completed', outcome: 'success' };
+    }, true, { options: {} });
+    const before = state.readEffectiveState();
+    assert.equal(dispatcher.dispatchPlayerAction(action).error.code, 'ACTION_FORBIDDEN');
+    assert.equal(dispatcher.dispatchTrustedAction(action, Symbol('wrong')).error.code, 'ACTION_FORBIDDEN');
+    assert.deepEqual(state.readEffectiveState(), before);
+    assert.equal(calls, 0);
+    assert.equal(dispatcher.dispatchTrustedAction(action, authority).status, 'completed');
+    assert.equal(calls, 1);
+});
+
+test('earliest failed dispatch stage determines rejection and safe correlation', () => {
+    const { state, dispatcher, action } = setup(() => assert.fail('handler must not run'), true,
+        { inactiveGuide: true, metadata: { enabled: false } });
+    const before = state.readEffectiveState();
+    for (const [input, code, echo] of [
+        [null, 'INVALID_ACTION', undefined],
+        [{ ...action, actorId: 'missing', type: 'game.unknown' }, 'ACTOR_NOT_FOUND', undefined],
+        [{ ...action, actorId: 'guide', type: 'game.unknown' }, 'ACTION_UNAVAILABLE', undefined],
+        [{ ...action, type: 'game.unknown' }, 'UNKNOWN_ACTION_TYPE', 'adventurer'],
+        [{ ...action, args: { unexpected: true } }, 'ACTION_UNAVAILABLE', 'adventurer'],
+    ]) {
+        const result = dispatcher.dispatchPlayerAction(input);
+        assert.equal(result.error.code, code);
+        assert.equal(result.actorId, echo);
+        assert.deepEqual(state.readEffectiveState(), before);
+    }
+});
+
+test('declared runtime reference categories are checked before handler invocation', () => {
+    let calls = 0;
+    const { dispatcher, action } = setup(() => {
+        calls++;
+        return { status: 'completed', outcome: 'success' };
+    }, true, { metadata: { arguments: {
+        targetId: { type: 'string', required: true, referenceKind: 'entity' },
+    } } });
+    for (const targetId of ['missing', 'guide', 'world']) {
+        assert.equal(dispatcher.dispatchPlayerAction({ ...action, args: { targetId } }).error.code,
+            'INVALID_ARGUMENTS');
+    }
+    assert.equal(calls, 0);
+    assert.equal(dispatcher.dispatchPlayerAction({ ...action, args: { targetId: 'brassLantern' } }).status,
+        'completed');
+    assert.equal(calls, 1);
+});
+
+test('zero cost commits changes and checked maximum turn overflow rolls back', () => {
+    const handler = (submitted, context) => {
+        const address = { scope: 'entity', id: 'brassLantern' };
+        const fuel = context.getProperty(address, 'stateFoundation.fuel').value;
+        context.setProperty(address, 'stateFoundation.fuel', fuel - 1);
+        return { status: 'completed', outcome: 'success' };
+    };
+    for (const cost of [0, Number.MAX_SAFE_INTEGER]) {
+        const { state, dispatcher, action } = setup(handler, true, { metadata: { turnCostSuccess: cost } });
+        assert.equal(dispatcher.dispatchPlayerAction(action).turnsAdvanced, cost);
+        assert.equal(state.turn, cost);
+        assert.equal(state.world.resolve('brassLantern').getProperty('stateFoundation.fuel'), 99);
+        const before = state.readEffectiveState();
+        const next = dispatcher.dispatchPlayerAction(action);
+        if (cost === 0) {
+            assert.equal(next.status, 'completed');
+            assert.equal(state.world.resolve('brassLantern').getProperty('stateFoundation.fuel'), 98);
+        } else {
+            assert.equal(next.error.code, 'EXECUTION_FAILED');
+            assert.equal(next.turnsAdvanced, 0);
+            assert.deepEqual(state.readEffectiveState(), before);
+        }
+    }
+});
+
+test('handler rejection preserves safe explicit details and malformed errors roll back', () => {
+    for (const error of [
+        { code: 'ACTION_UNAVAILABLE', details: { reason: 'blocked' } },
+        { code: 'ACTION_UNAVAILABLE', stack: 'private' },
+    ]) {
+        const { state, dispatcher, action } = setup((submitted, context) => {
+            context.setProperty({ scope: 'world' }, 'stateFoundation.powerRestored', true);
+            return { status: 'rejected', error };
+        });
+        const before = state.readEffectiveState();
+        const result = dispatcher.dispatchPlayerAction(action);
+        assert.deepEqual(state.readEffectiveState(), before);
+        assert.deepEqual(result.error, Object.hasOwn(error, 'details') ? error : { code: 'EXECUTION_FAILED' });
+    }
 });
