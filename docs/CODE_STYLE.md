@@ -165,6 +165,8 @@ try {
 }
 ```
 
+Result-returning public operations MUST follow [ADR 0020](decisions/0020-standardized-operation-result-architecture.md): engine-controlled specialized result classes, derived status predicates and read-only detached result-owned data. Serializable results MUST define toJSON according to their documented envelopes; unsupported result serialization MUST throw TypeError. Do not depend on enumerable class fields or serialize live game references.
+
 ## 19. File headers, documentation and comments
 
 Every covered JavaScript file must retain applicable copyright and license notices and begin with the MPL Exhibit A notice and SPDX identifier, followed by a JSDoc module description. For example:

@@ -40,6 +40,14 @@ Initialization validates definitions and applicable configuration before publish
 
 [Save restoration](SAVE_DATA.md#compatibility-and-restore) rejects invalid candidates atomically; exact codes and public interfaces remain Phase 2 work. Future Creator diagnostics may reuse the definition convention where appropriate.
 
+## Standardized operation results
+
+[ADR 0020](../decisions/0020-standardized-operation-result-architecture.md) establishes OperationResult with specialized subclasses. The authoritative status is completed, rejected or error. Read-only isCompleted, isRejected and isError predicates derive from status; isSuccess equals isCompleted and isFailure is its inverse. This describes operation completion, not gameplay outcome. Preserve operation-specific payloads and errors. Results are engine-constructed and read-only, with detached recursively protected data and controlled operational references where required.
+
+ValidationResult and InitializationResult expose diagnostics (always a read-only array) and error (undefined except on error). Completed results have empty diagnostics; rejected results have one or more diagnostics and no error; error results have empty diagnostics and safe operation-specific error information. InitializationResult additionally exposes game only on completion, otherwise undefined. ValidationResult has no separate valid Boolean. No partial game is exposed. Concrete error codes and configuration diagnostic paths remain FND-05 work.
+
+ValidationResult.toJSON returns a detached record containing status and diagnostics, with error only for error status. InitializationResult.toJSON throws TypeError in every status. Other result serialization follows its owning contract; omit derived predicates and preserve field omission rules. Do not expose raw exceptions or live operational objects. Ordinary getters and calculations do not require result wrappers.
+
 ## Codes and ownership
 
 Engine-defined codes use uppercase snake case, documented meanings and stable identifiers. Never repurpose existing codes or branch on human-readable messages. Domains own detection and their vocabularies; shared codes may use common definitions where semantics match. Existing definition and action catalogs remain authoritative. No global enumeration coupling every domain to all others.

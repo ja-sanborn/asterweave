@@ -25,5 +25,6 @@ Use sequential filenames such as `0001-platform-independent-runtime.md`. Each re
 | [0017](0017-error-handling-and-diagnostics.md) | Error handling and diagnostics | Accepted |
 | [0018](0018-public-api-and-compatibility.md) | Public API and compatibility | Accepted |
 | [0019](0019-security-and-trust-boundaries.md) | Security and trust boundaries | Accepted |
+| [0020](0020-standardized-operation-result-architecture.md) | Standardized operation result architecture | Accepted |
 
 Current canonical format is 3.0.0 under ADR 0013 and the [definition contract](../contracts/GAME_DEFINITIONS.md). Save format 1.0.0 is specified separately. See [coding standards](../CODE_STYLE.md) and [testing strategy](../../tests/README.md) for implementation and verification requirements.

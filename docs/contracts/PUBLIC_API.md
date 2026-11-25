@@ -16,6 +16,10 @@ Use supported queries and detached recursively read-only snapshots for inspectio
 
 Concrete signatures, module entry path, exports, construction interfaces and lifecycle operations are defined and tested by their owning stories. No new interface or capability is specified merely by naming this boundary.
 
+## Operation result interfaces
+
+Follow [ADR 0020](../decisions/0020-standardized-operation-result-architecture.md). Fallible public operations use operation-specific read-only result interfaces with common status semantics; ordinary getters and calculations return documented values. Concrete result classes and factories are internal. Supported serializable results implement toJSON and return detached JSON-compatible records; derived predicates are excluded and unavailable fields follow the operation envelope. ValidationResult supports serialization; InitializationResult explicitly throws TypeError from toJSON in every status. Serialization is not authorization and must never expose a live game reference. See the error-handling contract for result invariants.
+
 ## Version authorities
 
 | Version | Authority and meaning |
