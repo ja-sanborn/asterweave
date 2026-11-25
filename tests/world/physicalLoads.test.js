@@ -159,3 +159,17 @@ test('capacity diagnostics preserve independent rooted findings on invalid branc
     assert.ok(result.some(({ code, id }) =>
         code === WORLD_CODES.CAPACITY_EXCEEDED && id === 'hero'));
 });
+
+test('unknown and overflow flags coexist without exposing an inexact numeric value', () => {
+    const state = fixture();
+    state.entities[0].properties['asterweave.weight'] = Number.MAX_SAFE_INTEGER;
+    delete state.entities[1].properties['asterweave.weight'];
+    assert.deepEqual(new WorldQueries(state).physicalLoad('hero').weight, {
+        unknown: true, overflow: true,
+    });
+    assert.deepEqual(findings(state), []);
+    state.actors[0].properties['asterweave.weightCapacity'] = Number.MAX_SAFE_INTEGER;
+    assert.deepEqual(findings(state), [
+        { code: WORLD_CODES.CAPACITY_EXCEEDED, id: 'hero', property: 'weightCapacity' },
+    ]);
+});

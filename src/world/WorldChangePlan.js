@@ -14,6 +14,7 @@ import { indexParticipants } from './indexParticipants.js';
 import { collectDescendants } from './collectDescendants.js';
 import { validateWorldParticipants } from './validateWorldState.js';
 import { areJsonValuesEqual } from '../shared/jsonEquality.js';
+import { WORLD_PROPERTY_NAMES, isWorldPropertyValue } from './worldPropertyShape.js';
 import { immutableCopy } from '../shared/immutableData.js';
 
 /** Temporary world-domain proposal; never mutates the source effective view. */
@@ -29,7 +30,22 @@ export class WorldChangePlan {
     constructor(state) {
         this.#participants = indexParticipants(state);
         for (const [id, record] of this.#participants) {
-            this.#participants.set(id, immutableCopy(record));
+            const properties = {};
+            for (const name of WORLD_PROPERTY_NAMES) {
+                const key = 'asterweave.' + name;
+                if (Object.hasOwn(record.properties, key)) {
+                    const value = immutableCopy(record.properties[key]);
+                    if (!isWorldPropertyValue(name, value)) {
+                        throw new TypeError('Invalid original world property.');
+                    }
+                    properties[key] = value;
+                } else if (!isWorldPropertyValue(name, undefined)) {
+                    throw new TypeError('Missing original world property.');
+                }
+            }
+            this.#participants.set(id, Object.freeze({
+                kind: record.kind, properties: Object.freeze(properties),
+            }));
         }
         this.#initialHierarchy = validateWorldParticipants(this.#participants,
             () => { throw new Error('Invalid starting world state.'); });
@@ -64,14 +80,24 @@ export class WorldChangePlan {
      */
     set(id, key, value) {
         const record = this.#participants.get(id);
-        if (areJsonValuesEqual(record.properties[key], value)) {
+        if (record === undefined || typeof key !== 'string'
+            || !WORLD_PROPERTY_NAMES.some((name) => key === 'asterweave.' + name)) {
+            throw new TypeError('Invalid protected world property.');
+        }
+        const detached = value === undefined ? undefined : immutableCopy(value);
+        if (!isWorldPropertyValue(key.slice('asterweave.'.length), detached)
+            || (key === 'asterweave.lifecycle'
+                && record.properties[key] === 'destroyed' && detached !== 'destroyed')) {
+            throw new TypeError('Invalid proposed world property.');
+        }
+        if (areJsonValuesEqual(record.properties[key], detached)) {
             return;
         }
         const properties = { ...record.properties };
         if (value === undefined) {
             delete properties[key];
         } else {
-            properties[key] = immutableCopy(value);
+            properties[key] = detached;
         }
         this.#participants.set(id, Object.freeze({ kind: record.kind, properties: Object.freeze(properties) }));
         if (!this.#changes.has(id)) {

@@ -16,6 +16,7 @@ import { readFileSync } from 'node:fs';
 import { GameDefinitionValidator } from '../../src/definition/GameDefinitionValidator.js';
 import { RuntimeState } from '../../src/state/RuntimeState.js';
 import { ActionRegistry } from '../../src/actions/ActionRegistry.js';
+import { WORLD_OPERATIONS } from '../../src/world/worldOperations.js';
 import { ActionDispatcher } from '../../src/core/ActionDispatcher.js';
 
 /**
@@ -466,4 +467,95 @@ test('malformed lifecycle inputs invalidate even when caught', () => {
     const before = state.readEffectiveState();
     assert.equal(run().status, 'error');
     assert.deepEqual(state.readEffectiveState(), before);
+});
+
+test('every world mutation grant is independently required', () => {
+    const requests = [
+        ['relocate', (context) => context.relocate('rug', 'garage', 'in')],
+        ['establishAssociation', (context) => context.establishAssociation('rug', 'hiddenKey', 'near')],
+        ['removeAssociation', (context) => context.removeAssociation('hiddenKey', 'rug', 'under')],
+        ['modifyPhysicalProperties', (context) => context.setPhysicalProperty('rug', 'weight', 3)],
+        ['modifyPhysicalProperties', (context) => context.removePhysicalProperty('rug', 'weight')],
+        ['modifyPhysicalProperties', (context) => context.resetPhysicalProperty('rug', 'weight')],
+        ['activate', (context) => context.activate('visitor', 'garage', 'in')],
+        ['deactivate', (context) => context.deactivate('rug')],
+        ['destroy', (context) => context.destroy('rug')],
+        ['destroyRecursively', (context) => context.destroyRecursively('car')],
+    ];
+    for (const [required, request] of requests) {
+        const { state, run } = setup((action, context) => {
+            assert.throws(() => request(context), TypeError);
+            return completed();
+        }, WORLD_OPERATIONS.filter((operation) => operation !== required));
+        const before = state.readEffectiveState();
+        assert.equal(run().status, 'error', required);
+        assert.deepEqual(state.readEffectiveState(), before);
+    }
+});
+
+test('expired world mutation capability cannot change committed or later candidate state', () => {
+    let previous;
+    const { state, run } = setup((action, context) => {
+        if (previous !== undefined) {
+            assert.throws(() => previous.destroyRecursively('car'));
+        }
+        previous = context;
+        return completed();
+    }, ['destroyRecursively']);
+    const before = state.readEffectiveState();
+    assert.equal(run().status, 'completed');
+    assert.throws(() => previous.destroyRecursively('car'));
+    assert.equal(run().status, 'completed');
+    assert.deepEqual(state.readEffectiveState(), before);
+});
+
+test('equivalent independent runtimes produce identical changes and remain isolated', () => {
+    const handler = (action, context) => {
+        assert.equal(context.destroyRecursively('car').changed, true);
+        return completed();
+    };
+    const first = setup(handler, ['destroyRecursively']);
+    const second = setup(handler, ['destroyRecursively']);
+    const before = second.state.readEffectiveState();
+    const result = first.run();
+    assert.equal(result.status, 'completed');
+    assert.deepEqual(second.state.readEffectiveState(), before);
+    assert.deepEqual(second.run(), result);
+    assert.deepEqual(first.state.readEffectiveState(), second.state.readEffectiveState());
+    assert.deepEqual(first.state.overrides, second.state.overrides);
+});
+
+test('administrative reset restores authored state after committed destruction', () => {
+    const { state, run } = setup((action, context) => {
+        context.destroyRecursively('car');
+        return completed();
+    }, ['destroyRecursively']);
+    const before = state.readEffectiveState();
+    const car = state.world.resolve('car');
+    assert.equal(run().status, 'completed');
+    assert.equal(car.lifecycle, 'destroyed');
+    const lease = state.acquireOperation();
+    try {
+        state.prepareReset(lease);
+        state.commitReset(lease);
+    } finally {
+        state.releaseOperation(lease);
+    }
+    assert.deepEqual(state.readEffectiveState(), before);
+    assert.equal(state.world.resolve('car'), car);
+    assert.deepEqual(state.overrides, []);
+});
+
+test('repeated expected world rejections do not accumulate overrides', () => {
+    const { state, run } = setup((action, context) => {
+        for (let index = 0; index < 50; index++) {
+            assert.equal(context.relocate('safe', 'player', 'carried').status, 'rejected');
+            assert.equal(context.destroy('car').status, 'rejected');
+        }
+        return completed();
+    }, ['relocate', 'destroy']);
+    const before = state.readEffectiveState();
+    assert.equal(run().status, 'completed');
+    assert.deepEqual(state.readEffectiveState(), before);
+    assert.deepEqual(state.overrides, []);
 });

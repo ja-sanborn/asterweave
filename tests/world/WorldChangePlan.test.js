@@ -12,6 +12,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { planLifecycleOperation } from '../../src/world/planLifecycleOperation.js';
 import { WorldChangePlan } from '../../src/world/WorldChangePlan.js';
 import { planPhysicalProperty } from '../../src/world/planPhysicalProperty.js';
 import { PLACEMENT_OPERATIONS, LIFECYCLE_OPERATIONS, WORLD_OPERATIONS } from '../../src/world/worldOperations.js';
@@ -67,4 +68,54 @@ test('protected operation groups are immutable, disjoint and included in grants'
     assert.equal(new Set(WORLD_OPERATIONS).size, WORLD_OPERATIONS.length);
     assert.deepEqual(WORLD_OPERATIONS, [...PLACEMENT_OPERATIONS,
         'modifyPhysicalProperties', ...LIFECYCLE_OPERATIONS]);
+});
+
+test('proposal boundary rejects unsupported keys, unsafe shapes and terminal resurrection', () => {
+    const plan = new WorldChangePlan(fixture());
+    const accessor = { get parentId() { assert.fail('getter invoked'); }, relationship: 'in' };
+    for (const [key, value] of [
+        ['__proto__', { polluted: true }], ['constructor', {}], ['prototype', {}],
+        ['game.flag', true], ['asterweave.turn', 2], ['asterweave.lifecycle', 'missing'],
+        ['asterweave.isContainer', undefined], ['asterweave.weight', 0],
+        ['asterweave.associations', [{ targetId: 'item', relationship: 'in' }]],
+        ['asterweave.containment', accessor],
+        ['asterweave.containment', { parentId: 'room', relationship: 'in', extra: true }],
+    ]) {
+        assert.throws(() => plan.set('box', key, value), TypeError);
+    }
+    assert.deepEqual(plan.changes(), []);
+    assert.equal(Object.prototype.polluted, undefined);
+    plan.set('item', 'asterweave.lifecycle', 'destroyed');
+    plan.set('item', 'asterweave.containment', undefined);
+    assert.throws(() => plan.set('item', 'asterweave.lifecycle', 'active'), TypeError);
+    assert.equal(plan.finish().result.changed, true);
+});
+
+test('world proposals retain only structural data and detach source placement', () => {
+    const state = fixture();
+    state.entities[0].properties['game.large'] = { values: Array(10000).fill('data') };
+    const plan = new WorldChangePlan(state);
+    assert.equal(Object.hasOwn(plan.participant('box').properties, 'game.large'), false);
+    state.entities[0].properties['asterweave.containment'].parentId = 'world';
+    assert.equal(plan.participant('box').properties['asterweave.containment'].parentId, 'room');
+    assert.deepEqual(plan.changes(), []);
+});
+
+test('deep recursive destruction plans iteratively and deterministically', () => {
+    const state = fixture();
+    const count = 12000;
+    for (let index = 0; index < count; index++) {
+        state.entities.push({ id: 'node' + index, properties: {
+            'asterweave.lifecycle': 'active',
+            'asterweave.containment': {
+                parentId: index === 0 ? 'item' : 'node' + (index - 1), relationship: 'in',
+            },
+            'asterweave.associations': [], 'asterweave.isContainer': true,
+        } });
+    }
+    const result = planLifecycleOperation(state, 'destroyRecursively', 'box');
+    assert.equal(result.result.changed, true);
+    assert.equal(result.changes.length, (count + 2) * 2);
+    assert.deepEqual(result, planLifecycleOperation(state, 'destroyRecursively', 'box'));
+    assert.equal(state.entities.at(-1).properties['asterweave.lifecycle'], 'active');
 });
