@@ -10,6 +10,7 @@
  * @module world/WorldQueries
  */
 
+import { collectDescendants } from './collectDescendants.js';
 import { calculatePhysicalLoads, describeLoad } from './physicalLoads.js';
 import { indexParticipants } from './indexParticipants.js';
 import { validateContainment } from './validateContainment.js';
@@ -106,30 +107,12 @@ export class WorldQueries {
     }
 
     /**
-     * Collects supplied subtree roots and descendants without recursive calls.
-     * @param {string[]} roots - Disjoint subtree roots.
-     * @returns {ReadonlyArray<string>} Ordered identities.
-     */
-    #collect(roots) {
-        const pending = [...roots];
-        const result = [];
-        while (pending.length > 0) {
-            const id = pending.pop();
-            result.push(id);
-            for (const child of this.#children.get(id) ?? []) {
-                pending.push(child);
-            }
-        }
-        return Object.freeze(result.sort());
-    }
-
-    /**
      * Returns all descendants, excluding the subject.
      * @param {string} id - Identity.
      * @returns {ReadonlyArray<string>} Descendants.
      */
     recursiveContents(id) {
-        return this.#collect(this.directContents(id));
+        return collectDescendants(this.#children, this.directContents(id));
     }
 
     /**
@@ -195,7 +178,7 @@ export class WorldQueries {
         if (this.#participants.get(id)?.kind !== 'actor') {
             throw new TypeError('Expected actor identity.');
         }
-        return this.#collect(this.directContents(id).filter(
+        return collectDescendants(this.#children, this.directContents(id).filter(
             (child) => relationships.includes(this.containment(child).relationship),
         ));
     }
@@ -220,6 +203,7 @@ export class WorldQueries {
      * @returns {ReadonlyArray<string>} Held items.
      */
     heldItems(id) { return this.#actorBranches(id, ['held']); }
+
     /**
      * Returns checked direct size and recursive weight, excluding the subject.
      * @param {string} id - Participant identity.

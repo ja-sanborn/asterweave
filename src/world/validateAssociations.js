@@ -21,6 +21,7 @@ import { WORLD_CODES as C } from './worldDiagnostics.js';
  * @returns {void}
  */
 export function validateAssociations(participants, hierarchy, report) {
+    const resolve = (id) => participants.get(id);
     for (const [id, { properties }] of participants) {
         if (properties['asterweave.lifecycle'] !== 'active') {
             continue;
@@ -32,10 +33,10 @@ export function validateAssociations(participants, hierarchy, report) {
             let message;
             if (seen.has(identity)) {
                 message = 'Duplicate spatial association.';
-            } else if (!validAssociationEndpoints(participants, id, targetId)) {
+            } else if (!validAssociationEndpoints(resolve, id, targetId)) {
                 message = 'Association requires a distinct active participant.';
             } else if (!hierarchy.invalid.has(id) && !hierarchy.invalid.has(targetId)
-                && !sharesAssociationFrame(participants, id, targetId)) {
+                && !sharesAssociationFrame(resolve, id, targetId)) {
                 message = 'Association endpoints must share an immediate parent.';
             }
             seen.add(identity);

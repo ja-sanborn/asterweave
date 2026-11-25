@@ -11,7 +11,7 @@
  */
 
 import { WorldChangePlan } from './WorldChangePlan.js';
-import { WorldQueries } from './WorldQueries.js';
+import { LIFECYCLE_OPERATIONS } from './worldOperations.js';
 import { cleanInvalidAssociations } from './cleanInvalidAssociations.js';
 import { CONTAINMENT_RELATIONSHIPS, WORLD_ID } from './worldRelationships.js';
 import { WORLD_CODES as C } from './worldDiagnostics.js';
@@ -27,7 +27,7 @@ import { isIdentifier } from '../shared/identifiers.js';
  * @returns {object} Validated world proposal and semantic result.
  */
 export function planLifecycleOperation(state, operation, id, parentId, relationship) {
-    if (!['activate', 'deactivate', 'destroy', 'destroyRecursively'].includes(operation)
+    if (!LIFECYCLE_OPERATIONS.includes(operation)
         || !isIdentifier(id)
         || (operation === 'activate'
             ? !isIdentifier(parentId) || !CONTAINMENT_RELATIONSHIPS.includes(relationship)
@@ -53,8 +53,7 @@ export function planLifecycleOperation(state, operation, id, parentId, relations
     if (lifecycle === 'destroyed') {
         return plan.finish(C.INVALID_LIFECYCLE);
     }
-    const queries = new WorldQueries(state);
-    const descendants = queries.recursiveContents(id);
+    const descendants = plan.originalDescendants(id);
     if (descendants.length > 0 && operation !== 'destroyRecursively') {
         return plan.finish(C.INVALID_LIFECYCLE);
     }

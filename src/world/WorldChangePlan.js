@@ -11,15 +11,15 @@
  */
 
 import { indexParticipants } from './indexParticipants.js';
-import { PARTICIPANT_CATEGORIES } from './worldVocabulary.js';
-import { validateWorldState } from './validateWorldState.js';
+import { collectDescendants } from './collectDescendants.js';
+import { validateWorldParticipants } from './validateWorldState.js';
 import { areJsonValuesEqual } from '../shared/jsonEquality.js';
 import { immutableCopy } from '../shared/immutableData.js';
 
 /** Temporary world-domain proposal; never mutates the source effective view. */
 export class WorldChangePlan {
-    /** @type {object} Original effective records. */
-    #state;
+    /** @type {object} Validated original hierarchy, used before any proposed writes. */
+    #initialHierarchy;
     /** @type {Map} Proposed participant property maps. */
     #participants;
     /** @type {Map} Changed keys per participant. */
@@ -27,9 +27,12 @@ export class WorldChangePlan {
 
     /** @param {object} state - Structurally valid effective records. */
     constructor(state) {
-        this.#state = state;
         this.#participants = indexParticipants(state);
-        validateWorldState(state, () => { throw new Error('Invalid starting world state.'); });
+        for (const [id, record] of this.#participants) {
+            this.#participants.set(id, immutableCopy(record));
+        }
+        this.#initialHierarchy = validateWorldParticipants(this.#participants,
+            () => { throw new Error('Invalid starting world state.'); });
         Object.freeze(this);
     }
 
@@ -40,8 +43,18 @@ export class WorldChangePlan {
      */
     participant(id) { return this.#participants.get(id); }
 
-    /** @returns {Map} Internal temporary participant index for domain helpers only. */
-    get participants() { return this.#participants; }
+    /** @returns {ReadonlyArray<string>} Detached participant identities in index order. */
+    participantIds() { return Object.freeze([...this.#participants.keys()]); }
+
+    /**
+     * Enumerates original descendants before any proposed writes.
+     * @param {string} id - Known participant identity.
+     * @returns {ReadonlyArray<string>} Original descendants.
+     */
+    originalDescendants(id) {
+        return collectDescendants(this.#initialHierarchy.children,
+            this.#initialHierarchy.children.get(id) ?? []);
+    }
 
     /**
      * Proposes one protected property value, or removal by undefined.
@@ -60,7 +73,7 @@ export class WorldChangePlan {
         } else {
             properties[key] = immutableCopy(value);
         }
-        this.#participants.set(id, { kind: record.kind, properties });
+        this.#participants.set(id, Object.freeze({ kind: record.kind, properties: Object.freeze(properties) }));
         if (!this.#changes.has(id)) {
             this.#changes.set(id, new Set());
         }
@@ -72,13 +85,8 @@ export class WorldChangePlan {
      * @returns {string|undefined} First domain rejection code or absence.
      */
     validate() {
-        const state = Object.fromEntries(PARTICIPANT_CATEGORIES.map(({ collection }) => [
-            collection, this.#state[collection].map((record) => ({
-                ...record, properties: this.#participants.get(record.id).properties,
-            })),
-        ]));
         let reason;
-        validateWorldState(state, (code) => { reason ??= code; });
+        validateWorldParticipants(this.#participants, (code) => { reason ??= code; });
         return reason;
     }
 

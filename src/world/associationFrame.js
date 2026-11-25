@@ -12,26 +12,26 @@
 
 /**
  * Checks distinct active physical endpoints without requiring a spatial frame.
- * @param {Map} participants - Effective participant index.
+ * @param {Function} resolve - Participant lookup.
  * @param {string} id - Subject.
  * @param {string} targetId - Target.
  * @returns {boolean} Endpoint validity.
  */
-export function validAssociationEndpoints(participants, id, targetId) {
+export function validAssociationEndpoints(resolve, id, targetId) {
     return id !== targetId
-        && participants.get(id)?.properties['asterweave.lifecycle'] === 'active'
-        && participants.get(targetId)?.properties['asterweave.lifecycle'] === 'active';
+        && resolve(id)?.properties['asterweave.lifecycle'] === 'active'
+        && resolve(targetId)?.properties['asterweave.lifecycle'] === 'active';
 }
 
 /**
  * Checks shared immediate placement frame using effective containment.
- * @param {Map} participants - Effective participant index.
+ * @param {Function} resolve - Participant lookup.
  * @param {string} id - Subject.
  * @param {string} targetId - Target.
  * @returns {boolean} Shared frame.
  */
-export function sharesAssociationFrame(participants, id, targetId) {
-    const parent = participants.get(id)?.properties['asterweave.containment']?.parentId;
+export function sharesAssociationFrame(resolve, id, targetId) {
+    const parent = resolve(id)?.properties['asterweave.containment']?.parentId;
     return parent !== undefined
-        && parent === participants.get(targetId)?.properties['asterweave.containment']?.parentId;
+        && parent === resolve(targetId)?.properties['asterweave.containment']?.parentId;
 }

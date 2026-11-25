@@ -11,6 +11,7 @@
  */
 
 import { cleanInvalidAssociations } from './cleanInvalidAssociations.js';
+import { PLACEMENT_OPERATIONS } from './worldOperations.js';
 import { WorldChangePlan } from './WorldChangePlan.js';
 import { WORLD_CODES as C } from './worldDiagnostics.js';
 import { CONTAINMENT_RELATIONSHIPS, ASSOCIATION_RELATIONSHIPS, WORLD_ID } from './worldRelationships.js';
@@ -27,7 +28,7 @@ import { validAssociationEndpoints, sharesAssociationFrame } from './association
  * @returns {object} Semantic result and internal changes.
  */
 export function planWorldOperation(state, operation, id, targetId, relationship) {
-    if (!['relocate', 'establishAssociation', 'removeAssociation'].includes(operation)
+    if (!PLACEMENT_OPERATIONS.includes(operation)
         || !isIdentifier(id) || !isIdentifier(targetId)
         || !(operation === 'relocate' ? CONTAINMENT_RELATIONSHIPS
             : ASSOCIATION_RELATIONSHIPS).includes(relationship)) {
@@ -73,8 +74,9 @@ function relocate(plan, id, parentId, relationship) {
  * @returns {string|undefined} Rejection reason.
  */
 function associate(plan, operation, id, targetId, relationship) {
-    if (!validAssociationEndpoints(plan.participants, id, targetId)
-        || !sharesAssociationFrame(plan.participants, id, targetId)) {
+    const resolve = (subject) => plan.participant(subject);
+    if (!validAssociationEndpoints(resolve, id, targetId)
+        || !sharesAssociationFrame(resolve, id, targetId)) {
         return C.INVALID_ASSOCIATION;
     }
     const associations = plan.participant(id).properties['asterweave.associations'];

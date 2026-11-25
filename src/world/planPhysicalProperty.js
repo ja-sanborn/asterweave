@@ -24,7 +24,7 @@ import { isIdentifier } from '../shared/identifiers.js';
  * @param {*} value - Proposed set value.
  * @throws {TypeError} For malformed or unsupported requests.
  */
-export function requirePhysicalPropertyRequest(operation, id, name, value) {
+function requirePhysicalPropertyRequest(operation, id, name, value) {
     if (!isIdentifier(id) || !['set', 'remove', 'reset'].includes(operation)
         || !(name === 'isContainer' || PHYSICAL_MEASUREMENTS.includes(name))
         || (operation === 'remove' && name === 'isContainer')
@@ -38,12 +38,15 @@ export function requirePhysicalPropertyRequest(operation, id, name, value) {
 /**
  * Prepares a physical property change against the current effective hierarchy.
  * @param {object} state - Effective records.
+ * @param {string} operation - Set, remove or reset.
  * @param {string} id - Subject identity.
- * @param {string} name - Validated physical property name.
- * @param {*} value - Validated resolved value or absence.
+ * @param {string} name - Unqualified physical property name.
+ * @param {*} value - Proposed set value or absence.
+ * @param {Function} readInitial - Resolves baseline value for a known participant.
  * @returns {object} Semantic result and validated changes.
  */
-export function planPhysicalProperty(state, id, name, value) {
+export function planPhysicalProperty(state, operation, id, name, value, readInitial) {
+    requirePhysicalPropertyRequest(operation, id, name, value);
     const plan = new WorldChangePlan(state);
     if (id === WORLD_ID) {
         return plan.finish(WORLD_CODES.INVALID_CONTAINMENT);
@@ -51,6 +54,8 @@ export function planPhysicalProperty(state, id, name, value) {
     if (!plan.participant(id)) {
         throw new TypeError('Unknown world operation identity.');
     }
-    plan.set(id, 'asterweave.' + name, value);
+    const proposed = operation === 'reset' ? readInitial(id, name) : value;
+    requirePhysicalPropertyRequest(proposed === undefined ? 'remove' : 'set', id, name, proposed);
+    plan.set(id, 'asterweave.' + name, proposed);
     return plan.finish();
 }

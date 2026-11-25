@@ -10,8 +10,7 @@
  * @module state/StateTransaction
  */
 
-import { WORLD_ID } from '../world/worldRelationships.js';
-import { planPhysicalProperty, requirePhysicalPropertyRequest } from '../world/planPhysicalProperty.js';
+import { planPhysicalProperty } from '../world/planPhysicalProperty.js';
 import { planLifecycleOperation } from '../world/planLifecycleOperation.js';
 import { planWorldOperation } from '../world/planWorldOperation.js';
 import { EffectiveStateReader } from './EffectiveStateReader.js';
@@ -215,15 +214,13 @@ export class StateTransaction {
      */
     physicalPropertyOperation(operation, id, name, value) {
         return this.#perform(() => {
-            requirePhysicalPropertyRequest(operation, id, name, value);
             const { reader } = this.#candidate;
-            let proposed = value;
-            if (operation === 'reset' && id !== WORLD_ID) {
-                const address = { scope: reader.participantKind(id), id };
-                proposed = reader.getInitialProperty(address, 'asterweave.' + name).value;
-            }
             return this.#stageWorldPlan(planPhysicalProperty(
-                reader.readEffectiveState(), id, name, proposed,
+                reader.readEffectiveState(), operation, id, name, value,
+                (subject, property) => reader.getInitialProperty(
+                    { scope: reader.participantKind(subject), id: subject },
+                    'asterweave.' + property,
+                ).value,
             ));
         });
     }

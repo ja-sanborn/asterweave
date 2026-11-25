@@ -10,8 +10,17 @@
  * @module world/worldOperations
  */
 
+/** @type {ReadonlyArray<string>} Relocation and association operations. */
+export const PLACEMENT_OPERATIONS = Object.freeze([
+    'relocate', 'establishAssociation', 'removeAssociation',
+]);
+
+/** @type {ReadonlyArray<string>} Lifecycle operations. */
+export const LIFECYCLE_OPERATIONS = Object.freeze([
+    'activate', 'deactivate', 'destroy', 'destroyRecursively',
+]);
+
 /** @type {ReadonlyArray<string>} Supported protected world operation grants. */
 export const WORLD_OPERATIONS = Object.freeze([
-    'relocate', 'establishAssociation', 'removeAssociation', 'modifyPhysicalProperties',
-    'activate', 'deactivate', 'destroy', 'destroyRecursively',
+    ...PLACEMENT_OPERATIONS, 'modifyPhysicalProperties', ...LIFECYCLE_OPERATIONS,
 ]);

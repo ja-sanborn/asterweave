@@ -20,11 +20,22 @@ import { indexParticipants } from './indexParticipants.js';
 /**
  * Checks structurally valid effective physical records.
  * @param {object} state - Effective records.
+ * @returns {object} Derived hierarchy indexes.
  * @param {Function} report - Domain finding callback.
  * @param {boolean} initial - Whether initialization viability is required.
  */
 export function validateWorldState(state, report, initial = false) {
-    const participants = indexParticipants(state);
+    return validateWorldParticipants(indexParticipants(state), report, initial);
+}
+
+/**
+ * Validates an effective participant index without reconstructing records.
+ * @param {Map} participants - Effective participant index.
+ * @param {Function} report - Domain finding callback.
+ * @param {boolean} [initial] - Whether initialization viability is required.
+ * @returns {object} Derived hierarchy indexes.
+ */
+export function validateWorldParticipants(participants, report, initial = false) {
     const invalid = validateLifecycle(participants, report);
     if (initial) {
         validateInitialViability(participants, report);
@@ -32,4 +43,5 @@ export function validateWorldState(state, report, initial = false) {
     const hierarchy = validateContainment(participants, invalid, report);
     validateAssociations(participants, hierarchy, report);
     validateCapacity(participants, hierarchy, report);
+    return hierarchy;
 }

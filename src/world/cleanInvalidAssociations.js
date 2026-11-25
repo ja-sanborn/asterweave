@@ -17,11 +17,13 @@ import { validAssociationEndpoints, sharesAssociationFrame } from './association
  * @param {object} plan - Temporary world change proposal.
  */
 export function cleanInvalidAssociations(plan) {
-    for (const [subject, { properties }] of plan.participants) {
+    const resolve = (id) => plan.participant(id);
+    for (const subject of plan.participantIds()) {
+        const { properties } = resolve(subject);
         const associations = properties['asterweave.associations'];
         const retained = associations.filter(({ targetId }) =>
-            validAssociationEndpoints(plan.participants, subject, targetId)
-            && sharesAssociationFrame(plan.participants, subject, targetId));
+            validAssociationEndpoints(resolve, subject, targetId)
+            && sharesAssociationFrame(resolve, subject, targetId));
         if (retained.length !== associations.length) {
             plan.set(subject, 'asterweave.associations', retained);
         }
