@@ -12,9 +12,10 @@ Deliver a functional, extensible, platform-independent headless gameplay engine 
 - [Canonical definitions](contracts/GAME_DEFINITIONS.md), [containment](contracts/WORLD_CONTAINMENT.md), [physical capacity](contracts/PHYSICAL_PROPERTIES.md), [properties](contracts/PROPERTIES.md), [runtime state](contracts/RUNTIME_STATE.md), [save design](contracts/SAVE_DATA.md) and [action contracts](contracts/ACTIONS_AND_RESULTS.md).
 - Native definition validation, isolated initialization, read-only effective-state inspection, independent internal action registry, transactional dispatch and administrative reset infrastructure.
 
+- Internal authoritative containment transfers, derived queries and physical loads, directed association operations, authorized physical property mutations and explicit participant lifecycle operations, with transactional player-control cleanup. Production action handlers and public extension capabilities are not yet available.
+
 ### Remaining capabilities
 
-- Authoritative containment transfers, derived queries, capacity and generic participant lifecycle operations.
 - Supported public extension architecture with restricted capabilities, validation, namespace ownership, transactional state and compatibility.
 - Navigation, observation and shared actor-scoped access, speech, inventory and mechanical interactions; reusable standard handlers for the [planned Foundation actions](contracts/STANDARD_ACTIONS.md).
 - Configurable standard actions, deterministic randomness, declarative conditions/effects and action reactions, declarative custom actions and contextual interactions.

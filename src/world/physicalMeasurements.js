@@ -10,6 +10,8 @@
  * @module world/physicalMeasurements
  */
 
+import { isPositiveSafeInteger, isNonnegativeSafeInteger } from '../shared/safeArithmetic.js';
+
 /** @type {ReadonlyArray<string>} Positive intrinsic measurement fields. */
 export const INTRINSIC_MEASUREMENTS = Object.freeze(['size', 'weight']);
 
@@ -33,3 +35,14 @@ export const MEASUREMENT_LIMITS = Object.freeze([
 
 /** @type {ReadonlyArray<string>} All authored numeric physical fields. */
 export const PHYSICAL_MEASUREMENTS = Object.freeze([...INTRINSIC_MEASUREMENTS, ...MEASUREMENT_LIMITS]);
+
+/**
+ * Checks a known physical measurement value without coercion.
+ * @param {string} name - Unqualified measurement name.
+ * @param {unknown} value - Proposed value.
+ * @returns {boolean} Whether the measurement satisfies its domain range.
+ */
+export function isPhysicalMeasurementValue(name, value) {
+    return INTRINSIC_MEASUREMENTS.includes(name) ? isPositiveSafeInteger(value)
+        : MEASUREMENT_LIMITS.includes(name) && isNonnegativeSafeInteger(value);
+}

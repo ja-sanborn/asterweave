@@ -58,6 +58,20 @@ export class ActionExecutionContext {
     }
 
     /**
+     * Establishes dedicated operation authority.
+     * @param {string} operation - Protected operation name.
+     * @returns {object} Authorized transaction.
+     */
+    #operationAuthority(operation) {
+        const transaction = this.#active();
+        if (!this.#grants.operations.includes(operation)) {
+            transaction.invalidate();
+            throw new TypeError('Unauthorized protected operation.');
+        }
+        return transaction;
+    }
+
+    /**
      * Establishes dedicated player operation authority.
      * @param {string} operation - Protected operation name.
      * @param {string} playerId - Player identity.
@@ -65,12 +79,7 @@ export class ActionExecutionContext {
      * @returns {boolean} Domain eligibility.
      */
     #playerOperation(operation, playerId, actorId) {
-        const transaction = this.#active();
-        if (!this.#grants.operations.includes(operation)) {
-            transaction.invalidate();
-            throw new TypeError('Unauthorized player operation.');
-        }
-        return transaction.playerOperation(operation, playerId, actorId);
+        return this.#operationAuthority(operation).playerOperation(operation, playerId, actorId);
     }
 
     /**
@@ -134,6 +143,118 @@ export class ActionExecutionContext {
      * @returns {boolean} Eligibility.
      */
     clearSelection(playerId) { return this.#playerOperation('clearSelection', playerId); }
+
+    /**
+     * Relocates a physical participant.
+     * @param {string} id - Subject.
+     * @param {string} targetId - Parent or target.
+     * @param {string} relationship - Relationship.
+     * @returns {object} Semantic operation result.
+     */
+    relocate(id, targetId, relationship) {
+        return this.#operationAuthority('relocate')
+            .worldOperation('relocate', id, targetId, relationship);
+    }
+
+    /**
+     * Establishes a directed physical association.
+     * @param {string} id - Subject.
+     * @param {string} targetId - Parent or target.
+     * @param {string} relationship - Relationship.
+     * @returns {object} Semantic operation result.
+     */
+    establishAssociation(id, targetId, relationship) {
+        return this.#operationAuthority('establishAssociation')
+            .worldOperation('establishAssociation', id, targetId, relationship);
+    }
+
+    /**
+     * Removes a directed physical association.
+     * @param {string} id - Subject.
+     * @param {string} targetId - Parent or target.
+     * @param {string} relationship - Relationship.
+     * @returns {object} Semantic operation result.
+     */
+    removeAssociation(id, targetId, relationship) {
+        return this.#operationAuthority('removeAssociation')
+            .worldOperation('removeAssociation', id, targetId, relationship);
+    }
+
+    /**
+     * Sets a restricted physical property.
+     * @param {string} id - Participant identity.
+     * @param {string} name - Unqualified physical property name.
+     * @param {*} value - Proposed value.
+     * @returns {object} Semantic operation result.
+     */
+    setPhysicalProperty(id, name, value) {
+        return this.#operationAuthority('modifyPhysicalProperties')
+            .physicalPropertyOperation('set', id, name, value);
+    }
+
+    /**
+     * Removes a restricted physical property.
+     * @param {string} id - Participant identity.
+     * @param {string} name - Unqualified physical property name.
+     * @returns {object} Semantic operation result.
+     */
+    removePhysicalProperty(id, name) {
+        return this.#operationAuthority('modifyPhysicalProperties')
+            .physicalPropertyOperation('remove', id, name);
+    }
+
+    /**
+     * Resets a restricted physical property.
+     * @param {string} id - Participant identity.
+     * @param {string} name - Unqualified physical property name.
+     * @returns {object} Semantic operation result.
+     */
+    resetPhysicalProperty(id, name) {
+        return this.#operationAuthority('modifyPhysicalProperties')
+            .physicalPropertyOperation('reset', id, name);
+    }
+
+    /**
+     * Activates a participant at explicit placement.
+     * @param {string} id - Participant identity.
+     * @param {string} parentId - Explicit parent.
+     * @param {string} relationship - Placement relationship.
+     * @returns {object} Semantic operation result.
+     */
+    activate(id, parentId, relationship) {
+        return this.#operationAuthority('activate')
+            .lifecycleOperation('activate', id, parentId, relationship);
+    }
+
+    /**
+     * Deactivates an explicitly resolved participant.
+     * @param {string} id - Participant identity.
+     * @returns {object} Semantic operation result.
+     */
+    deactivate(id) {
+        return this.#operationAuthority('deactivate')
+            .lifecycleOperation('deactivate', id);
+    }
+
+    /**
+     * Destroys one explicitly resolved participant.
+     * @param {string} id - Participant identity.
+     * @returns {object} Semantic operation result.
+     */
+    destroy(id) {
+        return this.#operationAuthority('destroy')
+            .lifecycleOperation('destroy', id);
+    }
+
+    /**
+     * Destroys a participant and its active containment subtree.
+     * @param {string} id - Participant identity.
+     * @returns {object} Semantic operation result.
+     */
+    destroyRecursively(id) {
+        return this.#operationAuthority('destroyRecursively')
+            .lifecycleOperation('destroyRecursively', id);
+    }
 
     /**
      * @param {object} output - Semantic output.

@@ -42,8 +42,14 @@ If an applicable finite limit needs a missing size/weight value, reject the defi
 
 Example: backpack size 3, weight 2 contains a notebook size 2, weight 2. Its direct contents use size 2 and weight 2; the actor carrying it uses size 3 and weight 4. Adding a weight-5 item fails the backpack's maxItemWeight 3 regardless of spare total capacity. If an actor's remaining cumulative weight is insufficient, adding a small object to the backpack also fails atomically. A car with maxItemSize 4 and total size capacity 30 cannot accept a size-5 vehicle even when empty.
 
+## Authorized physical mutations
+
+Dedicated internal operations set any of the seven physical properties, remove optional numeric properties and reset to the effective authored baseline (including defaults or absence). Required isContainer cannot be removed. Validate safe integer ranges and Boolean types without coercion; reject World changes. Known nonactive participants may retain or change physical properties without changing lifecycle. Revalidate all affected restrictions, including ancestor weights, before staging. A valid identical value or absent removal is a no-op. Reducing capacity below load, removing a needed measurement or disabling a container with in children rejects without relocating contents. Resolve contents explicitly first. Generic game-property authority does not grant these operations.
+
+Derived load descriptors distinguish unknown inputs and overflow independently; expose an exact numeric value only when neither condition holds. Empty contents have exact zero; World and nonactive participants have no load descriptor. Shared iterative calculations serve validation and detached queries; no persistent load cache.
+
 ## Scope
 
-Initial values live in the canonical definition; The runtime state and property contracts define which values can change and how to preserve them. Validate initial values and all finite limits; enforce them during internal containment transfers and derive loads. Verify integrated behavior when transfers are supported. No capacity-related action, physics, detailed geometry, inventory UI, dynamic lifecycle implementation or new dependency is introduced by this design. See [fixture](../../tests/fixtures/games/containment-foundation.json).
+Initial values live in the canonical definition; current values follow normalized runtime overrides. Internal containment transfers, physical mutations and lifecycle transitions use shared invariants. Player-facing actions, physics, detailed geometry, inventory UI and game-specific mechanics are separate. See [fixture](../../tests/fixtures/games/containment-foundation.json).
 
 Runtime state maps authored structural values to reserved asterweave properties and stores only current differences, including explicit removal of containment when an active participant leaves World. See [properties](PROPERTIES.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md). No duplicate authoritative values; core validation remains mandatory.

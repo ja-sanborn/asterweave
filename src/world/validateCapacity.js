@@ -10,9 +10,8 @@
  * @module world/validateCapacity
  */
 
-import { addNonnegative } from '../shared/safeArithmetic.js';
+import { calculatePhysicalLoads, measurement } from './physicalLoads.js';
 import { INDIVIDUAL_LIMITS, CUMULATIVE_LIMITS } from './physicalMeasurements.js';
-import { WORLD_ID } from './worldRelationships.js';
 import { WORLD_CODES as C } from './worldDiagnostics.js';
 
 /**
@@ -23,37 +22,7 @@ import { WORLD_CODES as C } from './worldDiagnostics.js';
  * @returns {void}
  */
 export function validateCapacity(participants, hierarchy, report) {
-    // Traverse valid rooted branches even when a separate branch is invalid.
-    // A rejected edge cannot contribute to a valid rooted aggregate. Missing
-    // scores on valid children remain independent findings even if another edge fails.
-    const totals = new Map();
-    const pending = [];
-    for (const id of hierarchy.children.get(WORLD_ID) ?? []) {
-        pending.push([id, false]);
-    }
-    while (pending.length > 0) {
-        const [id, visited] = pending.pop();
-        const children = hierarchy.children.get(id) ?? [];
-        if (!visited) {
-            pending.push([id, true]);
-            for (const child of children) {
-                pending.push([child, false]);
-            }
-            continue;
-        }
-        const properties = participants.get(id).properties;
-        let weight = { sum: 0, unknown: false, overflow: false };
-        let size = { sum: 0, unknown: false, overflow: false };
-        for (const child of children) {
-            const childProperties = participants.get(child).properties;
-            size = combine(size, measurement(childProperties['asterweave.size']));
-            weight = combine(weight, totals.get(child));
-        }
-        totals.set(id, combine(weight, measurement(properties['asterweave.weight'])));
-        // Report in authored order in a separate pass.
-        totals.get(id).contentsWeight = weight;
-        totals.get(id).contentsSize = size;
-    }
+    const totals = calculatePhysicalLoads(participants, hierarchy);
     for (const [id, { properties }] of participants) {
         if (properties['asterweave.lifecycle'] !== 'active' || !totals.has(id)) {
             continue;
@@ -78,30 +47,6 @@ export function validateCapacity(participants, hierarchy, report) {
             }
         }
     }
-}
-
-/**
- * Creates an aggregate from one optional intrinsic score.
- * @param {number|undefined} value - Intrinsic score.
- * @returns {object} Checked aggregate.
- */
-function measurement(value) {
-    return { sum: value ?? 0, unknown: value === undefined, overflow: false };
-}
-
-/**
- * Combines independent aggregate scores without unsafe arithmetic.
- * @param {object} left - First aggregate.
- * @param {object} right - Second aggregate.
- * @returns {object} Combined aggregate.
- */
-function combine(left, right) {
-    const sum = addNonnegative(left.sum, right.sum);
-    return {
-        sum: sum ?? Number.MAX_SAFE_INTEGER,
-        unknown: left.unknown || right.unknown,
-        overflow: left.overflow || right.overflow || sum === undefined,
-    };
 }
 
 /**

@@ -103,15 +103,25 @@ export class Player {
         if (resolveActor(id) === undefined) {
             return false;
         }
-        if (this.controls(id)) {
-            const properties = { ...this.#record.properties,
-                'asterweave.controlledActors': this.controlledActors.filter((actor) => actor !== id) };
-            if (this.selectedActor === id) {
-                delete properties['asterweave.selectedActor'];
-            }
-            this.#replace(properties);
-        }
+        this.revokeControls([id]);
         return true;
+    }
+
+    /**
+     * Removes known actor controls as one domain update, clearing affected selection.
+     * @param {Iterable<string>} ids - Actor identities resolved by trusted orchestration.
+     */
+    revokeControls(ids) {
+        const removed = new Set(ids);
+        const controlled = this.controlledActors.filter((actor) => !removed.has(actor));
+        if (controlled.length === this.controlledActors.length) {
+            return;
+        }
+        const properties = { ...this.#record.properties, 'asterweave.controlledActors': controlled };
+        if (removed.has(this.selectedActor)) {
+            delete properties['asterweave.selectedActor'];
+        }
+        this.#replace(properties);
     }
 
     /**

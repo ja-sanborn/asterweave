@@ -17,3 +17,5 @@ Separate inventories/locations/containers; multiple roots; generic unrestricted 
 The [containment contract](../contracts/WORLD_CONTAINMENT.md) is normative. State, validation, initialization, internal containment and navigation follow this design and require integrated verification. No gameplay runtime, custom registration, lifecycle actions, visibility system or multiplayer implementation is introduced. Preserve ADRs 0001–0008.
 
 [ADR 0013](0013-namespaced-properties-and-runtime-state.md) supersedes the accepted format version with 3.0.0; ADRs [0021](0021-standard-navigation-vocabulary.md) and [0022](0022-flexible-physical-measurement-ranges.md) subsequently advance the format to 3.2.0; the historical decision above is retained. See the current [canonical contract](../contracts/GAME_DEFINITIONS.md).
+
+[ADR 0027](0027-authorized-world-transitions.md) elaborates authorized runtime transitions, including explicitly requested recursive destruction. It does not introduce implicit cascading destruction or change the definition format.

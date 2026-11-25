@@ -10,6 +10,9 @@
  * @module state/StateTransaction
  */
 
+import { planPhysicalProperty } from '../world/planPhysicalProperty.js';
+import { planLifecycleOperation } from '../world/planLifecycleOperation.js';
+import { planWorldOperation } from '../world/planWorldOperation.js';
 import { EffectiveStateReader } from './EffectiveStateReader.js';
 import { isGamePropertyKey } from './validateProperties.js';
 import { validateSemanticOutput, validateDetachedSemanticOutput } from './validateSemanticOutput.js';
@@ -95,6 +98,14 @@ export class StateTransaction {
     }
 
     /**
+     * Derives structural queries from the latest isolated candidate.
+     * @returns {object} Detached world query view.
+     */
+    readWorldQueries() {
+        return this.#perform(() => this.#candidate.reader.readWorldQueries());
+    }
+
+    /**
      * Checks candidate presence.
      * @param {object} address - Subject.
      * @param {string} key - Qualified key.
@@ -156,6 +167,88 @@ export class StateTransaction {
      * @param {string} key - Qualified key.
      */
     stagePropertyReset(address, key) { this.#stage('reset', address, key); }
+
+    /**
+     * Plans and stages an authorized world operation using the latest candidate.
+     * @param {string} operation - Protected operation.
+     * @param {string} id - Subject.
+     * @param {string} targetId - Parent or target.
+     * @param {string} relationship - Relationship.
+     * @returns {object} Detached semantic result.
+     */
+    worldOperation(operation, id, targetId, relationship) {
+        return this.#perform(() => {
+            const { reader } = this.#candidate;
+            const proposal = planWorldOperation(
+                reader.readEffectiveState(), operation, id, targetId, relationship,
+            );
+            return this.#stageWorldPlan(proposal);
+        });
+    }
+
+    /**
+     * Stages normalized writes from a successful world proposal.
+     * @param {object} proposal - Internal validated result and changes.
+     * @returns {object} Semantic result only.
+     */
+    #stageWorldPlan({ result, changes }) {
+        const { reader, overrides } = this.#candidate;
+        for (const { address, key, value } of changes) {
+            const initial = reader.getInitialProperty(address, key);
+            if (value === undefined) {
+                overrides.remove(address, key, initial);
+            } else {
+                overrides.set(address, key, value, initial);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Resolves a restricted physical property mutation and validates the proposal.
+     * @param {string} operation - Set, remove or reset.
+     * @param {string} id - Participant identity.
+     * @param {string} name - Unqualified physical property name.
+     * @param {*} [value] - New value for set.
+     * @returns {object} Semantic result.
+     */
+    physicalPropertyOperation(operation, id, name, value) {
+        return this.#perform(() => {
+            const { reader } = this.#candidate;
+            return this.#stageWorldPlan(planPhysicalProperty(
+                reader.readEffectiveState(), operation, id, name, value,
+                (subject, property) => reader.getInitialProperty(
+                    { scope: reader.participantKind(subject), id: subject },
+                    'asterweave.' + property,
+                ).value,
+            ));
+        });
+    }
+
+    /**
+     * Plans lifecycle changes and coordinates required player consequences.
+     * @param {string} operation - Protected lifecycle operation.
+     * @param {string} id - Participant.
+     * @param {string} [parentId] - Activation parent.
+     * @param {string} [relationship] - Activation placement.
+     * @returns {object} Semantic result.
+     */
+    lifecycleOperation(operation, id, parentId, relationship) {
+        return this.#perform(() => {
+            const { reader, player } = this.#candidate;
+            const proposal = planLifecycleOperation(
+                reader.readEffectiveState(), operation, id, parentId, relationship,
+            );
+            const result = this.#stageWorldPlan(proposal);
+            if (result.status === 'completed' && player !== undefined) {
+                const revoked = proposal.changes.filter(({ address, key, value }) =>
+                    address.scope === 'actor' && key === 'asterweave.lifecycle' && value !== 'active')
+                    .map(({ address }) => address.id);
+                player.revokeControls(revoked);
+            }
+            return result;
+        });
+    }
 
     /**
      * Delegates a protected control/selection operation to the candidate Player.

@@ -14,25 +14,11 @@ import { isRecord } from '../shared/recordShape.js';
 import { isIdentifier, isGameId, isVersion } from '../shared/identifiers.js';
 import { inspectJsonData } from '../shared/jsonData.js';
 import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
-import { LIFECYCLE_STATES, CONTAINMENT_RELATIONSHIPS, ASSOCIATION_RELATIONSHIPS,
-    WORLD_ID } from '../world/worldRelationships.js';
-import { INTRINSIC_MEASUREMENTS, MEASUREMENT_LIMITS } from '../world/physicalMeasurements.js';
+import { WORLD_ID } from '../world/worldRelationships.js';
+import { WORLD_PROPERTY_NAMES, isWorldPropertyValue } from '../world/worldPropertyShape.js';
 import { isStandardDirection } from '../world/navigationDirections.js';
 import { isGamePropertyKey } from './validateProperties.js';
 import { validatePropertyAddress } from './propertyAddress.js';
-
-/**
- * Checks a closed two-field physical edge.
- * @param {*} edge - Inspected edge.
- * @param {string} target - ID field.
- * @param {Array<string>} vocabulary - Relationship kinds.
- * @returns {boolean} Validity.
- */
-function edgeValid(edge, target, vocabulary) {
-    return isRecord(edge) && Object.keys(edge).length === 2
-        && Object.hasOwn(edge, target) && isIdentifier(edge[target])
-        && Object.hasOwn(edge, 'relationship') && vocabulary.includes(edge.relationship);
-}
 
 /**
  * Checks a property map's qualified keys and namespace ownership.
@@ -84,31 +70,16 @@ export function validateEffectiveStructure(input) {
             }
             ids.add(record.id);
             const p = record.properties;
-            if (!mapValid(p, namespace, ['id', 'name', 'description', 'lifecycle', 'containment',
-                'associations', 'isContainer', ...INTRINSIC_MEASUREMENTS, ...MEASUREMENT_LIMITS])
+            if (!mapValid(p, namespace, ['id', 'name', 'description', ...WORLD_PROPERTY_NAMES])
                 || p['asterweave.id'] !== record.id || typeof p['asterweave.name'] !== 'string'
                 || p['asterweave.name'].trim().length === 0
-                || !LIFECYCLE_STATES.includes(p['asterweave.lifecycle'])
-                || typeof p['asterweave.isContainer'] !== 'boolean'
-                || !Array.isArray(p['asterweave.associations'])
-                || !p['asterweave.associations'].every((edge) =>
-                    edgeValid(edge, 'targetId', ASSOCIATION_RELATIONSHIPS))) {
+                || !WORLD_PROPERTY_NAMES.every((name) =>
+                    isWorldPropertyValue(name, p['asterweave.' + name]))) {
                 return false;
             }
             if (Object.hasOwn(p, 'asterweave.description')
                 && typeof p['asterweave.description'] !== 'string') {
                 return false;
-            }
-            if (Object.hasOwn(p, 'asterweave.containment')
-                && !edgeValid(p['asterweave.containment'], 'parentId', CONTAINMENT_RELATIONSHIPS)) {
-                return false;
-            }
-            for (const key of [...INTRINSIC_MEASUREMENTS, ...MEASUREMENT_LIMITS]) {
-                const value = p['asterweave.' + key];
-                if (value !== undefined && (!Number.isSafeInteger(value)
-                    || value < (INTRINSIC_MEASUREMENTS.includes(key) ? 1 : 0))) {
-                    return false;
-                }
             }
             if (kind === 'location' && (!Array.isArray(record.exits)
                 || !record.exits.every((exit) => isRecord(exit) && Object.keys(exit).length === 2
