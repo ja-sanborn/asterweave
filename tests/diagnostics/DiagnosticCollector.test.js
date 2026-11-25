@@ -63,3 +63,42 @@ test('rejects invalid internal diagnostic fields', () => {
     }
     assert.equal(collector.size, 0);
 });
+
+test('supports operation-specific source ordering without retaining configuration', () => {
+    const sources = ['registry', 'owner', 'definition', 'handler'];
+    const collector = new DiagnosticCollector(sources);
+    sources.reverse();
+    sources.push('options');
+    collector.add(finding('handler', ''));
+    collector.add(finding('definition', '/z'));
+    collector.add(finding('registry', ''));
+    collector.add(finding('definition', '/a'));
+    collector.add(finding('definition', '/z'));
+    assert.equal(collector.size, 4);
+    assert.deepEqual(
+        collector.snapshot().map(({ source, path }) => [source, path]),
+        [['registry', ''], ['definition', '/z'], ['definition', '/a'], ['handler', '']],
+    );
+    assert.throws(() => collector.add(finding('options', '')), TypeError);
+    assert.throws(() => new DiagnosticCollector().add(finding('handler', '')), TypeError);
+});
+
+test('rejects invalid internal source configurations', () => {
+    for (const sources of [null, 'args', [], ['args', 'args'], [''], ['Args'], ['args\n'], [1]]) {
+        assert.throws(() => new DiagnosticCollector(sources), TypeError);
+    }
+});
+
+test('custom-source snapshots remain immutable and independent', () => {
+    const collector = new DiagnosticCollector(['args']);
+    const original = finding('args', '/direction');
+    collector.add(original);
+    const snapshot = collector.snapshot();
+    original.message = 'changed';
+    collector.add(finding('args', '/target'));
+    assert.equal(snapshot.length, 1);
+    assert.equal(snapshot[0].message, 'Invalid data.');
+    assert.throws(() => { snapshot[0].message = 'changed'; }, TypeError);
+    assert.throws(() => snapshot.push(original), TypeError);
+    assert.equal(new DiagnosticCollector(['args']).size, 0);
+});
