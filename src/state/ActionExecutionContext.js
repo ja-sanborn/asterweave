@@ -215,6 +215,48 @@ export class ActionExecutionContext {
     }
 
     /**
+     * Activates a participant at explicit placement.
+     * @param {string} id - Participant identity.
+     * @param {string} parentId - Explicit parent.
+     * @param {string} relationship - Placement relationship.
+     * @returns {object} Semantic operation result.
+     */
+    activate(id, parentId, relationship) {
+        return this.#operationAuthority('activate')
+            .lifecycleOperation('activate', id, parentId, relationship);
+    }
+
+    /**
+     * Deactivates an explicitly resolved participant.
+     * @param {string} id - Participant identity.
+     * @returns {object} Semantic operation result.
+     */
+    deactivate(id) {
+        return this.#operationAuthority('deactivate')
+            .lifecycleOperation('deactivate', id);
+    }
+
+    /**
+     * Destroys one explicitly resolved participant.
+     * @param {string} id - Participant identity.
+     * @returns {object} Semantic operation result.
+     */
+    destroy(id) {
+        return this.#operationAuthority('destroy')
+            .lifecycleOperation('destroy', id);
+    }
+
+    /**
+     * Destroys a participant and its active containment subtree.
+     * @param {string} id - Participant identity.
+     * @returns {object} Semantic operation result.
+     */
+    destroyRecursively(id) {
+        return this.#operationAuthority('destroyRecursively')
+            .lifecycleOperation('destroyRecursively', id);
+    }
+
+    /**
      * @param {object} output - Semantic output.
      */
     emitOutput(output) { this.#active().stageOutput(output); }

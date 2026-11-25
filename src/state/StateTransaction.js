@@ -12,6 +12,7 @@
 
 import { WORLD_ID } from '../world/worldRelationships.js';
 import { planPhysicalProperty, requirePhysicalPropertyRequest } from '../world/planPhysicalProperty.js';
+import { planLifecycleOperation } from '../world/planLifecycleOperation.js';
 import { planWorldOperation } from '../world/planWorldOperation.js';
 import { EffectiveStateReader } from './EffectiveStateReader.js';
 import { isGamePropertyKey } from './validateProperties.js';
@@ -224,6 +225,31 @@ export class StateTransaction {
             return this.#stageWorldPlan(planPhysicalProperty(
                 reader.readEffectiveState(), id, name, proposed,
             ));
+        });
+    }
+
+    /**
+     * Plans lifecycle changes and coordinates required player consequences.
+     * @param {string} operation - Protected lifecycle operation.
+     * @param {string} id - Participant.
+     * @param {string} [parentId] - Activation parent.
+     * @param {string} [relationship] - Activation placement.
+     * @returns {object} Semantic result.
+     */
+    lifecycleOperation(operation, id, parentId, relationship) {
+        return this.#perform(() => {
+            const { reader, player } = this.#candidate;
+            const proposal = planLifecycleOperation(
+                reader.readEffectiveState(), operation, id, parentId, relationship,
+            );
+            const result = this.#stageWorldPlan(proposal);
+            if (result.status === 'completed' && player !== undefined) {
+                const revoked = proposal.changes.filter(({ address, key, value }) =>
+                    address.scope === 'actor' && key === 'asterweave.lifecycle' && value !== 'active')
+                    .map(({ address }) => address.id);
+                player.revokeControls(revoked);
+            }
+            return result;
         });
     }
 

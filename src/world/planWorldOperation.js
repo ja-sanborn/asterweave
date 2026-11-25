@@ -10,6 +10,7 @@
  * @module world/planWorldOperation
  */
 
+import { cleanInvalidAssociations } from './cleanInvalidAssociations.js';
 import { WorldChangePlan } from './WorldChangePlan.js';
 import { WORLD_CODES as C } from './worldDiagnostics.js';
 import { CONTAINMENT_RELATIONSHIPS, ASSOCIATION_RELATIONSHIPS, WORLD_ID } from './worldRelationships.js';
@@ -58,14 +59,7 @@ function relocate(plan, id, parentId, relationship) {
         return C.INVALID_CONTAINMENT;
     }
     plan.set(id, 'asterweave.containment', { parentId, relationship });
-    for (const [subject, { properties }] of plan.participants) {
-        const associations = properties['asterweave.associations'];
-        const retained = associations.filter(({ targetId }) =>
-            sharesAssociationFrame(plan.participants, subject, targetId));
-        if (retained.length !== associations.length) {
-            plan.set(subject, 'asterweave.associations', retained);
-        }
-    }
+    cleanInvalidAssociations(plan);
     return undefined;
 }
 

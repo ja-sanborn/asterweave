@@ -13,4 +13,5 @@
 /** @type {ReadonlyArray<string>} Supported protected world operation grants. */
 export const WORLD_OPERATIONS = Object.freeze([
     'relocate', 'establishAssociation', 'removeAssociation', 'modifyPhysicalProperties',
+    'activate', 'deactivate', 'destroy', 'destroyRecursively',
 ]);
