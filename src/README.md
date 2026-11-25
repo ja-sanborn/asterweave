@@ -11,3 +11,5 @@ Read the [documentation index](../docs/README.md), [architecture](../docs/ARCHIT
 The internal shared and diagnostics modules establish descriptor-based JSON data inspection, detached immutable copies, canonical identifier grammar, checked arithmetic, JSON Pointer paths and per-operation diagnostic aggregation. These internal exports are not public APIs. Validation orchestration and game initialization are subsequent FND-05 increments.
 
 The internal results modules implement common status predicates, controlled specialized result construction, detached diagnostic data and operation-specific serialization under ADR 0020. Execution-boundary integration and public facade construction remain subsequent increments.
+
+The internal definition modules validate the authored prerequisites for canonical format 3.2.0, including closed shapes, scalar grammar, shared identities, directed exits and typed references. The shared world vocabulary is immutable. This stage alone does not establish effective-state validity or initialize a game; candidate mapping and domain invariant validation remain the next FND-05 increment.
