@@ -32,5 +32,6 @@ Use sequential filenames such as `0001-platform-independent-runtime.md`. Each re
 | [0024](0024-runtime-transactions-and-action-execution.md) | Runtime transactions and action execution | Accepted; elaborates 0006, 0013–0016, 0019, 0023 |
 | [0025](0025-runtime-reset-and-integrity-recovery.md) | Runtime reset and integrity recovery | Accepted; elaborates 0015, 0017–0020 |
 | [0026](0026-functional-foundation-and-optional-extension-boundaries.md) | Functional Foundation and optional extension boundaries | Accepted |
+| [0027](0027-authorized-world-transitions.md) | Authorized world transitions | Accepted; elaborates 0011–0012, 0022–0024 |
 
 Current canonical format is 3.2.0 under ADRs 0013, 0021 and 0022 and the [definition contract](../contracts/GAME_DEFINITIONS.md). Save format 1.0.0 is specified separately. See [coding standards](../CODE_STYLE.md) and [testing strategy](../../tests/README.md) for implementation and verification requirements.
