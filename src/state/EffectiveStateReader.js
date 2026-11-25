@@ -10,6 +10,7 @@
  * @module state/EffectiveStateReader
  */
 
+import { WorldQueries } from '../world/WorldQueries.js';
 import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
 import { WORLD_ID } from '../world/worldRelationships.js';
 import { validatePropertyAddress } from './propertyAddress.js';
@@ -221,6 +222,12 @@ export class EffectiveStateReader {
         });
         return immutableCopy(records);
     }
+
+    /**
+     * Derives a detached world query view from current effective records.
+     * @returns {WorldQueries} Point-in-time structural queries.
+     */
+    readWorldQueries() { return new WorldQueries(this.readEffectiveState()); }
 
     /**
      * Builds read-only effective records for validators and snapshots.

@@ -48,3 +48,32 @@ test('effective reads distinguish null, removal and isolated candidate values', 
     candidateStore.reset(pair, 'game.note');
     assert.deepEqual(candidate.listRelationships(), []);
 });
+
+test('world query views follow isolated effective placement overrides', () => {
+    const properties = (parentId) => ({
+        'asterweave.lifecycle': 'active',
+        'asterweave.isContainer': true,
+        'asterweave.associations': [],
+        'asterweave.containment': { parentId, relationship: 'in' },
+    });
+    const baseline = new GameBaseline({
+        game: {}, world: { properties: {} },
+        locations: ['roomA', 'roomB'].map((id) => ({ id, properties: properties('world'), exits: [] })),
+        actors: [{ id: 'hero', properties: properties('roomA') }], entities: [],
+        players: [], relationships: [],
+    });
+    const store = new PropertyOverrideStore();
+    const committed = new EffectiveStateReader(baseline, store);
+    const candidateStore = store.clone();
+    const candidate = new EffectiveStateReader(baseline, candidateStore);
+    const address = { scope: 'actor', id: 'hero' };
+    const key = 'asterweave.containment';
+    const before = candidate.readWorldQueries();
+    candidateStore.set(address, key, { parentId: 'roomB', relationship: 'in' },
+        candidate.getInitialProperty(address, key));
+    assert.equal(candidate.readWorldQueries().effectiveLocation('hero'), 'roomB');
+    assert.equal(committed.readWorldQueries().effectiveLocation('hero'), 'roomA');
+    assert.equal(before.effectiveLocation('hero'), 'roomA');
+    candidateStore.reset(address, key);
+    assert.equal(candidate.readWorldQueries().effectiveLocation('hero'), 'roomA');
+});

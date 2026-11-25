@@ -15,7 +15,7 @@ import { validateInitialViability } from './validateInitialViability.js';
 import { validateContainment } from './validateContainment.js';
 import { validateAssociations } from './validateAssociations.js';
 import { validateCapacity } from './validateCapacity.js';
-import { PARTICIPANT_CATEGORIES } from './worldVocabulary.js';
+import { indexParticipants } from './indexParticipants.js';
 
 /**
  * Checks structurally valid effective physical records.
@@ -24,12 +24,7 @@ import { PARTICIPANT_CATEGORIES } from './worldVocabulary.js';
  * @param {boolean} initial - Whether initialization viability is required.
  */
 export function validateWorldState(state, report, initial = false) {
-    const participants = new Map();
-    for (const { collection, kind } of PARTICIPANT_CATEGORIES) {
-        for (const { id, properties } of state[collection]) {
-            participants.set(id, { kind, properties });
-        }
-    }
+    const participants = indexParticipants(state);
     const invalid = validateLifecycle(participants, report);
     if (initial) {
         validateInitialViability(participants, report);

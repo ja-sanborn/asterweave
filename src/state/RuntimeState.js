@@ -125,6 +125,15 @@ export class RuntimeState {
         return this.#committed.reader.readEffectiveState();
     }
     /**
+     * Derives structural queries from the current committed state.
+     * @returns {object} Detached world query view.
+     */
+    readWorldQueries() {
+        this.#requireReadable();
+        return this.#committed.reader.readWorldQueries();
+    }
+
+    /**
      * Reconstructs original mutable containers from immutable initialization inputs.
      * @returns {object} Independent initial state record.
      */

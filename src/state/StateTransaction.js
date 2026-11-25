@@ -95,6 +95,14 @@ export class StateTransaction {
     }
 
     /**
+     * Derives structural queries from the latest isolated candidate.
+     * @returns {object} Detached world query view.
+     */
+    readWorldQueries() {
+        return this.#perform(() => this.#candidate.reader.readWorldQueries());
+    }
+
+    /**
      * Checks candidate presence.
      * @param {object} address - Subject.
      * @param {string} key - Qualified key.
