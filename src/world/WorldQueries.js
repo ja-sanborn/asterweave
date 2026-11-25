@@ -10,6 +10,7 @@
  * @module world/WorldQueries
  */
 
+import { calculatePhysicalLoads, describeLoad } from './physicalLoads.js';
 import { indexParticipants } from './indexParticipants.js';
 import { validateContainment } from './validateContainment.js';
 import { validateLifecycle } from './validateLifecycle.js';
@@ -23,6 +24,8 @@ export class WorldQueries {
     #parents;
     /** @type {Map} Validated derived child index. */
     #children;
+    /** @type {Map} Detached checked load aggregates for this temporary view. */
+    #loads;
 
     /**
      * Builds a temporary query view from structurally valid effective records.
@@ -40,6 +43,7 @@ export class WorldQueries {
         }
         this.#parents = hierarchy.parents;
         this.#children = hierarchy.children;
+        this.#loads = calculatePhysicalLoads(participants, hierarchy);
         for (const [id, { kind, properties }] of participants) {
             const containment = properties['asterweave.containment'];
             this.#participants.set(id, Object.freeze({
@@ -216,4 +220,20 @@ export class WorldQueries {
      * @returns {ReadonlyArray<string>} Held items.
      */
     heldItems(id) { return this.#actorBranches(id, ['held']); }
+    /**
+     * Returns checked direct size and recursive weight, excluding the subject.
+     * @param {string} id - Participant identity.
+     * @returns {object|undefined} Immutable loads, absent for World and nonactive participants.
+     */
+    physicalLoad(id) {
+        this.#requireIdentity(id);
+        const load = this.#loads.get(id);
+        if (load === undefined) {
+            return undefined;
+        }
+        return Object.freeze({
+            size: describeLoad(load.contentsSize),
+            weight: describeLoad(load.contentsWeight),
+        });
+    }
 }
