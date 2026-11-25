@@ -12,6 +12,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { setImmediate } from 'node:timers/promises';
 import { validateActionDefinition } from '../../src/actions/validateActionDefinition.js';
 import { validateActionArguments } from '../../src/actions/validateActionArguments.js';
 
@@ -167,4 +168,29 @@ test('prototype-related argument names require explicit own declarations and val
     assert.equal(validateActionArguments(def, { constructor: 'item' }).status, 'completed');
     assert.equal(validateActionArguments(definition({}), { constructor: 'item' }).status, 'rejected');
     assert.equal(validateActionArguments(definition({}), JSON.parse('{"__proto__":{}}')).status, 'rejected');
+});
+
+test('rejects unsupported validator categories before invocation', () => {
+    const def = definition({});
+    let calls = 0;
+    for (const validator of [
+        async () => { calls++; return []; },
+        function* () { calls++; },
+        async function* () { calls++; },
+    ]) {
+        assert.throws(() => validateActionArguments(def, {}, validator), TypeError);
+    }
+    assert.equal(calls, 0);
+});
+
+test('rejects accidental native Promise returns without unhandled rejection or thenable execution', async () => {
+    const def = definition({});
+    assert.throws(() => validateActionArguments(def, {}, () => Promise.resolve([])), TypeError);
+    assert.throws(() => validateActionArguments(def, {}, () => Promise.reject(new Error('private'))), TypeError);
+    let accessed = false;
+    const thenable = { get then() { accessed = true; throw new Error('must not execute'); } };
+    assert.throws(() => validateActionArguments(def, {}, () => thenable), TypeError);
+    assert.equal(accessed, false);
+    // Allow the native test runner to detect any unhandled rejection.
+    await setImmediate();
 });

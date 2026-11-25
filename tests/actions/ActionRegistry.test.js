@@ -164,3 +164,33 @@ test('finalization is irreversible and idempotent without inspecting later input
     assert.equal(registry.has('look'), true);
     assert.equal(registry.size, 1);
 });
+
+test('rejects identifiable asynchronous and generator associations without executing them', () => {
+    const { registry, engineOwner } = ActionRegistry.create();
+    let calls = 0;
+    const asyncHandler = async () => { calls++; };
+    const generator = function* () { calls++; };
+    const asyncGenerator = async function* () { calls++; };
+    for (const unsupported of [asyncHandler, generator, asyncGenerator,
+        asyncHandler.bind(null), generator.bind(null), asyncGenerator.bind(null),
+    ]) {
+        assert.deepEqual(codes(registry.register(engineOwner, definition('look'), unsupported)),
+            ['INVALID_HANDLER']);
+        assert.deepEqual(codes(registry.register(engineOwner, definition('look'), handler, unsupported)),
+            ['INVALID_VALIDATOR']);
+    }
+    assert.equal(calls, 0);
+    assert.equal(registry.size, 0);
+    assert.equal(registry.register(engineOwner, definition('look'), handler.bind(null), () => []).status,
+        'completed');
+});
+
+test('association reflection failure releases the registry modification guard', () => {
+    const { registry, engineOwner } = ActionRegistry.create();
+    const error = new Error('association reflection failed');
+    const proxy = new Proxy(handler, { getPrototypeOf() { throw error; } });
+    assert.throws(() => registry.register(engineOwner, definition('look'), proxy),
+        (caught) => caught === error);
+    assert.equal(registry.size, 0);
+    assert.equal(registry.register(engineOwner, definition('look'), handler).status, 'completed');
+});

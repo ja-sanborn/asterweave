@@ -10,6 +10,7 @@
  * @module actions/validateActionArguments
  */
 
+import { isSynchronousAssociation } from './executableAssociations.js';
 import { DiagnosticCollector } from '../diagnostics/DiagnosticCollector.js';
 import { addActionFinding } from './actionDiagnostics.js';
 import { appendPointer } from '../diagnostics/jsonPointer.js';
@@ -27,8 +28,8 @@ import { isRecord, matchesArgumentType, matchesReferenceSyntax } from './argumen
  * @throws {TypeError} On invalid internal validator association or return contract.
  */
 export function validateActionArguments(definition, input, validator) {
-    if (validator !== undefined && typeof validator !== 'function') {
-        throw new TypeError('Expected a trusted argument validator.');
+    if (validator !== undefined && !isSynchronousAssociation(validator)) {
+        throw new TypeError('Expected a trusted synchronous argument validator.');
     }
     const collector = new DiagnosticCollector(['args']);
     const { value, issues } = inspectJsonData(input);
@@ -100,6 +101,7 @@ function validateStructure(specifications, args, collector) {
  * @throws {TypeError} On invalid finding data or fields.
  */
 function collectSpecializedFindings(findings, collector) {
+    rejectNonArrayReturn(findings);
     const { value, issues } = inspectJsonData(findings);
     if (issues.length > 0 || !Array.isArray(value)) {
         throw new TypeError('Expected a synchronous argument diagnostic array.');
@@ -112,4 +114,26 @@ function collectSpecializedFindings(findings, collector) {
         }
         collector.add(finding);
     }
+}
+
+/**
+ * Rejects non-array returns and observes rejection of accidental native Promises.
+ * The intrinsic then performs a Promise brand check without assimilating thenables.
+ * No result is awaited or used; the synchronous contract violation still throws.
+ * @param {unknown} findings - Trusted validator return value.
+ * @throws {TypeError} On a non-array return.
+ */
+function rejectNonArrayReturn(findings) {
+    if (Array.isArray(findings)) {
+        return;
+    }
+    if (findings !== null && typeof findings === 'object') {
+        try {
+            Promise.prototype.then.call(findings, undefined, () => undefined);
+        } catch (error) {
+            // Non-Promise objects fail the native brand check. Preserve the cause.
+            throw new TypeError('Expected a synchronous argument diagnostic array.', { cause: error });
+        }
+    }
+    throw new TypeError('Expected a synchronous argument diagnostic array.');
 }

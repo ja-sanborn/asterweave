@@ -10,6 +10,7 @@
  * @module actions/ActionRegistry
  */
 
+import { isSynchronousAssociation } from './executableAssociations.js';
 import { isIdentifier } from '../shared/identifiers.js';
 import { classifyActionType, isReservedActionNamespace } from './actionIdentifiers.js';
 import { validateActionDefinition } from './validateActionDefinition.js';
@@ -108,12 +109,13 @@ export class ActionRegistry {
             if (validation.status === 'completed') {
                 this.#checkOwnership(owner, validation.definition.type, collector);
             }
-            if (typeof handler !== 'function') {
-                addActionFinding(collector, 'handler', 'INVALID_HANDLER', '', 'Expected a trusted handler function.');
+            if (!isSynchronousAssociation(handler)) {
+                addActionFinding(collector, 'handler', 'INVALID_HANDLER', '',
+                    'Expected a trusted synchronous handler function.');
             }
-            if (validator !== undefined && typeof validator !== 'function') {
+            if (validator !== undefined && !isSynchronousAssociation(validator)) {
                 addActionFinding(collector, 'validator', 'INVALID_VALIDATOR', '',
-                    'Expected a trusted validator function.');
+                    'Expected a trusted synchronous validator function.');
             }
             const result = actionRegistryResult(collector);
             if (result.status === 'completed') {
