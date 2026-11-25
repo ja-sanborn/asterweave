@@ -37,3 +37,5 @@ Future ActionResult serialization preserves the existing action result envelope,
 Document and test status predicates, result invariants, immutable detached data, construction control, operation-specific envelopes, serialization field presence and omission, and TypeError for unsupported serialization. Preserve the existing action contracts and exception boundaries. Introduce result types only as required by supported operations. No schema version change, implementation, dependency or release is implied.
 
 See [public API](../contracts/PUBLIC_API.md), [error handling](../contracts/ERROR_HANDLING.md), [action results](../contracts/ACTIONS_AND_RESULTS.md), [coding standards](../CODE_STYLE.md) and [testing strategy](../../tests/README.md).
+
+Subsequent decision: [ADR 0025](0025-runtime-reset-and-integrity-recovery.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.

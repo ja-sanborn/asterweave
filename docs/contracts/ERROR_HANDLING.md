@@ -41,7 +41,7 @@ Initialization validates definitions and applicable configuration before publish
 
 [Save restoration](SAVE_DATA.md#compatibility-and-restore) rejects invalid candidates atomically; exact codes and public interfaces remain Phase 2 work. Future Creator diagnostics may reuse the definition convention where appropriate.
 
-Internal action registration and argument validation have their own diagnostic sources and immutable completed/rejected records, specified in [action definitions](ACTION_DEFINITIONS.md). These records are not public ActionResult or initialization diagnostics. Malformed specialized validator returns and unexpected reflective failures are internal exceptions; future dispatch translates them at its operation boundary.
+Internal action registration and argument validation have their own diagnostic sources and immutable completed/rejected records, specified in [action definitions](ACTION_DEFINITIONS.md). These records are not public ActionResult or initialization diagnostics. Malformed specialized validator returns and unexpected reflective failures are internal exceptions; the dispatcher translates them at its operation boundary.
 
 ## Runtime execution failures
 
@@ -49,9 +49,9 @@ Reentrant dispatch rejects with ACTION_UNAVAILABLE. Compromised runtime dispatch
 
 ## Reset result
 
-ResetResult is an operation-specific read-only result extending OperationResult. Status is completed, rejected or error. The error field is absent on completion; otherwise it is a closed record containing only code. RESET_UNAVAILABLE is a rejection when another runtime operation is active; RESET_FAILED is an unexpected reset or integrity-establishment failure. No actor, gameplay outcome, turns or semantic outputs. toJSON returns detached status and error where applicable, excluding derived predicates. Construction remains engine-controlled.
+ResetResult is an operation-specific read-only result extending OperationResult. Status is completed, rejected or error. The error field is absent on completion; otherwise it is a closed record containing only code. RESET_UNAVAILABLE is a rejection when another runtime operation is active; RESET_FAILED is an unexpected reset or integrity-establishment failure. Inherit all five OperationResult predicates (isCompleted, isRejected, isError, isSuccess, isFailure) unchanged. No actor, gameplay outcome, turns or semantic outputs. toJSON returns detached status and error where applicable, excluding derived predicates. Construction remains engine-controlled.
 
-When committed integrity is uncertain, turn and getStateSnapshot() throw a native Error with a safe fixed message rather than expose invalid state. Verified immutable game metadata remains accessible. Recovery requires successful validated reset; failed recovery does not publish a candidate or authorize gameplay. See [ADR 0025](../decisions/0025-runtime-reset-and-integrity-recovery.md).
+When committed integrity is uncertain, turn and getStateSnapshot() throw a native Error with a safe fixed message rather than expose invalid state. Verified immutable game metadata remains accessible. Recovery requires successful bounded verification under the [runtime state contract](RUNTIME_STATE.md#administrative-reset-and-integrity); failed recovery does not publish a candidate or authorize gameplay. Verification cannot repair executable code or guarantee environmental integrity. See [ADR 0025](../decisions/0025-runtime-reset-and-integrity-recovery.md).
 
 ## Standardized operation results
 

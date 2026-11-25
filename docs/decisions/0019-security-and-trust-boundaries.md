@@ -26,3 +26,5 @@ Preserve safe diagnostics, fail-closed integrity and host-owned logging under AD
 ## Consequences
 
 Validate at applicable boundaries, test malformed data and unauthorized operations, avoid unsafe presentation assumptions and review resource consumption. Hosts must impose deployment-specific protections. Authentication, sandboxing, quotas, cryptographic package protection and disposal APIs are not implemented or designed in detail by this record. Existing schemas and accepted contracts are preserved.
+
+Subsequent decision: [ADR 0024](0024-runtime-transactions-and-action-execution.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.

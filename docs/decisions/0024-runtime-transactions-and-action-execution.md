@@ -14,6 +14,10 @@ Compose a dedicated dispatcher, isolated transaction and restricted synchronous 
 
 Reuse pure domain validation across initialization and candidate transitions, separating initial viability from ongoing invariants. Check local mutation preconditions and complete candidate integrity before commit. Use checked arithmetic without intermediate iteration until events exist; preserve future ordered intermediate event semantics. No production placeholder handlers, direct public state setters, middleware, event bus, async execution, gameplay undo or persistence implementation. Trusted executable code is not sandboxed; atomicity covers engine-owned state only.
 
+### Clarifications
+
+Separate initialization viability, shared effective structural prerequisites and domain invariants, and forward-transition checks; preserve existing initialization diagnostics and independent findings. Lifecycle mechanics remain deferred while their invariants and player consistency are enforced. Share effective-property resolution across consumers without duplicating authoritative state. Separate argument structure/syntax, runtime reference existence/category and action-specific eligibility. Engine-established mutation capabilities are independent of actor control and registration ownership. Share synchronous-return protection where applicable without merging return contracts. Preserve inherited result semantics and deterministic rejection precedence with safe identity echo; trusted-host results are not remote-client privacy guarantees. Normative details remain in the linked contracts.
+
 ## Alternatives
 
 Live mutation with inverse journals risks incomplete rollback. Full baseline cloning duplicates immutable data. Copy-on-write adds complexity before measured need. Facade-owned or handler-owned orchestration couples responsibilities. A universal property dictionary or separate stores duplicate or weaken domain rules. Declarative-only handlers and middleware are premature.

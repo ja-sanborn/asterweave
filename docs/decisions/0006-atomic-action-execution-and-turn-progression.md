@@ -17,3 +17,5 @@ Handler-owned turns; a single ambiguous success/failure status; fixed costs for 
 ## Consequences
 
 Transaction guarantees and dispatcher integration precede movement implementation. Configuration and event scheduling are later capabilities. See [action and result contracts](../contracts/ACTIONS_AND_RESULTS.md). This record accepts a design, not implemented behavior.
+
+Subsequent decision: [ADR 0024](0024-runtime-transactions-and-action-execution.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.
