@@ -13,15 +13,17 @@
 import { GameDefinitionValidator } from '../definition/GameDefinitionValidator.js';
 import { validatePlayerConfiguration } from '../state/validatePlayerConfiguration.js';
 import { RuntimeState } from '../state/RuntimeState.js';
+import { ActionRegistry } from '../actions/ActionRegistry.js';
 
 /** Sequences initial candidate validation and runtime ownership. */
 export class GameInitializer {
     /**
-     * Validates both arguments and constructs state only if all checks succeed.
+     * Validates both arguments and constructs state and registry only if all checks succeed.
      * @param {unknown} definition - Parsed canonical game definition.
      * @param {unknown} [options] - Optional initialization configuration.
-     * @returns {{state: RuntimeState|undefined, diagnostics: ReadonlyArray<object>}}
-     *     Complete state or ordered validation findings; never partial state.
+     * @returns {{state: RuntimeState|undefined, registry: ActionRegistry|undefined,
+     *     diagnostics: ReadonlyArray<object>}}
+     *     Complete runtime collaborators or ordered findings; never partial runtime.
      */
     initialize(definition, options) {
         const validated = new GameDefinitionValidator().validate(definition);
@@ -31,11 +33,15 @@ export class GameInitializer {
             ...configuration.diagnostics,
         ]);
         if (diagnostics.length !== 0) {
-            return { state: undefined, diagnostics };
+            return { state: undefined, registry: undefined, diagnostics };
         }
-        return {
-            state: new RuntimeState(validated.candidate, configuration.options),
-            diagnostics,
-        };
+        const state = new RuntimeState(validated.candidate, configuration.options);
+        const { registry } = ActionRegistry.create();
+        // Only real executable handlers may be registered in production.
+        const finalized = registry.finalize();
+        if (finalized.status !== 'completed') {
+            throw new Error('Action registry finalization failed.');
+        }
+        return { state, registry, diagnostics };
     }
 }

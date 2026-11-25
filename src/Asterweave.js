@@ -23,18 +23,25 @@ const CONSTRUCTION = Symbol('Asterweave');
 export class Asterweave {
     /** @type {import('./state/RuntimeState.js').RuntimeState} Owned runtime state. */
     #state;
+    /** @type {import('./actions/ActionRegistry.js').ActionRegistry} Owned finalized action registry. */
+    #registry;
 
     /**
      * Constructs a game only from the internal initialization factory.
      * @param {symbol} token - Private construction capability.
      * @param {import('./state/RuntimeState.js').RuntimeState} state - Validated runtime.
-     * @throws {TypeError} If constructed outside the supported factory.
+     * @param {import('./actions/ActionRegistry.js').ActionRegistry} registry - Finalized registry.
+     * @throws {TypeError} If constructed outside the supported factory or registry is not finalized.
      */
-    constructor(token, state) {
+    constructor(token, state, registry) {
         if (token !== CONSTRUCTION) {
             throw new TypeError('Use Asterweave.initializeGame().');
         }
+        if (registry?.isFinalized !== true) {
+            throw new TypeError('Expected a finalized action registry.');
+        }
         this.#state = state;
+        this.#registry = registry;
         Object.freeze(this);
     }
 
@@ -62,11 +69,11 @@ export class Asterweave {
      */
     static initializeGame(definition, options) {
         try {
-            const { state, diagnostics } = new GameInitializer().initialize(definition, options);
+            const { state, registry, diagnostics } = new GameInitializer().initialize(definition, options);
             if (diagnostics.length !== 0) {
                 return InitializationResult.rejected(diagnostics);
             }
-            return InitializationResult.completed(new Asterweave(CONSTRUCTION, state));
+            return InitializationResult.completed(new Asterweave(CONSTRUCTION, state, registry));
         } catch (error) {
             // Fail closed: a partial game is never published.
             return InitializationResult.failed();
