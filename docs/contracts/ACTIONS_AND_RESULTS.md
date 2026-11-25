@@ -1,6 +1,6 @@
 # Action and result contracts
 
-Status: Runtime action execution infrastructure; production gameplay handlers remain deferred.
+Status: Runtime action execution infrastructure; production gameplay handlers are planned Foundation work.
 
 This specification elaborates [ADR 0002](../decisions/0002-unified-action-contract.md) and [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md). Commands, choices, narrative and direct callers submit the same platform-independent data. Only the dispatcher authorizes and commits world transitions.
 
@@ -95,13 +95,13 @@ Expected domain precondition failures are rejections. Unexpected malformed retur
 
 ## Representative examples
 
-Illustrative well-formed Foundation movement request (the production movement handler remains deferred):
+Illustrative well-formed Foundation movement request (the production movement handler is not yet implemented):
 
 ```json
 {"actorId":"player","type":"move","args":{"direction":"north"}}
 ```
 
-Valid future observation (not implemented in Foundation):
+Illustrative observation request (planned Foundation action, not yet implemented):
 
 ```json
 {"actorId":"player","type":"examine","args":{"targetId":"chest","relation":"in"}}
@@ -157,7 +157,7 @@ World references and relationship semantics follow [world containment](WORLD_CON
 
 ## Turn and transaction invariants
 
-The dispatcher alone advances turns. It resolves success/failure costs from trusted action definitions, commits the outcome, state and turn delta together, and releases committed outputs only after success of the transaction. Rejected actions and execution errors leave all engine-owned state unchanged, including random state and pending events when introduced. Foundation successful movement costs one turn; invalid or unavailable exits are rejected and cost zero. Future game overrides apply only to completed outcomes. Use checked nonnegative safe-integer addition without per-turn iteration while no intermediate events exist. Intermediate scheduled turns must not be skipped when events are introduced; exact event ordering and interruption semantics belong to the future rules/events design. See [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).
+The dispatcher alone advances turns. It resolves success/failure costs from trusted action definitions, commits the outcome, state and turn delta together, and releases committed outputs only after success of the transaction. Rejected actions and execution errors leave all engine-owned state unchanged, including random state and pending events when introduced. The initial movement design defaults to one turn on success; invalid or unavailable exits are rejected and cost zero under the current contract. Planned Foundation game overrides apply only to completed outcomes. Use checked nonnegative safe-integer addition without per-turn iteration while no intermediate events exist. Intermediate scheduled turns must not be skipped when events are introduced; exact event ordering and authorized internal actor execution belong to the planned Foundation rules/events design; interruption semantics remain subject to separate review. See [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).
 
 ## Runtime state authority
 

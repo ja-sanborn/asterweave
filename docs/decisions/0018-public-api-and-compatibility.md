@@ -26,3 +26,7 @@ Public interfaces, semantic behavior, errors, defaults and compatibility must be
 Concrete entry point paths, signatures, classes, export lists and lifecycle interfaces require explicit implementation-design authorization. This record introduces no implementation or package changes.
 
 Subsequent decision: [ADR 0025](0025-runtime-reset-and-integrity-recovery.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.
+
+## Subsequent scope clarification
+
+[ADR 0026](0026-functional-foundation-and-optional-extension-boundaries.md) establishes supported extension contracts and standalone distribution as Foundation deliverables. Concrete public interfaces require separate design and verification; current supported APIs and version authorities are unchanged.

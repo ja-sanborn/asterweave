@@ -41,3 +41,7 @@ This decision preserves existing action, definition and save formats and error m
 A subsequent diagnostic design decision adds a required source to definition and initialization configuration diagnostics, identifying the input argument to which the JSON Pointer is relative. See the current [error-handling contract](../contracts/ERROR_HANDLING.md). Existing action error envelopes are unchanged.
 
 Subsequent decision: [ADR 0025](0025-runtime-reset-and-integrity-recovery.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.
+
+## Subsequent scope clarification
+
+[ADR 0026](0026-functional-foundation-and-optional-extension-boundaries.md) supersedes the Phase 2 restoration timing above. Persistence and supported extension diagnostics require detailed Foundation design review; the existing error-handling principles remain in force.

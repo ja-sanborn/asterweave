@@ -1,6 +1,6 @@
 # Save data
 
-Status: Accepted design; serialization/restoration implementation is planned for Phase 2. See [ADR 0015](../decisions/0015-state-isolation-and-persistence.md), [runtime state](RUNTIME_STATE.md) and [properties](PROPERTIES.md).
+Status: Accepted design; serialization/restoration implementation is planned within Foundation. See [ADR 0015](../decisions/0015-state-isolation-and-persistence.md), [runtime state](RUNTIME_STATE.md) and [properties](PROPERTIES.md).
 
 ## Envelope 1.0.0
 
@@ -24,11 +24,11 @@ Deterministic serialization orders override records by scope world, location, en
 
 ## Compatibility and restore
 
-Follow the [error-handling contract](ERROR_HANDLING.md) for deterministic safe diagnostics, candidate validation and atomic failure. Exact restoration codes and public interfaces remain Phase 2 work; storage failures are host-owned.
+Follow the [error-handling contract](ERROR_HANDLING.md) for deterministic safe diagnostics, candidate validation and atomic failure. Exact restoration codes and public interfaces require Foundation persistence design review; storage failures are host-owned.
 
-Treat every save as untrusted. Require supported versions and exact game ID, content version and definition format match. Version matching relies on authors incrementing content version for changed released baselines; it cannot prove byte-equivalent definitions. Definition fingerprinting and migration are deferred. No silent migration/coercion. Optional extension state will require explicit compatibility contracts when introduced; unsupported namespace state rejects rather than silently disappearing.
+Treat every save as untrusted. Require supported versions and exact game ID, content version and definition format match. Version matching relies on authors incrementing content version for changed released baselines; it cannot prove byte-equivalent definitions. Definition fingerprinting and migration are deferred. No silent migration/coercion. Pending event state, deterministic random state and supported extension-owned transactional state require explicit Foundation compatibility and serialization contracts; the current envelope does not yet define those fields. Any format revision requires explicit approval. Unsupported namespace state rejects rather than silently disappearing.
 
-Validate envelope and plain data, references/ownership, property mutations and removals, reconstruct a fresh candidate from the current immutable baseline plus saved overrides and full dynamic player records, then validate the complete effective state. Validate control, identity, turn, lifecycle, association, containment and capacity invariants without applying gameplay actions or requiring forward transitions from the currently running state. A saved destroyed participant stays destroyed; restoring an earlier valid active state is allowed. An authored initially destroyed participant cannot become active through an override. Never merge a save into unrelated current state. Commit replacement atomically or preserve the running state unchanged. No side effects, turns or historical action replay. Structured diagnostic codes and public API are Phase 2 implementation details; diagnostics must be deterministic and safe. Reset restores initial configuration rather than saved player control.
+Validate envelope and plain data, references/ownership, property mutations and removals, reconstruct a fresh candidate from the current immutable baseline plus saved overrides and full dynamic player records, then validate the complete effective state. Validate control, identity, turn, lifecycle, association, containment and capacity invariants without applying gameplay actions or requiring forward transitions from the currently running state. A saved destroyed participant stays destroyed; restoring an earlier valid active state is allowed. An authored initially destroyed participant cannot become active through an override. Never merge a save into unrelated current state. Commit replacement atomically or preserve the running state unchanged. No side effects, turns or historical action replay. Structured diagnostic codes and public API are pending Foundation implementation details; diagnostics must be deterministic and safe. Reset restores initial configuration rather than saved player control.
 
 ## Storage and protection
 

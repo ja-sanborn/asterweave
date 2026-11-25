@@ -11,18 +11,18 @@ Use sequential filenames such as `0001-platform-independent-runtime.md`. Each re
 | [0003](0003-canonical-json-game-format.md) | Canonical JSON game format | Accepted; elaborated by 0009–0013 |
 | [0004](0004-state-and-persistence-separation.md) | State and persistence separation | Accepted; elaborated by 0013–0015 |
 | [0005](0005-development-and-testing-tooling.md) | Development and testing tooling | Accepted |
-| [0006](0006-atomic-action-execution-and-turn-progression.md) | Atomic action execution and turn progression | Accepted |
+| [0006](0006-atomic-action-execution-and-turn-progression.md) | Atomic action execution and turn progression | Accepted; milestone scope superseded where applicable by 0026 |
 | [0007](0007-extensible-and-configurable-action-definitions.md) | Extensible and configurable action definitions | Accepted |
 | [0008](0008-game-time-and-calendar-separation.md) | Game time and calendar separation | Accepted |
 | [0009](0009-canonical-game-definition-contract.md) | Canonical game-definition contract | Accepted; schema/version portions superseded by 0011–0013, 0021–0022 |
-| [0010](0010-game-packaging-and-content-protection.md) | Game packaging and content protection | Accepted |
+| [0010](0010-game-packaging-and-content-protection.md) | Game packaging and content protection | Accepted; milestone scope superseded where applicable by 0026 |
 | [0011](0011-unified-world-containment.md) | Unified world containment | Accepted; format version superseded by 0013, 0021–0022 |
 | [0012](0012-physical-properties-and-capacity.md) | Physical properties and capacity | Accepted; measurement ranges superseded by 0022 |
 | [0013](0013-namespaced-properties-and-runtime-state.md) | Namespaced properties and runtime state | Accepted |
 | [0014](0014-player-identity-and-state-scopes.md) | Player identity and state scopes | Accepted |
-| [0015](0015-state-isolation-and-persistence.md) | State isolation and persistence | Accepted |
+| [0015](0015-state-isolation-and-persistence.md) | State isolation and persistence | Accepted; milestone scope superseded where applicable by 0026 |
 | [0016](0016-modular-architecture-and-design-patterns.md) | Modular architecture and design patterns | Accepted |
-| [0017](0017-error-handling-and-diagnostics.md) | Error handling and diagnostics | Accepted |
+| [0017](0017-error-handling-and-diagnostics.md) | Error handling and diagnostics | Accepted; milestone scope superseded where applicable by 0026 |
 | [0018](0018-public-api-and-compatibility.md) | Public API and compatibility | Accepted |
 | [0019](0019-security-and-trust-boundaries.md) | Security and trust boundaries | Accepted |
 | [0020](0020-standardized-operation-result-architecture.md) | Standardized operation result architecture | Accepted |
@@ -31,5 +31,6 @@ Use sequential filenames such as `0001-platform-independent-runtime.md`. Each re
 | [0023](0023-action-registry-ownership-and-lifecycle.md) | Action registry ownership, registration authority and lifecycle | Accepted; elaborates 0007 |
 | [0024](0024-runtime-transactions-and-action-execution.md) | Runtime transactions and action execution | Accepted; elaborates 0006, 0013–0016, 0019, 0023 |
 | [0025](0025-runtime-reset-and-integrity-recovery.md) | Runtime reset and integrity recovery | Accepted; elaborates 0015, 0017–0020 |
+| [0026](0026-functional-foundation-and-optional-extension-boundaries.md) | Functional Foundation and optional extension boundaries | Accepted |
 
 Current canonical format is 3.2.0 under ADRs 0013, 0021 and 0022 and the [definition contract](../contracts/GAME_DEFINITIONS.md). Save format 1.0.0 is specified separately. See [coding standards](../CODE_STYLE.md) and [testing strategy](../../tests/README.md) for implementation and verification requirements.

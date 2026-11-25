@@ -25,3 +25,7 @@ Distribute only plain JSON; embed encryption in the canonical schema or runtime 
 Foundation establishes the boundary only; no packaging or encryption code, new canonical fields, runtime implementation or dependencies are introduced. Phase 2 includes package design, implementation, offline host verification, failure handling and author-facing documentation. Creator export integration is later Phase 4 work. Runtime state and save data remain separate from distribution packaging. This record complements ADRs 0001, 0003, 0005 and 0009 without superseding them.
 
 See the [canonical definition contract](../contracts/GAME_DEFINITIONS.md) and [architecture](../ARCHITECTURE.md).
+
+## Subsequent scope clarification
+
+[ADR 0026](0026-functional-foundation-and-optional-extension-boundaries.md) supersedes the milestone timing and initial distribution target above: Foundation includes the standalone engine bundle and protected/unprotected game packages; standalone HTML is later host work. All protection and trust boundaries remain in force; tools and cryptographic design require review.

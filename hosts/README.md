@@ -1,6 +1,6 @@
 # Hosts
 
-Hosts provide platform-specific input, presentation, storage and integration for the platform-independent engine. The first playable target is an offline, text-only browser host in Phase 2. CLI, server, Discord and other hosts remain future work.
+Hosts provide platform-specific input, presentation, storage and integration for the platform-independent engine. Foundation first delivers an independently usable engine bundle and game packages. A subsequent playable target is an offline, text-only browser host using the optional Text Parsing Extension; hosts may instead use direct actions or other selected extensions. Standalone HTML delivery is subsequent host work. CLI, server, Discord and other hosts remain future work.
 
 Hosts consume documented public APIs and semantic results, not private state or implementation modules. They own error presentation, optional logging and telemetry, storage, safe rendering, platform permissions, and authentication and delivery authorization where applicable. The core retains gameplay authorization, validation and state integrity. Package decoding or optional protection happens outside core; validate canonical data afterward.
 

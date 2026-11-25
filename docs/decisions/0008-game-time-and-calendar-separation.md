@@ -17,3 +17,7 @@ Wall-clock-driven core; mandatory Gregorian calendar; unrelated turn and fiction
 ## Consequences
 
 Foundation requires turn progression only. Optional clock/calendar support depends on rules/events and persistence. See [ADR 0006](0006-atomic-action-execution-and-turn-progression.md). This record accepts architecture, not implementation.
+
+## Subsequent scope clarification
+
+[ADR 0026](0026-functional-foundation-and-optional-extension-boundaries.md) identifies the optional calendar capability as the independent Date Time Extension. Abstract turns and generic scheduled events remain Foundation responsibilities.

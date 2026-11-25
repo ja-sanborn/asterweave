@@ -39,7 +39,7 @@ Preserve [action results](ACTIONS_AND_RESULTS.md#result-envelope): status comple
 
 Initialization validates definitions and applicable configuration before publishing a runtime. Failure exposes no partial runtime. Configuration findings use source options and JSON Pointer paths relative to the options argument (for example /player/selectedActor); definition findings use source definition. Both appear in one diagnostics collection. Unexpected initialization failures are translated according to the approved public API, without misrepresenting internal defects as invalid authored data.
 
-[Save restoration](SAVE_DATA.md#compatibility-and-restore) rejects invalid candidates atomically; exact codes and public interfaces remain Phase 2 work. Future Creator diagnostics may reuse the definition convention where appropriate.
+[Save restoration](SAVE_DATA.md#compatibility-and-restore) rejects invalid candidates atomically; exact codes and public interfaces require Foundation persistence design review. Future Creator diagnostics may reuse the definition convention where appropriate.
 
 Internal action registration and argument validation have their own diagnostic sources and immutable completed/rejected records, specified in [action definitions](ACTION_DEFINITIONS.md). These records are not public ActionResult or initialization diagnostics. Malformed specialized validator returns and unexpected reflective failures are internal exceptions; the dispatcher translates them at its operation boundary.
 
@@ -65,7 +65,7 @@ ValidationResult.toJSON returns a detached record containing status and diagnost
 
 Engine-defined codes use uppercase snake case, documented meanings and stable identifiers. Never repurpose existing codes or branch on human-readable messages. Domains own detection and their vocabularies; shared codes may use common definitions where semantics match. Existing definition and action catalogs remain authoritative. No global enumeration coupling every domain to all others.
 
-Orchestration maps findings into operation-specific codes. For example, CAPACITY_EXCEEDED maps to ACTION_UNAVAILABLE for rejected Foundation movement under the action contract. Validators need not know action statuses, authored JSON paths or save layout. New public codes require documented meaning, ownership and compatibility review. Extension error contracts and naming are deferred.
+Orchestration maps findings into operation-specific codes. For example, CAPACITY_EXCEEDED maps to ACTION_UNAVAILABLE for rejected Foundation movement under the action contract. Validators need not know action statuses, authored JSON paths or save layout. New public codes require documented meaning, ownership and compatibility review. Extension error contracts and naming require review as part of the planned Foundation extension architecture; no new codes are established here.
 
 ## Aggregation and deterministic diagnostics
 

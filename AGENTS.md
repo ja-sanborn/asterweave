@@ -11,18 +11,20 @@ Accepted ADRs govern decisions; current normative contracts govern behavior; cod
 ## Architecture and coding
 
 - Use standard ECMAScript, ES modules and zero third-party runtime/development npm dependencies under current Foundation decisions. Node.js is permitted for development and compatible hosts.
-- Keep src independent of DOM, storage, networking, filesystem, graphics and Node-specific APIs. Hosts integrate platforms; Creator is optional authoring; extensions provide optional mechanics/presentation. Exclude Creator and unused optional modules from distributions.
+- Keep src independent of DOM, storage, networking, filesystem, graphics and Node-specific APIs. Hosts integrate platforms; Creator is optional authoring; extensions provide optional mechanics/presentation. Exclude Creator and unused optional modules from distributions. Foundation includes standalone bundling and game packaging outside core; any build-tool dependency exception requires explicit approval. Creator framework dependencies are separate and require design review.
 - Follow ADR 0016: cohesive domain modules, one principal type per file, native encapsulation, composition, narrow explicit dependencies, no circular imports or global mutable state. Use independently testable domain logic and separate orchestration.
 - Follow [public API](docs/contracts/PUBLIC_API.md): one primary facade, engine-controlled construction, intentional documented public interfaces, compatibility review and independent version authorities.
 - Use descriptive English identifiers, required license headers and JSDoc for public and private members, and EditorConfig formatting. Avoid speculative frameworks and premature optimization.
-- Commands and choices share explicit actor-identified actions and one dispatcher; neither owns world logic. Return semantic results, not rendered interfaces. Design for multiple actors but implement single-player offline text first.
+- Commands and choices share explicit actor-identified actions and one dispatcher; neither owns world logic. Return semantic results, not rendered interfaces. Design for multiple actors and implement the single-player headless engine first; interaction and presentation remain optional.
+
+- Keep generic world operations and reusable standard handlers separate from game policies and specialized mechanics. Public extension contracts are planned Foundation work; do not expose private registry or state internals. Date Time, Text Parsing and Visual Novel are independent optional extensions. Zork is a compatibility reference, not an engine specification.
 
 ## Security, errors and state
 
 - Follow [security model](docs/contracts/SECURITY_MODEL.md) and [error handling](docs/contracts/ERROR_HANDLING.md): validate external data, authorization, references and invariants; use safe algorithms and explicit resource ownership. Executable extensions are trusted code, not sandboxed data.
 - Preserve operation-specific diagnostics/results, domain-owned codes, deterministic aggregation, exception cause when wrapping, atomic failure and fail-closed integrity. No core operational logger; hosts own reporting and platform security.
 - Use immutable isolated definitions, normalized overrides, qualified component-owned properties, six gameplay scopes and one authoritative World containment hierarchy. Derive actor location, inventory and loads; enforce lifecycle, association and capacity invariants without duplicating placement.
-- No persistent instance ID, human knowledge tracking or gameplay undo. Keep detached recursively read-only snapshots and engine-owned transactions. Storage adapters remain outside core; save implementation is Phase 2. See [properties](docs/contracts/PROPERTIES.md), [runtime state](docs/contracts/RUNTIME_STATE.md) and [save data](docs/contracts/SAVE_DATA.md).
+- No persistent instance ID, human knowledge tracking or gameplay undo. Keep detached recursively read-only snapshots and engine-owned transactions. Storage adapters remain outside core; platform-independent capture and atomic restoration are planned Foundation work. See [properties](docs/contracts/PROPERTIES.md), [runtime state](docs/contracts/RUNTIME_STATE.md) and [save data](docs/contracts/SAVE_DATA.md).
 
 ## Testing and completion
 

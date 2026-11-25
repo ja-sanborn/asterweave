@@ -14,7 +14,7 @@ Follow the [error-handling contract](docs/contracts/ERROR_HANDLING.md) and [ADR 
 
 - Keep runtime code in standard JavaScript without third-party core runtime dependencies.
 - Isolate platform-specific APIs in hosts and adapters.
-- Keep graphics and authoring tools outside the runtime core.
+- Keep graphics, authoring tools and platform-specific distribution tooling outside the runtime core. Keep optional mechanics in games or extensions, and use supported public integration contracts.
 - Prefer deterministic behavior, explicit contracts and testable modules.
 - Include tests and update documentation when behavior changes.
 - Do not commit credentials, private game content or generated distributions.
@@ -28,7 +28,7 @@ Follow the [error-handling contract](docs/contracts/ERROR_HANDLING.md) and [ADR 
 Use Node.js 26 LTS and its bundled npm. The supported major version is recorded
 in `.nvmrc` and `package.json`. With nvm, run `nvm install` and `nvm use`.
 From the repository root, run `npm ci` and `npm test`. Commit the lockfile
-when changing the manifest. No third-party npm dependencies are required.
+when changing the manifest. No third-party npm dependencies are currently required. Distribution tooling and Creator application dependencies must be reviewed separately; no exception to current Foundation tooling policy is implied.
 
 Follow [coding standards](docs/CODE_STYLE.md) for source organization, naming, formatting, license headers, JSDoc, validation and maintainability. Follow [ADR 0016](docs/decisions/0016-modular-architecture-and-design-patterns.md) for modular architecture and design patterns.
 Use native `node:test` and `node:assert/strict`; see [test guidance](tests/README.md).

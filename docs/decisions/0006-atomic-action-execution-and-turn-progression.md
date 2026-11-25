@@ -19,3 +19,7 @@ Handler-owned turns; a single ambiguous success/failure status; fixed costs for 
 Transaction guarantees and dispatcher integration precede movement implementation. Configuration and event scheduling are later capabilities. See [action and result contracts](../contracts/ACTIONS_AND_RESULTS.md). This record accepts a design, not implemented behavior.
 
 Subsequent decision: [ADR 0024](0024-runtime-transactions-and-action-execution.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.
+
+## Subsequent scope clarification
+
+The milestone scope is elaborated by [ADR 0026](0026-functional-foundation-and-optional-extension-boundaries.md): movement costs are initial defaults; configurable action costs and scheduled events are planned Foundation work. The atomic execution and dispatcher-owned turn principles remain in force.

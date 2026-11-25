@@ -26,3 +26,7 @@ Supersedes the direction restriction in [ADR 0009](0009-canonical-game-definitio
 Verify all twelve identifiers, duplicate and invalid direction rejection, destination references, directed semantics and exact format version. Future movement uses the same vocabulary. No runtime code, new dependency, parser or custom direction registration is introduced by this decision.
 
 [ADR 0022](0022-flexible-physical-measurement-ranges.md) supersedes the accepted format version with 3.2.0; the navigation vocabulary and semantics above remain in effect.
+
+## Subsequent scope clarification
+
+[ADR 0026](0026-functional-foundation-and-optional-extension-boundaries.md) includes conditional access, traversal and destination selection in planned Foundation scope. The current twelve-direction vocabulary, fixed exit representation and movement semantics remain normative until explicitly revised through reviewed design.
