@@ -31,3 +31,7 @@ Live mutation with inverse journals risks incomplete rollback. Full baseline clo
 Clear authority boundaries and consistent outcomes enable future command, choice, narrative and NPC actions. Candidate copying and complete validation have costs; optimize only with evidence. Internal contracts remain independent of serialized formats. Test isolation, reentrancy, failure paths, capability expiration, deterministic ordering and safe arithmetic with trusted test handlers.
 
 Elaborates ADRs [0006](0006-atomic-action-execution-and-turn-progression.md), [0013](0013-namespaced-properties-and-runtime-state.md), [0014](0014-player-identity-and-state-scopes.md), [0015](0015-state-isolation-and-persistence.md), [0016](0016-modular-architecture-and-design-patterns.md), [0019](0019-security-and-trust-boundaries.md) and [0023](0023-action-registry-ownership-and-lifecycle.md). Normative details: [runtime state](../contracts/RUNTIME_STATE.md), [properties](../contracts/PROPERTIES.md), [actions and results](../contracts/ACTIONS_AND_RESULTS.md), [action definitions](../contracts/ACTION_DEFINITIONS.md), [public API](../contracts/PUBLIC_API.md).
+
+## Subsequent scope clarification
+
+[ADR 0026](0026-functional-foundation-and-optional-extension-boundaries.md) brings generic lifecycle operations, transactional randomness, events, authorized internal actor execution and persistence into planned Foundation scope. The original infrastructure decision remains historical; detailed additions must preserve transaction ownership and atomicity.

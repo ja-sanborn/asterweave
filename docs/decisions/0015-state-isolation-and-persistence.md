@@ -15,3 +15,7 @@ Full duplicated definitions, required historical replay, mutable public referenc
 See [save data](../contracts/SAVE_DATA.md) and [runtime state](../contracts/RUNTIME_STATE.md). Elaborates ADR 0004 and preserves ADRs 0006, 0008, 0010–0012. Serialization and restoration are planned for Phase 2; no serializer in Foundation.
 
 Subsequent decision: [ADR 0025](0025-runtime-reset-and-integrity-recovery.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.
+
+## Subsequent scope clarification
+
+[ADR 0026](0026-functional-foundation-and-optional-extension-boundaries.md) supersedes the Phase 2 implementation restriction: platform-independent capture and atomic restoration are Foundation work. Storage separation and accepted persistence principles remain unchanged.

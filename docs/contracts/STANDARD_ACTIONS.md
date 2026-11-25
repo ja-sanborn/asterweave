@@ -2,17 +2,17 @@
 
 Status: Accepted reference design; catalog entries do not establish runtime availability.
 
-This extensible reference catalog contains 82 canonical standard action types. It is not exhaustive and does not require a game to include all actions. Only move is scheduled for Foundation; all other entries are reference designs until their capabilities are explicitly implemented. The internal registry recognizes these catalog identifiers; only move has reusable definition metadata, and no production action handler is registered yet. Names and individual default costs establish the design baseline, not a guarantee of availability. Costs apply only to completed gameplay outcomes; rejected and error results always cost zero. See [definitions](ACTION_DEFINITIONS.md) and [results](ACTIONS_AND_RESULTS.md).
+This extensible reference catalog contains 82 canonical standard action types. It is not exhaustive and does not require a game to include all actions. Foundation plans 25 reusable standard handlers; other entries remain reference designs. A game need not enable or use every Foundation action. The planned status does not establish implemented behavior. The internal registry recognizes these catalog identifiers; only move has reusable definition metadata, and no production action handler is registered yet. Names and individual default costs establish the design baseline, not a guarantee of availability. Costs apply only to completed gameplay outcomes; rejected and error results always cost zero. See [definitions](ACTION_DEFINITIONS.md) and [results](ACTIONS_AND_RESULTS.md).
 
-Argument column describes proposed semantic keys, not final schemas for future handlers. Unmarked keys are expected; ? denotes optional; alternatives must be specified when implemented. IDs reference stable game entities, actors or authored data as appropriate. none means an empty args object. direction and relation use canonical values, text is data, and action in command is a proposed nested intent whose execution/authorization rules are deferred (no direct bypass or recursive dispatch guarantee). Foundation move requires a canonical direction string from the twelve standard identifiers in [canonical definitions](GAME_DEFINITIONS.md#locations-and-exits); its actual exit validation belongs to the world handler. The shared domain-owned vocabulary is used by definition validation and movement. Parser synonyms and prepositions are not canonical action types. See [world containment](WORLD_CONTAINMENT.md) for standard containment and spatial associations and [physical properties](PHYSICAL_PROPERTIES.md) for capacity semantics. Only move is required; other relationship-specific actions remain future work.
+Argument column describes proposed semantic keys, not final schemas for future handlers. Unmarked keys are expected; ? denotes optional; alternatives must be specified when implemented. IDs reference stable game entities, actors or authored data as appropriate. none means an empty args object. direction and relation use canonical values, text is data, and action in command is a proposed nested intent whose execution/authorization rules are deferred (no direct bypass or recursive dispatch guarantee). Foundation move requires a canonical direction string from the twelve standard identifiers in [canonical definitions](GAME_DEFINITIONS.md#locations-and-exits); its actual exit validation belongs to the world handler. The shared domain-owned vocabulary is used by definition validation and movement. Parser synonyms and prepositions are not canonical action types. See [world containment](WORLD_CONTAINMENT.md) for standard containment and spatial associations and [physical properties](PHYSICAL_PROPERTIES.md) for capacity semantics. Planned Foundation handlers are marked in the catalog. Generic domain operations remain independent of particular action names; specialized mechanics may use game-defined or extension actions.
 
 ## Exploration and movement
 
 | Type | Purpose | Arguments | turnCostSuccess | turnCostFail | Status |
 | --- | --- | --- | ---: | ---: | --- |
 | move | Move actor through a directional exit | direction (required) | 1 | 0 | Metadata implemented; handler planned |
-| enter | Enter a location or entity | targetId | 1 | 0 | Reference only |
-| exit | Leave a location or entity | targetId? | 1 | 0 | Reference only |
+| enter | Enter a location or entity | targetId | 1 | 0 | Foundation planned |
+| exit | Leave a location or entity | targetId? | 1 | 0 | Foundation planned |
 | climb | Climb a target | targetId, direction? | 1 | 0 | Reference only |
 | jump | Leap or jump | targetId?, destinationId? | 1 | 0 | Reference only |
 | swim | Move by swimming | destinationId?, direction? | 1 | 0 | Reference only |
@@ -25,11 +25,11 @@ Argument column describes proposed semantic keys, not final schemas for future h
 
 | Type | Purpose | Arguments | turnCostSuccess | turnCostFail | Status |
 | --- | --- | --- | ---: | ---: | --- |
-| look | Observe surroundings | none | 0 | 0 | Reference only |
-| examine | Inspect a target or relation | targetId, relation? | 0 | 0 | Reference only |
-| search | Actively investigate | targetId | 1 | 1 | Reference only |
+| look | Observe surroundings | none | 0 | 0 | Foundation planned |
+| examine | Inspect a target or relation | targetId, relation? | 0 | 0 | Foundation planned |
+| search | Actively investigate | targetId | 1 | 1 | Foundation planned |
 | find | Attempt to locate a target | targetId | 1 | 1 | Reference only |
-| read | Read authored content | targetId | 0 | 0 | Reference only |
+| read | Read authored content | targetId | 0 | 0 | Foundation planned |
 | listen | Listen to surroundings or target | targetId? | 0 | 0 | Reference only |
 | smell | Observe scent | targetId? | 0 | 0 | Reference only |
 | touch | Observe tactile properties | targetId | 0 | 0 | Reference only |
@@ -40,25 +40,25 @@ Argument column describes proposed semantic keys, not final schemas for future h
 
 | Type | Purpose | Arguments | turnCostSuccess | turnCostFail | Status |
 | --- | --- | --- | ---: | ---: | --- |
-| inventory | Inspect holdings | none | 0 | 0 | Reference only |
-| take | Acquire an item | objectId | 1 | 0 | Reference only |
-| drop | Release an item | objectId | 1 | 0 | Reference only |
-| put | Place an item relative to target | objectId, targetId, relation | 1 | 0 | Reference only |
-| give | Transfer an item to actor | objectId, recipientId | 1 | 0 | Reference only |
-| wear | Wear an item | objectId | 1 | 0 | Reference only |
-| remove | Remove worn item | objectId | 1 | 0 | Reference only |
+| inventory | Inspect holdings | none | 0 | 0 | Foundation planned |
+| take | Acquire an item | objectId | 1 | 0 | Foundation planned |
+| drop | Release an item | objectId | 1 | 0 | Foundation planned |
+| put | Place an item relative to target | objectId, targetId, relation | 1 | 0 | Foundation planned |
+| give | Transfer an item to actor | objectId, recipientId | 1 | 0 | Foundation planned |
+| wear | Wear an item | objectId | 1 | 0 | Foundation planned |
+| remove | Remove worn item | objectId | 1 | 0 | Foundation planned |
 | throw | Throw an item | objectId, targetId? | 1 | 1 | Reference only |
 
 ## Mechanical interaction
 
 | Type | Purpose | Arguments | turnCostSuccess | turnCostFail | Status |
 | --- | --- | --- | ---: | ---: | --- |
-| open | Open target | targetId | 1 | 0 | Reference only |
-| close | Close target | targetId | 1 | 0 | Reference only |
-| lock | Lock target | targetId, instrumentId? | 1 | 0 | Reference only |
-| unlock | Unlock target | targetId, instrumentId? | 1 | 0 | Reference only |
-| activate | Activate target | targetId | 1 | 0 | Reference only |
-| deactivate | Deactivate target | targetId | 1 | 0 | Reference only |
+| open | Open target | targetId | 1 | 0 | Foundation planned |
+| close | Close target | targetId | 1 | 0 | Foundation planned |
+| lock | Lock target | targetId, instrumentId? | 1 | 0 | Foundation planned |
+| unlock | Unlock target | targetId, instrumentId? | 1 | 0 | Foundation planned |
+| activate | Activate target | targetId | 1 | 0 | Foundation planned |
+| deactivate | Deactivate target | targetId | 1 | 0 | Foundation planned |
 | push | Push target | targetId, destinationId? | 1 | 1 | Reference only |
 | pull | Pull target | targetId, destinationId? | 1 | 1 | Reference only |
 | turn | Rotate or adjust target | targetId, direction?, instrumentId? | 1 | 1 | Reference only |
@@ -72,7 +72,7 @@ Argument column describes proposed semantic keys, not final schemas for future h
 
 | Type | Purpose | Arguments | turnCostSuccess | turnCostFail | Status |
 | --- | --- | --- | ---: | ---: | --- |
-| use | Use item | objectId, targetId? | 1 | 1 | Reference only |
+| use | Use item | objectId, targetId? | 1 | 1 | Foundation planned |
 | cut | Cut target | targetId, instrumentId? | 1 | 1 | Reference only |
 | break | Break target | targetId, instrumentId? | 1 | 1 | Reference only |
 | dig | Dig at target | targetId, instrumentId? | 1 | 1 | Reference only |
@@ -103,17 +103,17 @@ Argument column describes proposed semantic keys, not final schemas for future h
 | sleep | Sleep | none | 1 | 0 | Reference only |
 | wake | Wake actor | targetId? | 1 | 1 | Reference only |
 | rest | Rest | none | 1 | 0 | Reference only |
-| wait | Wait for progression | none | 1 | 0 | Reference only |
+| wait | Wait for progression | none | 1 | 0 | Foundation planned |
 
 ## Social and narrative
 
 | Type | Purpose | Arguments | turnCostSuccess | turnCostFail | Status |
 | --- | --- | --- | ---: | ---: | --- |
-| talk | Initiate conversation | targetId | 1 | 1 | Reference only |
+| talk | Initiate conversation | targetId | 1 | 1 | Foundation planned |
 | ask | Ask actor about topic | targetId, topicId | 1 | 1 | Reference only |
 | tell | Tell actor about topic | targetId, topicId | 1 | 1 | Reference only |
 | answer | Respond to prompt | choiceId or topicId | 1 | 1 | Reference only |
-| say | Speak authored or literal content | topicId or text | 1 | 1 | Reference only |
+| say | Speak authored or literal content | topicId or text | 1 | 1 | Foundation planned |
 | shout | Speak loudly | topicId or text | 1 | 1 | Reference only |
 | greet | Greet actor | targetId? | 1 | 1 | Reference only |
 | signal | Signal actor or target | targetId?, topicId? | 1 | 1 | Reference only |
@@ -121,7 +121,7 @@ Argument column describes proposed semantic keys, not final schemas for future h
 | knock | Knock on target | targetId | 1 | 1 | Reference only |
 | choose | Select authored choice | choiceId | 0 | 0 | Reference only |
 | continue | Advance narrative sequence | none | 0 | 0 | Reference only |
-| interact | Contextual interaction | targetId | 1 | 1 | Reference only |
+| interact | Contextual interaction | targetId | 1 | 1 | Foundation planned |
 
 ## Boundaries
 

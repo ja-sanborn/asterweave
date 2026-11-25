@@ -13,7 +13,7 @@ Asterweave is in Foundation development. Development and native test infrastruct
 ## Design goals
 
 - Standard JavaScript with no third-party runtime dependencies in the core.
-- Offline-first gameplay, with a standalone browser host as the initial target.
+- Offline-first gameplay, with an independently usable engine distribution before a standalone browser host.
 - No DOM, graphics, network, filesystem, or storage dependencies in the core.
 - Data-driven, genre-independent worlds and narratives using a versioned JSON game format.
 - Deterministic command parsing and choice-driven interaction without AI services.
@@ -22,18 +22,18 @@ Asterweave is in Foundation development. Development and native test infrastruct
 
 ## Planned capabilities
 
-- Command-based exploration: rooms, exits, objects, inventory, containers, synonyms and contextual command resolution.
-- Choice-based storytelling: branching dialogue, conditional choices, narrative sequences and transitions between commands and choices.
-- Persistent world state: NPCs, relationships, merchants, quests, flags, rules and turn-based events.
-- Portable saves: versioned state serialization, browser storage through adapters, and save-file import/export.
-- Creator toolkit: human-readable authoring, compilation to JSON, validation, playtesting and export. Creator tools are not required in game distributions.
-- Future extensions: optional visual and audio presentation, server hosting, Discord interaction and multiplayer worlds.
+- Foundation: generic world and lifecycle operations, reusable standard actions, configurable and custom actions, declarative rules, events, deterministic randomness and supported extension contracts.
+- Portable saves: versioned state capture and atomic restoration; storage adapters remain host responsibilities.
+- Standalone distribution: a compact JavaScript engine bundle and versioned game packages with optional encryption, independent of Creator and presentation.
+- Optional extensions: Date Time, Text Parsing and Visual Novel; games may include any combination or none.
+- Creator: an offline JavaScript web application for authoring, validation, playtesting and export; not required in player distributions.
+- Reference games: Lantern House and a native Zork I recreation, subject to compatibility and rights review. Additional hosts and multiplayer remain future work.
 
 ## Architecture
 
 In the intended architecture, the command parser, choice engine and narrative systems submit actions to a shared, platform-independent core that validates requests, applies domain rules, commits state atomically and returns semantic results. Hosts handle input, output, logging, storage and platform security. The planned Creator toolkit will compile authoring content to canonical JSON and will not be required in finished games.
 
-The initial Foundation milestone is a headless runtime; the first playable target is a text-only offline browser adventure in Phase 2. Online hosting, multiplayer and graphical presentation are later capabilities.
+Foundation targets a functional, extensible headless engine, verified through direct public API gameplay and standalone distribution. A text-only offline browser interface is a subsequent playable target. Games own their content and specific rules; optional extensions provide reusable specialized mechanics and interaction. See the [roadmap](docs/ROADMAP.md).
 
 ## Documentation
 

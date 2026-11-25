@@ -10,7 +10,7 @@ Start here for the current technical design and development standards. See the [
 | AI contributor | [AGENTS.md](../AGENTS.md), this index | Same standards, contracts, decisions, tests and issue as human contributors |
 | Game author | [Canonical definitions](contracts/GAME_DEFINITIONS.md), [examples](../examples/README.md) | World/property contracts and planned author guide; no playable runtime yet |
 | Host developer | [Public API](contracts/PUBLIC_API.md), [hosts](../hosts/README.md) | [Security model](contracts/SECURITY_MODEL.md), [error handling](contracts/ERROR_HANDLING.md), actions and persistence contracts |
-| Creator or extension developer | [Creator](../creator/README.md), [extensions](../extensions/README.md) | Relevant canonical data, public API and security contracts |
+| Creator or extension developer | [Creator](../creator/README.md), [extensions](../extensions/README.md) | Relevant canonical data, public API, security and planned extension/distribution boundaries in the [architecture](ARCHITECTURE.md) |
 
 ## Document authority
 
@@ -33,7 +33,7 @@ Read the current branch and relevant issue, follow cross-references and explicit
 
 ## Current contract versions
 
-Canonical game-definition format: 3.2.0. Save format: 1.0.0 (implementation deferred to Phase 2). Engine package: private 0.0.0 development package; no production release. These versions are independent under the [public API contract](contracts/PUBLIC_API.md). Verify supported versions against their normative contracts.
+Canonical game-definition format: 3.2.0. Save format: 1.0.0 (implementation planned within Foundation). Engine package: private 0.0.0 development package; no production release. These versions are independent under the [public API contract](contracts/PUBLIC_API.md). Verify supported versions against their normative contracts.
 
 ## Repository navigation
 

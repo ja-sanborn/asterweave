@@ -17,3 +17,7 @@ Hardcoded closed action enumeration; separate execution paths for extensions; ca
 ## Consequences
 
 Registry infrastructure precedes dispatcher integration. Configurable and declarative actions follow later. See [definitions](../contracts/ACTION_DEFINITIONS.md) and [catalog](../contracts/STANDARD_ACTIONS.md). This decision does not implement handlers or finalize the game JSON schema.
+
+## Subsequent scope clarification
+
+[ADR 0026](0026-functional-foundation-and-optional-extension-boundaries.md) brings configurable standard actions, declarative custom actions and supported extension integration into Foundation. Detailed registration and authored schema contracts require separate design review.

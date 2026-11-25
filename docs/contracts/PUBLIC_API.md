@@ -4,7 +4,7 @@ Status: Accepted contract. See [ADR 0018](../decisions/0018-public-api-and-compa
 
 ## Consumer boundary
 
-Asterweave provides one primary public facade for game integrators, hosts and authoring tools. Only explicitly designated, documented interfaces are supported public APIs. Internal ES module exports support collaboration between modules but do not automatically become consumer contracts. Consumers must not depend on internal file paths or implementation representations. A global engine object is not required. Optional extension access uses separate, explicitly supported contracts when introduced.
+Asterweave provides one primary public facade for game integrators, hosts and authoring tools. Only explicitly designated, documented interfaces are supported public APIs. Internal ES module exports support collaboration between modules but do not automatically become consumer contracts. Consumers must not depend on internal file paths or implementation representations. A global engine object is not required. Optional extension access uses separate, explicitly supported contracts planned within Foundation. Input/presentation clients and trusted gameplay providers require different capabilities; no private registry or mutable state becomes public by implication.
 
 Supported factories control construction of engine-owned runtimes and domain objects. Consumers cannot arbitrarily construct or mutate engine-owned objects through supported APIs. Native classes, private members, closures and module boundaries provide encapsulation, not a sandbox against code controlling the execution environment.
 
@@ -35,7 +35,7 @@ if (result.isCompleted) {
 }
 ```
 
-The caller supplies parsed canonical data; the import path is relative to a consumer at the repository root. Validation alone publishes no game. Initialization validates independently even after a successful standalone check. Rejection exposes diagnostics and no game; unexpected failure exposes a safe error and no game. See [error handling](ERROR_HANDLING.md). Dispatch validates submitted actions and executes registered trusted handlers. Production initialization retains an empty registry, so no gameplay action is currently executable through the public facade. Administrative reset is supported. Save and restore remain deferred.
+The caller supplies parsed canonical data; the import path is relative to a consumer at the repository root. Validation alone publishes no game. Initialization validates independently even after a successful standalone check. Rejection exposes diagnostics and no game; unexpected failure exposes a safe error and no game. See [error handling](ERROR_HANDLING.md). Dispatch validates submitted actions and executes registered trusted handlers. Production initialization retains an empty registry, so no gameplay action is currently executable through the public facade. Administrative reset is supported. Save and restore, supported extension interfaces and actor-scoped queries are planned Foundation work, not currently supported public interfaces. A standalone bundle will preserve documented public behavior; concrete entry points and package-loading interfaces require design review.
 
 ## Action dispatch and reset
 
@@ -60,7 +60,7 @@ Validation and initialization share a single diagnostics collection with require
 | Game-definition format | Asterweave canonical JSON interpretation |
 | Game content | Author-managed content revision |
 | Save format | Asterweave serialized state interpretation |
-| Distribution format | Future packaging representation, independently versioned |
+| Distribution format | Planned Foundation packaging representation, independently versioned |
 
 These versions do not advance in lockstep. A bug fix need not change a data format. Engine compatibility never implies support for every definition, save or package version. Respect each existing contract's explicit supported versions and compatibility rules, including exact save compatibility; no automatic migration promise. See [game definitions](GAME_DEFINITIONS.md), [save data](SAVE_DATA.md) and [ADR 0010](../decisions/0010-game-packaging-and-content-protection.md).
 
