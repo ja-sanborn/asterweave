@@ -38,7 +38,7 @@ Optional initialAssociations is an array of closed objects with required targetI
 {"targetId":"rug","relationship":"under"}
 ```
 
-Prefer standard engine relationships when semantics fit; synonyms are vocabulary, not new structural relationships. Future extension or game-defined identifiers may use owned namespaces following [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md). Each definition must explicitly classify containment versus association and comply with core invariants. Format 3.1.0 accepts only the standard identifiers; custom registration and authoring are deferred.
+Prefer standard engine relationships when semantics fit; synonyms are vocabulary, not new structural relationships. Future extension or game-defined identifiers may use owned namespaces following [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md). Each definition must explicitly classify containment versus association and comply with core invariants. Format 3.2.0 accepts only the standard identifiers; custom registration and authoring are deferred.
 
 ## Lifecycle
 

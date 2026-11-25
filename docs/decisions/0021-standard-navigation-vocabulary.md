@@ -24,3 +24,5 @@ Advance the canonical definition format from 3.0.0 to 3.1.0 as a compatible voca
 Supersedes the direction restriction in [ADR 0009](0009-canonical-game-definition-contract.md) and the format version established by [ADR 0013](0013-namespaced-properties-and-runtime-state.md). Existing state, containment and action semantics remain in effect. See [canonical definitions](../contracts/GAME_DEFINITIONS.md), [action contracts](../contracts/ACTIONS_AND_RESULTS.md), [standard actions](../contracts/STANDARD_ACTIONS.md) and [testing strategy](../../tests/README.md).
 
 Verify all twelve identifiers, duplicate and invalid direction rejection, destination references, directed semantics and exact format version. Future movement uses the same vocabulary. No runtime code, new dependency, parser or custom direction registration is introduced by this decision.
+
+[ADR 0022](0022-flexible-physical-measurement-ranges.md) supersedes the accepted format version with 3.2.0; the navigation vocabulary and semantics above remain in effect.

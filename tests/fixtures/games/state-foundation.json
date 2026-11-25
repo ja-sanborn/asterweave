@@ -1,5 +1,5 @@
 {
-  "formatVersion": "3.1.0",
+  "formatVersion": "3.2.0",
   "game": {
     "id": "org.example.stateFoundation",
     "namespace": "stateFoundation",
