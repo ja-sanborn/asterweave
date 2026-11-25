@@ -1,6 +1,6 @@
 # Documentation
 
-Start here for the current technical design and development standards. See the [project README](../README.md) for an introduction. Asterweave is in Foundation development; accepted designs are not evidence of implemented or tested capabilities. See the [public API](contracts/PUBLIC_API.md) for supported interfaces and the [roadmap](ROADMAP.md) for planned capabilities.
+Start here for the current technical design and development standards. See the [project README](../README.md) for an introduction. Asterweave is in Foundation development; accepted designs are not evidence of implemented or tested capabilities. Proposed means awaiting acceptance; accepted means approved design; implemented means corresponding source exists; verified means relevant test evidence exists; deferred means outside current approved scope; superseded means replaced by a subsequent accepted decision. These distinctions are descriptive, not a separate capability lifecycle. See the [public API](contracts/PUBLIC_API.md) for supported interfaces and the [roadmap](ROADMAP.md) for planned capabilities.
 
 ## Reading paths
 
@@ -17,6 +17,7 @@ Start here for the current technical design and development standards. See the [
 | Source | Responsibility |
 | --- | --- |
 | [Architecture](ARCHITECTURE.md) | Current system overview and boundaries |
+| [Runtime implementation design](RUNTIME_IMPLEMENTATION.md) | Accepted internal runtime collaboration and responsibilities |
 | [Accepted ADRs](decisions/README.md) | Decisions and rationale; respect explicit supersession |
 | [Normative contracts](contracts/README.md) | Required domain and public behavior |
 | [Coding standards](CODE_STYLE.md) | JavaScript implementation conventions |

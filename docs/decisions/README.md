@@ -29,5 +29,7 @@ Use sequential filenames such as `0001-platform-independent-runtime.md`. Each re
 | [0021](0021-standard-navigation-vocabulary.md) | Standard navigation vocabulary | Accepted |
 | [0022](0022-flexible-physical-measurement-ranges.md) | Flexible physical measurement ranges | Accepted |
 | [0023](0023-action-registry-ownership-and-lifecycle.md) | Action registry ownership, registration authority and lifecycle | Accepted; elaborates 0007 |
+| [0024](0024-runtime-transactions-and-action-execution.md) | Runtime transactions and action execution | Accepted; elaborates 0006, 0013–0016, 0019, 0023 |
+| [0025](0025-runtime-reset-and-integrity-recovery.md) | Runtime reset and integrity recovery | Accepted; elaborates 0015, 0017–0020 |
 
 Current canonical format is 3.2.0 under ADRs 0013, 0021 and 0022 and the [definition contract](../contracts/GAME_DEFINITIONS.md). Save format 1.0.0 is specified separately. See [coding standards](../CODE_STYLE.md) and [testing strategy](../../tests/README.md) for implementation and verification requirements.

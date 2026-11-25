@@ -11,14 +11,17 @@
  */
 
 import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
+import { addressLeaf } from './typedAddressIndex.js';
 import { immutableCopy } from '../shared/immutableData.js';
 
 /** Owns the immutable authored effective state of one validated game. */
 export class GameBaseline {
     /** @type {object} Detached normalized authored state. */
     #data;
-    /** @type {Map<string, object>} Index of immutable participant records. */
+    /** @type {Map<string, object>} Index of immutable participant records and categories. */
     #participants;
+    /** @type {Map} Index of immutable authored directed relationships. */
+    #relationships = new Map();
 
     /**
      * Isolates a validated candidate. The caller must complete validation first.
@@ -31,10 +34,14 @@ export class GameBaseline {
         }
         this.#data = immutableCopy(candidate);
         this.#participants = new Map();
-        for (const { collection } of PARTICIPANT_CATEGORIES) {
+        for (const { collection, kind } of PARTICIPANT_CATEGORIES) {
             for (const record of this.#data[collection]) {
-                this.#participants.set(record.id, record);
+                this.#participants.set(record.id, Object.freeze({ kind, record }));
             }
+        }
+        for (const record of this.#data.relationships) {
+            addressLeaf(this.#relationships, { scope: 'relationship', from: record.from, to: record.to },
+                () => record);
         }
         Object.freeze(this);
     }
@@ -75,6 +82,26 @@ export class GameBaseline {
      * @returns {object|undefined} Immutable baseline record.
      */
     participant(id) {
-        return this.#participants.get(id);
+        return this.#participants.get(id)?.record;
+    }
+    /**
+     * Resolves category through the existing participant index.
+     * @param {string} id - Participant ID.
+     * @returns {string|undefined} Category.
+     */
+    participantKind(id) {
+        return this.#participants.get(id)?.kind;
+    }
+    /**
+     * Resolves a baseline relationship by typed ordered endpoints.
+     * @param {object} address - Validated relationship address.
+     * @returns {object|undefined} Original record.
+     */
+    relationship(address) {
+        return addressLeaf(this.#relationships, address);
+    }
+    /** @returns {object} Recursively immutable original effective state. */
+    readState() {
+        return this.#data;
     }
 }

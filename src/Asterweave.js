@@ -26,14 +26,21 @@ export class Asterweave {
     /** @type {import('./actions/ActionRegistry.js').ActionRegistry} Owned finalized action registry. */
     #registry;
 
+    /** @type {import('./core/ActionDispatcher.js').ActionDispatcher} Gameplay orchestration. */
+    #dispatcher;
+    /** @type {import('./core/RuntimeResetter.js').RuntimeResetter} Administrative orchestration. */
+    #resetter;
+
     /**
      * Constructs a game only from the internal initialization factory.
      * @param {symbol} token - Private construction capability.
      * @param {import('./state/RuntimeState.js').RuntimeState} state - Validated runtime.
      * @param {import('./actions/ActionRegistry.js').ActionRegistry} registry - Finalized registry.
+     * @param {object} dispatcher - Internal action dispatcher.
+     * @param {object} resetter - Internal runtime resetter.
      * @throws {TypeError} If constructed outside the supported factory or registry is not finalized.
      */
-    constructor(token, state, registry) {
+    constructor(token, state, registry, dispatcher, resetter) {
         if (token !== CONSTRUCTION) {
             throw new TypeError('Use Asterweave.initializeGame().');
         }
@@ -42,6 +49,8 @@ export class Asterweave {
         }
         this.#state = state;
         this.#registry = registry;
+        this.#dispatcher = dispatcher;
+        this.#resetter = resetter;
         Object.freeze(this);
     }
 
@@ -69,11 +78,11 @@ export class Asterweave {
      */
     static initializeGame(definition, options) {
         try {
-            const { state, registry, diagnostics } = new GameInitializer().initialize(definition, options);
+            const { state, registry, dispatcher, resetter, diagnostics } = new GameInitializer().initialize(definition, options);
             if (diagnostics.length !== 0) {
                 return InitializationResult.rejected(diagnostics);
             }
-            return InitializationResult.completed(new Asterweave(CONSTRUCTION, state, registry));
+            return InitializationResult.completed(new Asterweave(CONSTRUCTION, state, registry, dispatcher, resetter));
         } catch (error) {
             // Fail closed: a partial game is never published.
             return InitializationResult.failed();
@@ -101,5 +110,21 @@ export class Asterweave {
      */
     getStateSnapshot() {
         return createStateSnapshot(this.#state.readEffectiveState());
+    }
+    /**
+     * Submits an explicit player-authorized action synchronously.
+     * @param {unknown} action - Untrusted action envelope.
+     * @returns {import('./results/ActionResult.js').ActionResult} Semantic result.
+     */
+    dispatchAction(action) {
+        return this.#dispatcher.dispatchPlayerAction(action);
+    }
+
+    /**
+     * Restores original initialized state without replacing the facade or registry.
+     * @returns {import('./results/ResetResult.js').ResetResult} Administrative result.
+     */
+    reset() {
+        return this.#resetter.reset();
     }
 }

@@ -8,7 +8,7 @@ Inspired by classic parser adventures such as Zork, branching fiction, gamebooks
 
 ## Project status
 
-Asterweave is in Foundation development. Development and native test infrastructure are established. The architecture, canonical game-definition format 3.2.0, state/save design and project-wide standards are documented. The runtime supports native definition validation, isolated initialization, read-only effective-state inspection and internal action registration and argument validation. Action processing and gameplay remain planned; no playable release exists. The current private package is version 0.0.0.
+Asterweave is in Foundation development. Development and native test infrastructure are established. The architecture, canonical game-definition format 3.2.0, state/save design and project-wide standards are documented. The runtime supports native definition validation, isolated initialization, read-only effective-state inspection and internal action registration and argument validation. Synchronous action processing, transactional state and administrative reset infrastructure are implemented; production gameplay handlers remain planned and no playable release exists. The current private package is version 0.0.0.
 
 ## Design goals
 

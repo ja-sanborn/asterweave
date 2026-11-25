@@ -39,3 +39,5 @@ This decision preserves existing action, definition and save formats and error m
 [ADR 0020](0020-standardized-operation-result-architecture.md) elaborates the approved common result base class, specialized interfaces and serialization conventions without replacing operation-specific error contracts or this failure taxonomy.
 
 A subsequent diagnostic design decision adds a required source to definition and initialization configuration diagnostics, identifying the input argument to which the JSON Pointer is relative. See the current [error-handling contract](../contracts/ERROR_HANDLING.md). Existing action error envelopes are unchanged.
+
+Subsequent decision: [ADR 0025](0025-runtime-reset-and-integrity-recovery.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.

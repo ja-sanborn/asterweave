@@ -24,3 +24,5 @@ Use [Semantic Versioning 2.0.0](https://semver.org/) for engine releases, with p
 Public interfaces, semantic behavior, errors, defaults and compatibility must be intentionally documented and tested. Internal refactoring can remain independent of public contracts. Release decisions do not automatically change data formats. See the normative [public API contract](../contracts/PUBLIC_API.md) and [security model](../contracts/SECURITY_MODEL.md).
 
 Concrete entry point paths, signatures, classes, export lists and lifecycle interfaces require explicit implementation-design authorization. This record introduces no implementation or package changes.
+
+Subsequent decision: [ADR 0025](0025-runtime-reset-and-integrity-recovery.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.

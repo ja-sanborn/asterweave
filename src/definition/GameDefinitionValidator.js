@@ -10,15 +10,12 @@
  * @module definition/GameDefinitionValidator
  */
 
+import { validateEffectiveStructure } from '../state/validateEffectiveStructure.js';
 import { GameDefinitionMapper } from './GameDefinitionMapper.js';
 import { participants } from './validateIdentity.js';
 import { appendPointer } from '../diagnostics/jsonPointer.js';
-import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
 import { WORLD_CODES } from '../world/worldDiagnostics.js';
-import { validateLifecycle } from '../world/validateLifecycle.js';
-import { validateContainment } from '../world/validateContainment.js';
-import { validateAssociations } from '../world/validateAssociations.js';
-import { validateCapacity } from '../world/validateCapacity.js';
+import { validateWorldState } from '../world/validateWorldState.js';
 import { validateGameProperties, validateRelationshipPairs } from '../state/validateProperties.js';
 import { inspectJsonData } from '../shared/jsonData.js';
 import { DiagnosticCollector } from '../diagnostics/DiagnosticCollector.js';
@@ -67,7 +64,6 @@ export class GameDefinitionValidator {
         const collector = new DiagnosticCollector();
         const candidate = new GameDefinitionMapper().map(definition);
         const sources = new Map();
-        const effective = new Map();
         for (const { participant, path } of participants(definition.world)) {
             sources.set(participant.id, path);
             if (participant.initialLifecycle !== undefined && participant.initialLifecycle !== 'active'
@@ -77,19 +73,11 @@ export class GameDefinitionValidator {
                     'Nonactive participant must omit initial associations.');
             }
         }
-        for (const { collection, kind } of PARTICIPANT_CATEGORIES) {
-            for (const entry of candidate[collection]) {
-                effective.set(entry.id, { kind, properties: entry.properties });
-            }
-        }
         const report = (code, id, property, message, index) => {
             const path = domainPointer(sources, id, property, index);
             reportDefinition(collector, code, path, message);
         };
-        const invalid = validateLifecycle(effective, report);
-        const hierarchy = validateContainment(effective, invalid, report);
-        validateAssociations(effective, hierarchy, report);
-        validateCapacity(effective, hierarchy, report);
+        validateWorldState(candidate, report, true);
 
         // Check authored ownership before accepting normalized maps; reserved keys
         // must not be concealed by the engine defaults in the mapped candidate.
@@ -104,6 +92,11 @@ export class GameDefinitionValidator {
         for (const [index, entry] of candidate.relationships.entries()) {
             checkMap(entry.properties, namespace,
                 '/world/initialRelationships/' + index + '/initialProperties', collector);
+        }
+        // Authored findings retain their existing precedence. A structurally invalid
+        // mapped candidate with no authored findings is an internal mapping defect.
+        if (collector.size === 0 && !validateEffectiveStructure(candidate)) {
+            throw new Error('Invalid normalized definition candidate.');
         }
         return {
             candidate: collector.size === 0 ? candidate : undefined,

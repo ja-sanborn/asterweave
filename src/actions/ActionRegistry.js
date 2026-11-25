@@ -10,6 +10,8 @@
  * @module actions/ActionRegistry
  */
 
+import { immutableCopy } from '../shared/immutableData.js';
+import { isRecord } from '../shared/recordShape.js';
 import { isSynchronousAssociation } from './executableAssociations.js';
 import { isIdentifier } from '../shared/identifiers.js';
 import { classifyActionType, isReservedActionNamespace } from './actionIdentifiers.js';
@@ -21,6 +23,21 @@ import {
 /** @type {symbol} Internal construction capability, never returned. */
 const CONSTRUCTION = Symbol('ActionRegistry construction');
 
+/**
+ * Checks detached mutation grants for setup and retained integrity verification.
+ * @param {object} grants - Inspected grant record.
+ * @returns {boolean} Validity.
+ */
+function validGrants(grants) {
+    return !(!isRecord(grants) || Object.keys(grants).length !== 2
+                || !Array.isArray(grants.namespaces) || !Array.isArray(grants.operations)
+                || grants.namespaces.some((name) => !isIdentifier(name) || name === 'asterweave')
+                || grants.operations.some((name) => !['grantControl', 'revokeControl',
+                    'selectActor', 'clearSelection'].includes(name))
+                || new Set(grants.namespaces).size !== grants.namespaces.length
+                || new Set(grants.operations).size !== grants.operations.length);
+}
+
 /** Independent registry of trusted executable associations and immutable metadata. */
 export class ActionRegistry {
     /** @type {Map<string, object>} Validated registrations. */
@@ -31,6 +48,10 @@ export class ActionRegistry {
     #engineOwner = Symbol('engine');
     /** @type {symbol} Game registration authority. */
     #gameOwner = Symbol('game');
+    /** @type {symbol} Independent engine mutation grant authority. */
+    #grantOwner = Symbol('mutation grants');
+    /** @type {Map<string, object>} Engine-established executable grants. */
+    #grants = new Map();
     /** @type {boolean} Whether setup has permanently ended. */
     #finalized = false;
     /** @type {boolean} Whether a modification is active. */
@@ -51,11 +72,12 @@ export class ActionRegistry {
     /**
      * Creates a registry and transfers setup capabilities to trusted orchestration.
      * These capabilities are never returned by lookup or exposed through the public facade.
-     * @returns {{registry: ActionRegistry, engineOwner: symbol, gameOwner: symbol}} Trusted setup record.
+     * @returns {{registry: ActionRegistry, engineOwner: symbol, gameOwner: symbol, grantOwner: symbol}} Trusted setup record.
      */
     static create() {
         const registry = new ActionRegistry(CONSTRUCTION);
-        return Object.freeze({ registry, engineOwner: registry.#engineOwner, gameOwner: registry.#gameOwner });
+        return Object.freeze({ registry, engineOwner: registry.#engineOwner, gameOwner: registry.#gameOwner,
+            grantOwner: registry.#grantOwner });
     }
 
     /** @returns {number} Current registration count. */
@@ -227,5 +249,75 @@ export class ActionRegistry {
             addActionFinding(collector, 'definition', C.DUPLICATE_ACTION_TYPE, '/type',
                 'Action identifier is already registered.');
         }
+    }
+    /**
+     * Establishes immutable mutation grants separately from registration ownership.
+     * @param {symbol} authority - Independent engine setup grant capability.
+     * @param {string} type - Already registered action type.
+     * @param {object} input - Closed namespace and operation grants.
+     * @throws {TypeError} For invalid authority, lifecycle or grants.
+     */
+    establishMutationGrants(authority, type, input) {
+        if (authority !== this.#grantOwner || this.#finalized || this.#modificationInProgress
+            || !this.#registrations.has(type) || this.#grants.has(type)) {
+            throw new TypeError('Invalid mutation grant setup.');
+        }
+        this.#modificationInProgress = true;
+        try {
+            const grants = immutableCopy(input);
+            if (!validGrants(grants)) {
+                throw new TypeError('Invalid mutation grants.');
+            }
+            this.#grants.set(type, grants);
+        } finally {
+            this.#modificationInProgress = false;
+        }
+    }
+
+    /**
+     * Reads established grants for a trusted executable association.
+     * @param {string} type - Registered action type.
+     * @returns {object} Immutable grants, defaulting to no mutation authority.
+     */
+    mutationGrants(type) {
+        return this.#grants.get(type) ?? immutableCopy({ namespaces: [], operations: [] });
+    }
+    /**
+     * Verifies bounded retained registry structure without invoking handlers.
+     * @returns {boolean} Whether trusted setup invariants remain established.
+     */
+    verifyIntegrity() {
+        if (!this.#finalized || this.#modificationInProgress) {
+            return false;
+        }
+        const owners = new Set([this.#engineOwner, this.#gameOwner, this.#grantOwner]);
+        if (owners.size !== 3) {
+            return false;
+        }
+        for (const [namespace, owner] of this.#namespaceOwners) {
+            if (!isIdentifier(namespace) || isReservedActionNamespace(namespace)
+                || typeof owner !== 'symbol' || owners.has(owner)) {
+                return false;
+            }
+            owners.add(owner);
+        }
+        for (const [type, record] of this.#registrations) {
+            const identity = classifyActionType(type);
+            if (identity === undefined || record.definition.type !== type
+                || validateActionDefinition(record.definition).status !== 'completed'
+                || !Object.isFrozen(record) || !Object.isFrozen(record.definition)
+                || !isSynchronousAssociation(record.handler)
+                || (record.validator !== undefined && !isSynchronousAssociation(record.validator))
+                || (identity.classification === 'extension' && !this.#namespaceOwners.has(identity.namespace))) {
+                return false;
+            }
+        }
+        for (const [type, grants] of this.#grants) {
+            if (!this.#registrations.has(type) || !validGrants(grants) || !Object.isFrozen(grants)
+                || !Object.isFrozen(grants.namespaces) || !Object.isFrozen(grants.operations)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -12,7 +12,10 @@
 
 import { GameDefinitionValidator } from '../definition/GameDefinitionValidator.js';
 import { validatePlayerConfiguration } from '../state/validatePlayerConfiguration.js';
+import { validateEffectiveState } from '../state/validateEffectiveState.js';
 import { RuntimeState } from '../state/RuntimeState.js';
+import { ActionDispatcher } from './ActionDispatcher.js';
+import { RuntimeResetter } from './RuntimeResetter.js';
 import { ActionRegistry } from '../actions/ActionRegistry.js';
 
 /** Sequences initial candidate validation and runtime ownership. */
@@ -22,7 +25,7 @@ export class GameInitializer {
      * @param {unknown} definition - Parsed canonical game definition.
      * @param {unknown} [options] - Optional initialization configuration.
      * @returns {{state: RuntimeState|undefined, registry: ActionRegistry|undefined,
-     *     diagnostics: ReadonlyArray<object>}}
+     *     dispatcher?: ActionDispatcher, resetter?: RuntimeResetter, diagnostics: ReadonlyArray<object>}}
      *     Complete runtime collaborators or ordered findings; never partial runtime.
      */
     initialize(definition, options) {
@@ -36,12 +39,17 @@ export class GameInitializer {
             return { state: undefined, registry: undefined, diagnostics };
         }
         const state = new RuntimeState(validated.candidate, configuration.options);
+        if (!validateEffectiveState(state.readEffectiveState(), true)) {
+            throw new Error('Invalid initialized effective state.');
+        }
         const { registry } = ActionRegistry.create();
         // Only real executable handlers may be registered in production.
         const finalized = registry.finalize();
         if (finalized.status !== 'completed') {
             throw new Error('Action registry finalization failed.');
         }
-        return { state, registry, diagnostics };
+        const dispatcher = new ActionDispatcher(state, registry);
+        const resetter = new RuntimeResetter(state, registry);
+        return { state, registry, dispatcher, resetter, diagnostics };
     }
 }

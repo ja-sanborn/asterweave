@@ -13,3 +13,5 @@ Conflate player and actor, persist playthrough IDs, mandatory discovery tracking
 
 ## Consequences
 See [runtime state](../contracts/RUNTIME_STATE.md). Multiplayer authentication and networking remain deferred; no new implementation.
+
+Subsequent decision: [ADR 0024](0024-runtime-transactions-and-action-execution.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.

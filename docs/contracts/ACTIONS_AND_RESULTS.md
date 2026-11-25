@@ -1,6 +1,6 @@
 # Action and result contracts
 
-Status: Accepted design; action execution is planned.
+Status: Runtime action execution infrastructure; production gameplay handlers remain deferred.
 
 This specification elaborates [ADR 0002](../decisions/0002-unified-action-contract.md) and [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md). Commands, choices, narrative and direct callers submit the same platform-independent data. Only the dispatcher authorizes and commits world transitions.
 
@@ -52,13 +52,13 @@ Arguments use descriptive lower camel case keys. Use stable IDs rather than disp
 
 A completed failure is an intentionally resolved gameplay attempt, not a validation rejection or technical failure. It can commit intentional consequences and its configured failure cost. Rejection or execution error commits no engine-owned state change and advances zero turns; discard staged success/failure outputs. Safe diagnostics may still be returned to the submitting caller. A malformed request must not require a valid actor or request ID to receive a result. No stack traces, secrets, or live state references.
 
-The future action result class follows [ADR 0020](../decisions/0020-standardized-operation-result-architecture.md). Its public read-only accessors and derived status predicates are distinct from the serialized envelope above. Its toJSON method returns detached data preserving the documented fields, omission rules and output order; derived Boolean predicates are not serialized. This does not change action outcomes, turn costs, error vocabulary or authorization requirements.
+The ActionResult class follows [ADR 0020](../decisions/0020-standardized-operation-result-architecture.md). Its public read-only accessors and all five inherited status predicates (isCompleted, isRejected, isError, isSuccess, isFailure) are distinct from the serialized envelope above. Inherit the common predicate implementation without redefining it; completed gameplay failure is operation success. Its toJSON method returns detached data preserving the documented fields, omission rules and output order; derived Boolean predicates are not serialized. This does not change action outcomes, turn costs, error vocabulary or authorization requirements.
 
 ### Error vocabulary
 
 Follow the common [error-handling contract](ERROR_HANDLING.md). Preserve this operation-specific error record and code vocabulary; definition diagnostic fields are not required here. Orchestration translates domain findings into these codes, and unexpected exceptions are translated at the dispatcher boundary without exposing internal causes or stacks.
 
-The error object requires a stable code string and may contain JSON-compatible safe details. Initial codes:
+The error object is closed: required code and optional details containing JSON-compatible, explicitly selected safe semantic data. Omit all other fields, including stack, cause and raw exception messages. Trusted handlers are responsible for selecting non-sensitive details; JSON shape validation alone cannot establish confidentiality. The dispatcher preserves validated rejection details and never forwards unexpected exception internals. Initial codes:
 
 | Code | Status | Meaning |
 | --- | --- | --- |
@@ -66,10 +66,10 @@ The error object requires a stable code string and may contain JSON-compatible s
 | UNKNOWN_ACTION_TYPE | rejected | No registered action type. |
 | INVALID_ARGUMENTS | rejected | Argument schema or reference validation failed. |
 | ACTOR_NOT_FOUND | rejected | Actor identity cannot be resolved. |
-| ACTION_UNAVAILABLE | rejected | Registered action is disabled or unavailable. |
+| ACTION_UNAVAILABLE | rejected | Registered action is disabled or unavailable; actor is inactive; or dispatch is reentrant. |
 | ACTION_FORBIDDEN | rejected | Actor is not permitted to perform action. |
 | EXIT_UNAVAILABLE | rejected | Foundation exit does not exist or cannot be used. |
-| EXECUTION_FAILED | error | Unexpected handler, transaction or invariant failure. |
+| EXECUTION_FAILED | error | Unexpected handler, transaction or invariant failure; committed integrity cannot be established. |
 
 Gameplay failure explanations belong in semantic outputs, not the technical error field. Later codes may be added without changing these meanings.
 
@@ -85,9 +85,17 @@ Each output requires a nonempty type string (semantic identifier), audience obje
 
 Reject malformed audience definitions, avoid leaking private data through shared outputs, and deliver only to authorized recipients. The host must enforce delivery authorization; scope is not authentication. Diagnostics without a valid actor are returned to the requesting caller, not broadcast.
 
+## Dispatch sequence
+
+The dispatcher is synchronous and independent of action-specific gameplay. Establish the execution guard and verify runtime availability before inspecting external action data. Validate and detach the envelope; resolve the active actor; verify player control or separately established trusted internal authority; resolve exact registration and enabled status; validate declared argument structure, syntax and specialized constraints; resolve declared runtime references for existence and category; begin isolated transaction; invoke the trusted handler; validate its outcome, outputs, applicable turn cost and complete candidate state; commit only on valid completion; otherwise discard; return ActionResult and reliably release the guard. Earliest applicable failed stage determines rejection; do not evaluate unnecessary later stages. Unknown acting actor yields ACTOR_NOT_FOUND; inactive acting actor yields ACTION_UNAVAILABLE; unauthorized active actor yields ACTION_FORBIDDEN. Unregistered or disabled action and invalid arguments follow the existing error vocabulary. Invalid declared target references yield INVALID_ARGUMENTS, while action-specific target eligibility belongs to gameplay logic. Only the acting actor is universally required to be active. Reentrant dispatch rejects with ACTION_UNAVAILABLE and compromised runtime dispatch returns EXECUTION_FAILED, before inspecting input. No implicit selected actor or player-free authorization bypass.
+
+ActionResult extends the common OperationResult contract; isSuccess equals isCompleted even for completed gameplay failure. Construction is engine-controlled; serialization omits derived predicates and absent fields. Output records are validated and detached at staging, with state-dependent constraints rechecked before commitment; audience records are closed and referenced actors must exist. Preserve emission order, including intentional duplicates. See [internal execution and result design](../RUNTIME_IMPLEMENTATION.md#turns-outputs-and-results). Rejection/error returns an empty output array and zero turns. Safe errors are returned to the submitting caller, not broadcast. Echo actorId only when the identity is established, authorized for the submission and safe; omit it for unknown, malformed, inactive or unauthorized actors, reentrant dispatch and compromised-runtime dispatch. Echo a well-formed requestId only when known and safe. Do not include internal records or capabilities. Distinct codes may reveal existence or lifecycle despite omitted actorId; these results are trusted-host data, not an enumeration-resistant remote-client contract. See [security model](SECURITY_MODEL.md#authorization-and-extensions).
+
+Expected domain precondition failures are rejections. Unexpected malformed returns, unauthorized mutation attempts by handlers, invalid mutation data, arithmetic overflow or final candidate integrity violations are execution errors; programming/integrity failures invalidate the transaction even if caught by handler code. See [runtime state](RUNTIME_STATE.md#transactions-and-snapshots).
+
 ## Representative examples
 
-Illustrative well-formed Foundation movement request (execution is not yet implemented):
+Illustrative well-formed Foundation movement request (the production movement handler remains deferred):
 
 ```json
 {"actorId":"player","type":"move","args":{"direction":"north"}}
@@ -149,7 +157,7 @@ World references and relationship semantics follow [world containment](WORLD_CON
 
 ## Turn and transaction invariants
 
-The dispatcher alone advances turns. It resolves success/failure costs from trusted action definitions, commits the outcome, state and turn delta together, and releases committed outputs only after success of the transaction. Rejected actions and execution errors leave all engine-owned state unchanged, including random state and pending events when introduced. Foundation successful movement costs one turn; invalid or unavailable exits are rejected and cost zero. Future game overrides apply only to completed outcomes. Intermediate scheduled turns must not be skipped; exact event ordering and interruption semantics belong to the future rules/events design. See [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).
+The dispatcher alone advances turns. It resolves success/failure costs from trusted action definitions, commits the outcome, state and turn delta together, and releases committed outputs only after success of the transaction. Rejected actions and execution errors leave all engine-owned state unchanged, including random state and pending events when introduced. Foundation successful movement costs one turn; invalid or unavailable exits are rejected and cost zero. Future game overrides apply only to completed outcomes. Use checked nonnegative safe-integer addition without per-turn iteration while no intermediate events exist. Intermediate scheduled turns must not be skipped when events are introduced; exact event ordering and interruption semantics belong to the future rules/events design. See [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).
 
 ## Runtime state authority
 
