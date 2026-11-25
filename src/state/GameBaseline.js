@@ -10,6 +10,7 @@
  * @module state/GameBaseline
  */
 
+import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
 import { immutableCopy } from '../shared/immutableData.js';
 
 /** Owns the immutable authored effective state of one validated game. */
@@ -30,7 +31,7 @@ export class GameBaseline {
         }
         this.#data = immutableCopy(candidate);
         this.#participants = new Map();
-        for (const collection of ['locations', 'actors', 'entities']) {
+        for (const { collection } of PARTICIPANT_CATEGORIES) {
             for (const record of this.#data[collection]) {
                 this.#participants.set(record.id, record);
             }

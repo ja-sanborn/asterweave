@@ -10,6 +10,8 @@
  * @module state/validatePlayerConfiguration
  */
 
+import { isRecord, missingFields, unknownFields } from '../shared/recordShape.js';
+import { WORLD_ID } from '../world/worldRelationships.js';
 import { inspectJsonData } from '../shared/jsonData.js';
 import { isIdentifier, isQualifiedKey } from '../shared/identifiers.js';
 import { appendPointer } from '../diagnostics/jsonPointer.js';
@@ -65,19 +67,15 @@ export function validatePlayerConfiguration(input, candidate) {
  * @returns {boolean} Whether the record shape permits field inspection.
  */
 function checkRecord(value, path, allowed, required, report) {
-    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    if (!isRecord(value)) {
         report(C.INVALID_TYPE, path, 'Expected an object.');
         return false;
     }
-    for (const key of required) {
-        if (!Object.hasOwn(value, key)) {
-            report(C.REQUIRED_FIELD, appendPointer(path, key), 'Required field is absent.');
-        }
+    for (const key of missingFields(value, required)) {
+        report(C.REQUIRED_FIELD, appendPointer(path, key), 'Required field is absent.');
     }
-    for (const key of Object.keys(value).sort()) {
-        if (!allowed.includes(key)) {
-            report(C.UNKNOWN_FIELD, appendPointer(path, key), 'Unsupported field.');
-        }
+    for (const key of unknownFields(value, allowed)) {
+        report(C.UNKNOWN_FIELD, appendPointer(path, key), 'Unsupported field.');
     }
     return true;
 }
@@ -107,7 +105,7 @@ function checkPlayer(player, candidate, report) {
     }
     if (Object.hasOwn(player, 'initialProperties')) {
         const properties = player.initialProperties;
-        if (properties === null || typeof properties !== 'object' || Array.isArray(properties)) {
+        if (!isRecord(properties)) {
             report(C.INVALID_TYPE, '/player/initialProperties', 'Expected a property map.');
         } else if (candidate !== undefined) {
             validateGameProperties(properties, candidate.game.namespace, (code, key, message) => {
@@ -161,7 +159,7 @@ function checkControlledActors(value, candidate, report) {
     const actors = candidate === undefined
         ? undefined : new Map(candidate.actors.map((actor) => [actor.id, actor]));
     const otherIds = candidate === undefined ? undefined : new Set([
-        'world',
+        WORLD_ID,
         ...candidate.locations.map((record) => record.id),
         ...candidate.entities.map((record) => record.id),
     ]);

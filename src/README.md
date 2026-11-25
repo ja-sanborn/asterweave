@@ -17,9 +17,9 @@ The named Asterweave export in [Asterweave.js](Asterweave.js) is the sole suppor
 | definition | Safe authored validation, identity and reference checks, candidate mapping and diagnostic translation |
 | diagnostics | Per-operation diagnostic collection and JSON Pointer paths |
 | results | Common status semantics, specialized immutable results and serialization |
-| shared | Data inspection, detached copying, identifiers and checked arithmetic |
+| shared | Data inspection, detached copying, inspected-record predicates, identifiers and checked arithmetic |
 | state | Immutable baseline, initial runtime ownership, explicit player configuration and effective snapshots |
-| world | Participant identities, private registry, vocabulary and reusable effective-state invariants |
+| world | Participant identities, private registry, authoritative category and measurement vocabulary, detached property reads and reusable effective-state invariants |
 
 World objects read authoritative properties through explicit collaborators; they do not maintain duplicate mutable gameplay records. RuntimeState owns the isolated baseline, empty initial differences, original configuration, World and optional separate Player. GameInitializer sequences validation and runtime construction, including creation and finalization of a separate action registry privately owned by the facade; the facade translates unexpected failures into safe operation-specific results.
 

@@ -10,7 +10,8 @@
  * @module world/WorldObject
  */
 
-import { immutableCopy } from '../shared/immutableData.js';
+import { readEffectiveProperty } from './readEffectiveProperty.js';
+import { WORLD_ID } from './worldRelationships.js';
 import { isIdentifier } from '../shared/identifiers.js';
 
 /** Base of the physical participant categories; does not own gameplay state. */
@@ -27,7 +28,7 @@ export class WorldObject {
      * @throws {TypeError} On invalid internal construction.
      */
     constructor(id, readProperties) {
-        if (new.target === WorldObject || !isIdentifier(id) || id === 'world'
+        if (new.target === WorldObject || !isIdentifier(id) || id === WORLD_ID
             || typeof readProperties !== 'function') {
             throw new TypeError('Invalid world participant construction.');
         }
@@ -61,10 +62,6 @@ export class WorldObject {
      * @returns {*} Detached immutable value, or undefined for absence.
      */
     getProperty(key) {
-        const properties = this.#readProperties(this.#id);
-        if (!Object.hasOwn(properties, key)) {
-            return undefined;
-        }
-        return immutableCopy(properties[key]);
+        return readEffectiveProperty(this.#readProperties(this.#id), key);
     }
 }

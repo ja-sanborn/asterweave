@@ -10,6 +10,9 @@
  * @module definition/validateStructure
  */
 
+import { isRecord, unknownFields } from '../shared/recordShape.js';
+import { INTRINSIC_MEASUREMENTS, MEASUREMENT_LIMITS } from '../world/physicalMeasurements.js';
+import { PARTICIPANT_KINDS } from '../world/worldVocabulary.js';
 import { appendPointer } from '../diagnostics/jsonPointer.js';
 import { isGameId, isIdentifier, isVersion } from '../shared/identifiers.js';
 import { isNonnegativeSafeInteger, isPositiveSafeInteger } from '../shared/safeArithmetic.js';
@@ -60,11 +63,6 @@ export function validateStructure(definition, collector) {
     return collector.size === start;
 }
 
-/** @param {*} value - Safe data. @returns {boolean} Whether it is a record. */
-function isRecord(value) {
-    return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
 /**
  * Checks a closed object in declared field order.
  * @param {*} value - Candidate.
@@ -78,7 +76,7 @@ function record(value, path, fields, report) {
         report(C.INVALID_TYPE, path, 'Expected an object.');
         return;
     }
-    const allowed = new Set(fields.map(([key]) => key));
+    const allowed = fields.map(([key]) => key);
     for (const [key, validate, optional] of fields) {
         const child = appendPointer(path, key);
         if (!Object.hasOwn(value, key)) {
@@ -89,10 +87,8 @@ function record(value, path, fields, report) {
             validate(value[key], child, report);
         }
     }
-    for (const key of Object.keys(value).sort()) {
-        if (!allowed.has(key)) {
-            report(C.UNKNOWN_FIELD, appendPointer(path, key), 'Unsupported field.');
-        }
+    for (const key of unknownFields(value, allowed)) {
+        report(C.UNKNOWN_FIELD, appendPointer(path, key), 'Unsupported field.');
     }
 }
 
@@ -314,10 +310,10 @@ function physical(value, path, report) {
                 add(C.INVALID_TYPE, pointer, 'Expected a Boolean.');
             }
         }, true],
-        ...['size', 'weight'].map((key) => [
+        ...INTRINSIC_MEASUREMENTS.map((key) => [
             key, (entry, pointer, add) => measurement(entry, pointer, add, isPositiveSafeInteger), true,
         ]),
-        ...['maxItemSize', 'maxItemWeight', 'sizeCapacity', 'weightCapacity'].map((key) => [
+        ...MEASUREMENT_LIMITS.map((key) => [
             key, (entry, pointer, add) => measurement(entry, pointer, add, isNonnegativeSafeInteger), true,
         ]),
     ], report);
@@ -331,10 +327,10 @@ function physical(value, path, report) {
  */
 function endpoint(value, path, report) {
     const scope = isRecord(value) && Object.hasOwn(value, 'scope') ? value.scope : undefined;
-    const participantScope = ['location', 'actor', 'entity'].includes(scope);
+    const participantScope = PARTICIPANT_KINDS.includes(scope);
     record(value, path, [
         ['scope', (entry, pointer, add) => stringValue(entry, pointer, add,
-            (kind) => ['world', 'location', 'actor', 'entity'].includes(kind))],
+            (kind) => (kind === 'world' || PARTICIPANT_KINDS.includes(kind)))],
         ...(scope === 'world' ? [] : [['id', identifier, !participantScope]]),
     ], report);
 }

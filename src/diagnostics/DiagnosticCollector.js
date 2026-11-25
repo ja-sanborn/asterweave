@@ -10,6 +10,7 @@
  * @module diagnostics/DiagnosticCollector
  */
 
+import { isIdentifier } from '../shared/identifiers.js';
 import { immutableCopy } from '../shared/immutableData.js';
 
 /**
@@ -32,7 +33,7 @@ export class DiagnosticCollector {
             throw new TypeError('Invalid diagnostic sources.');
         }
         for (const source of sources) {
-            if (typeof source !== 'string' || !/^[a-z][A-Za-z0-9]*(?![\s\S])/.test(source)
+            if (!isIdentifier(source)
                 || this.#records.has(source)) {
                 throw new TypeError('Invalid diagnostic sources.');
             }

@@ -22,7 +22,7 @@ import {
 
 test('recognizes exactly the documented standard catalog identifiers', () => {
     const catalog = readFileSync(new URL('../../docs/contracts/STANDARD_ACTIONS.md', import.meta.url), 'utf8');
-    const names = [...catalog.matchAll(/^\| ([a-z][A-Za-z0-9]*) \|.*\| (?:Metadata implemented; handler planned|Reference only) \|$/gm)]
+    const names = [...catalog.matchAll(/^\| ([a-z][A-Za-z0-9]*) \|[^\n]*\| \d+ \| \d+ \|[^\n]*\|$/gm)]
         .map((match) => match[1]);
     assert.deepEqual([...STANDARD_ACTION_TYPES].sort(), [...names].sort());
     assert.ok(Object.isFrozen(STANDARD_ACTION_TYPES));

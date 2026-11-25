@@ -10,6 +10,8 @@
  * @module actions/argumentConstraints
  */
 
+import { isRecord } from '../shared/recordShape.js';
+import { PARTICIPANT_KINDS } from '../world/worldVocabulary.js';
 import { isIdentifier } from '../shared/identifiers.js';
 import { WORLD_ID } from '../world/worldRelationships.js';
 
@@ -20,17 +22,8 @@ export const ARGUMENT_TYPES = Object.freeze([
 
 /** @type {ReadonlyArray<string>} Supported reference categories. */
 export const REFERENCE_KINDS = Object.freeze([
-    'location', 'actor', 'entity', 'participant', 'world', 'player',
+    ...PARTICIPANT_KINDS, 'participant', 'world', 'player',
 ]);
-
-/**
- * Checks a detached JSON record.
- * @param {unknown} value - Inspected data.
- * @returns {boolean} Whether the value is a record.
- */
-export function isRecord(value) {
-    return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
 
 /**
  * Checks a value against a declared type without coercion.

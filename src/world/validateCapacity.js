@@ -11,6 +11,7 @@
  */
 
 import { addNonnegative } from '../shared/safeArithmetic.js';
+import { INDIVIDUAL_LIMITS, CUMULATIVE_LIMITS } from './physicalMeasurements.js';
 import { WORLD_ID } from './worldRelationships.js';
 import { WORLD_CODES as C } from './worldDiagnostics.js';
 
@@ -58,7 +59,7 @@ export function validateCapacity(participants, hierarchy, report) {
             continue;
         }
         const children = hierarchy.children.get(id) ?? [];
-        for (const [limit, score] of [['maxItemSize', 'size'], ['maxItemWeight', 'weight']]) {
+        for (const { limit, score } of INDIVIDUAL_LIMITS) {
             const maximum = properties['asterweave.' + limit];
             if (maximum === undefined) {
                 continue;
@@ -69,10 +70,8 @@ export function validateCapacity(participants, hierarchy, report) {
             }
         }
         const total = totals.get(id);
-        for (const [limit, load] of [
-            ['sizeCapacity', total.contentsSize],
-            ['weightCapacity', total.contentsWeight],
-        ]) {
+        for (const { limit, score } of CUMULATIVE_LIMITS) {
+            const load = score === 'size' ? total.contentsSize : total.contentsWeight;
             const maximum = properties['asterweave.' + limit];
             if (maximum !== undefined) {
                 checkLimit(id, limit, maximum, load, children.length > 0, report);

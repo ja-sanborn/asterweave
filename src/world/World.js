@@ -14,7 +14,7 @@ import { WorldObjectRegistry } from './WorldObjectRegistry.js';
 import { Location } from './Location.js';
 import { Actor } from './Actor.js';
 import { Entity } from './Entity.js';
-import { immutableCopy } from '../shared/immutableData.js';
+import { readEffectiveProperty } from './readEffectiveProperty.js';
 import { WORLD_ID } from './worldRelationships.js';
 
 /** Non-navigable World root, owning the physical participant identity registry. */
@@ -54,8 +54,7 @@ export class World {
      * @returns {*} Detached immutable value, or undefined for absence.
      */
     getProperty(key) {
-        const properties = this.#readProperties(WORLD_ID);
-        return Object.hasOwn(properties, key) ? immutableCopy(properties[key]) : undefined;
+        return readEffectiveProperty(this.#readProperties(WORLD_ID), key);
     }
 
     /**

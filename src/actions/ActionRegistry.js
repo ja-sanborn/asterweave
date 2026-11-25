@@ -14,7 +14,9 @@ import { isSynchronousAssociation } from './executableAssociations.js';
 import { isIdentifier } from '../shared/identifiers.js';
 import { classifyActionType, isReservedActionNamespace } from './actionIdentifiers.js';
 import { validateActionDefinition } from './validateActionDefinition.js';
-import { createActionCollector, addActionFinding, actionRegistryResult } from './actionDiagnostics.js';
+import {
+    ACTION_CODES as C, createActionCollector, addActionFinding, actionRegistryResult,
+} from './actionDiagnostics.js';
 
 /** @type {symbol} Internal construction capability, never returned. */
 const CONSTRUCTION = Symbol('ActionRegistry construction');
@@ -74,11 +76,11 @@ export class ActionRegistry {
     claimNamespace(namespace) {
         return this.#modify((collector) => {
             if (!isIdentifier(namespace)) {
-                addActionFinding(collector, 'namespace', 'INVALID_NAMESPACE', '', 'Invalid action namespace.');
+                addActionFinding(collector, 'namespace', C.INVALID_NAMESPACE, '', 'Invalid action namespace.');
             } else if (isReservedActionNamespace(namespace)) {
-                addActionFinding(collector, 'namespace', 'RESERVED_NAMESPACE', '', 'Action namespace is reserved.');
+                addActionFinding(collector, 'namespace', C.RESERVED_NAMESPACE, '', 'Action namespace is reserved.');
             } else if (this.#namespaceOwners.has(namespace)) {
-                addActionFinding(collector, 'namespace', 'NAMESPACE_CONFLICT', '',
+                addActionFinding(collector, 'namespace', C.NAMESPACE_CONFLICT, '',
                     'Action namespace is already owned.');
             }
             if (collector.size > 0) {
@@ -110,11 +112,11 @@ export class ActionRegistry {
                 this.#checkOwnership(owner, validation.definition.type, collector);
             }
             if (!isSynchronousAssociation(handler)) {
-                addActionFinding(collector, 'handler', 'INVALID_HANDLER', '',
+                addActionFinding(collector, 'handler', C.INVALID_HANDLER, '',
                     'Expected a trusted synchronous handler function.');
             }
             if (validator !== undefined && !isSynchronousAssociation(validator)) {
-                addActionFinding(collector, 'validator', 'INVALID_VALIDATOR', '',
+                addActionFinding(collector, 'validator', C.INVALID_VALIDATOR, '',
                     'Expected a trusted synchronous validator function.');
             }
             const result = actionRegistryResult(collector);
@@ -170,7 +172,7 @@ export class ActionRegistry {
     finalize() {
         const collector = createActionCollector();
         if (this.#modificationInProgress) {
-            addActionFinding(collector, 'registry', 'REGISTRY_BUSY', '', 'Registry modification is already active.');
+            addActionFinding(collector, 'registry', C.REGISTRY_BUSY, '', 'Registry modification is already active.');
             return actionRegistryResult(collector);
         }
         const result = actionRegistryResult(collector);
@@ -186,11 +188,11 @@ export class ActionRegistry {
     #modify(operation) {
         const collector = createActionCollector();
         if (this.#modificationInProgress) {
-            addActionFinding(collector, 'registry', 'REGISTRY_BUSY', '', 'Registry modification is already active.');
+            addActionFinding(collector, 'registry', C.REGISTRY_BUSY, '', 'Registry modification is already active.');
             return actionRegistryResult(collector);
         }
         if (this.#finalized) {
-            addActionFinding(collector, 'registry', 'REGISTRY_FINALIZED', '', 'Registry is finalized.');
+            addActionFinding(collector, 'registry', C.REGISTRY_FINALIZED, '', 'Registry is finalized.');
             return actionRegistryResult(collector);
         }
         this.#modificationInProgress = true;
@@ -218,11 +220,11 @@ export class ActionRegistry {
             expected = this.#namespaceOwners.get(identity.namespace);
         }
         if (typeof owner !== 'symbol' || expected === undefined || owner !== expected) {
-            addActionFinding(collector, 'owner', 'INVALID_REGISTRATION_OWNER', '',
+            addActionFinding(collector, 'owner', C.INVALID_REGISTRATION_OWNER, '',
                 'Registration authority does not own this action identity.');
         }
         if (this.#registrations.has(type)) {
-            addActionFinding(collector, 'definition', 'DUPLICATE_ACTION_TYPE', '/type',
+            addActionFinding(collector, 'definition', C.DUPLICATE_ACTION_TYPE, '/type',
                 'Action identifier is already registered.');
         }
     }

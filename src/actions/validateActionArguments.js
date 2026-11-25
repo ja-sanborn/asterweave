@@ -12,11 +12,12 @@
 
 import { isSynchronousAssociation } from './executableAssociations.js';
 import { DiagnosticCollector } from '../diagnostics/DiagnosticCollector.js';
-import { addActionFinding } from './actionDiagnostics.js';
+import { ACTION_CODES as C, addActionFinding } from './actionDiagnostics.js';
 import { appendPointer } from '../diagnostics/jsonPointer.js';
 import { inspectJsonData } from '../shared/jsonData.js';
 import { freezeDetachedJsonData } from '../shared/immutableData.js';
-import { isRecord, matchesArgumentType, matchesReferenceSyntax } from './argumentConstraints.js';
+import { isRecord, unknownFields } from '../shared/recordShape.js';
+import { matchesArgumentType, matchesReferenceSyntax } from './argumentConstraints.js';
 
 /**
  * Checks submitted arguments against previously validated immutable definition metadata.
@@ -34,7 +35,7 @@ export function validateActionArguments(definition, input, validator) {
     const collector = new DiagnosticCollector(['args']);
     const { value, issues } = inspectJsonData(input);
     for (const issue of issues) {
-        addActionFinding(collector, 'args', 'INVALID_DATA', issue.path, issue.message);
+        addActionFinding(collector, 'args', C.INVALID_DATA, issue.path, issue.message);
     }
     if (issues.length === 0) {
         validateStructure(definition.arguments, value, collector);
@@ -61,7 +62,7 @@ export function validateActionArguments(definition, input, validator) {
  */
 function validateStructure(specifications, args, collector) {
     if (!isRecord(args)) {
-        addActionFinding(collector, 'args', 'INVALID_TYPE', '', 'Expected an argument record.');
+        addActionFinding(collector, 'args', C.INVALID_TYPE, '', 'Expected an argument record.');
         return;
     }
     for (const key of Object.keys(specifications).sort()) {
@@ -69,27 +70,25 @@ function validateStructure(specifications, args, collector) {
         const path = appendPointer('', key);
         if (!Object.hasOwn(args, key)) {
             if (spec.required) {
-                addActionFinding(collector, 'args', 'REQUIRED_FIELD', path, 'Required argument is missing.');
+                addActionFinding(collector, 'args', C.REQUIRED_FIELD, path, 'Required argument is missing.');
             }
             continue;
         }
         const value = args[key];
         if (!matchesArgumentType(value, spec.type)) {
-            addActionFinding(collector, 'args', 'INVALID_TYPE', path, 'Argument does not match its declared type.');
+            addActionFinding(collector, 'args', C.INVALID_TYPE, path, 'Argument does not match its declared type.');
             continue;
         }
         if (Object.hasOwn(spec, 'referenceKind') && !matchesReferenceSyntax(value, spec.referenceKind)) {
-            addActionFinding(collector, 'args', 'INVALID_VALUE', path, 'Invalid reference identifier.');
+            addActionFinding(collector, 'args', C.INVALID_VALUE, path, 'Invalid reference identifier.');
             continue;
         }
         if (Object.hasOwn(spec, 'allowedValues') && !spec.allowedValues.includes(value)) {
-            addActionFinding(collector, 'args', 'INVALID_VALUE', path, 'Argument is not an allowed value.');
+            addActionFinding(collector, 'args', C.INVALID_VALUE, path, 'Argument is not an allowed value.');
         }
     }
-    for (const key of Object.keys(args).sort()) {
-        if (!Object.hasOwn(specifications, key)) {
-            addActionFinding(collector, 'args', 'UNKNOWN_FIELD', appendPointer('', key), 'Unknown argument.');
-        }
+    for (const key of unknownFields(args, Object.keys(specifications))) {
+        addActionFinding(collector, 'args', C.UNKNOWN_FIELD, appendPointer('', key), 'Unknown argument.');
     }
 }
 
