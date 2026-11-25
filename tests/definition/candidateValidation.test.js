@@ -229,3 +229,25 @@ test('independent rooted capacity violations survive an unrelated containment cy
     rejects(input, 'CONTAINMENT_CYCLE');
     rejects(input, 'CAPACITY_EXCEEDED', '/world/actors/1/physical/weightCapacity');
 });
+
+test('reports missing measurements in valid branches despite unrelated containment errors', () => {
+    const input = fixture();
+    participant(input, 'house').initialContainment.parentId = 'bedroom';
+    delete participant(input, 'notebook').physical.weight;
+    const result = validate(input);
+    assert.equal(result.candidate, undefined);
+    assert.ok(result.diagnostics.some((entry) => entry.code === 'CONTAINMENT_CYCLE'));
+    assert.ok(result.diagnostics.some((entry) => entry.code === 'UNKNOWN_MEASUREMENT'
+        && entry.path === '/world/actors/1/physical/weightCapacity'));
+});
+
+test('reports missing measurements on a valid child despite an invalid sibling edge', () => {
+    const input = fixture();
+    participant(input, 'key').initialContainment = { parentId: 'world', relationship: 'on' };
+    delete participant(input, 'notebook').physical.weight;
+    const result = validate(input);
+    assert.equal(result.candidate, undefined);
+    assert.ok(result.diagnostics.some((entry) => entry.code === 'INVALID_CONTAINMENT'));
+    assert.ok(result.diagnostics.some((entry) => entry.code === 'UNKNOWN_MEASUREMENT'
+        && entry.path === '/world/actors/1/physical/weightCapacity'));
+});

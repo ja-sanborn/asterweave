@@ -11,6 +11,7 @@
  */
 
 import { addNonnegative } from '../shared/safeArithmetic.js';
+import { WORLD_ID } from './worldRelationships.js';
 import { WORLD_CODES as C } from './worldDiagnostics.js';
 
 /**
@@ -22,11 +23,11 @@ import { WORLD_CODES as C } from './worldDiagnostics.js';
  */
 export function validateCapacity(participants, hierarchy, report) {
     // Traverse valid rooted branches even when a separate branch is invalid.
-    // Missing or invalid edges make affected aggregates incomplete.
-    const incomplete = hierarchy.invalid.size > 0;
+    // A rejected edge cannot contribute to a valid rooted aggregate. Missing
+    // scores on valid children remain independent findings even if another edge fails.
     const totals = new Map();
     const pending = [];
-    for (const id of hierarchy.children.get('world') ?? []) {
+    for (const id of hierarchy.children.get(WORLD_ID) ?? []) {
         pending.push([id, false]);
     }
     while (pending.length > 0) {
@@ -73,8 +74,7 @@ export function validateCapacity(participants, hierarchy, report) {
             ['weightCapacity', total.contentsWeight],
         ]) {
             const maximum = properties['asterweave.' + limit];
-            if (maximum !== undefined && (!incomplete || load.overflow || load.sum > maximum
-                || (maximum === 0 && children.length > 0))) {
+            if (maximum !== undefined) {
                 checkLimit(id, limit, maximum, load, children.length > 0, report);
             }
         }
