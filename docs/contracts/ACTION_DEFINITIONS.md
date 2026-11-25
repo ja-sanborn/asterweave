@@ -1,16 +1,16 @@
 # Action definitions and registration
 
-Status: Accepted design; action registration and configuration are planned.
+Status: Accepted design; registry implementation and game configuration are not yet established.
 
-See [action/result envelopes](ACTIONS_AND_RESULTS.md), [standard catalog](STANDARD_ACTIONS.md) and [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md).
+See [action/result envelopes](ACTIONS_AND_RESULTS.md), [standard catalog](STANDARD_ACTIONS.md) and [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md), elaborated by [ADR 0023](../decisions/0023-action-registry-ownership-and-lifecycle.md).
 
 ## Classifications and identity
 
-Standard action identifiers are unqualified lower camel case names reserved for the engine catalog (e.g. move, lieDown). Extension identifiers use a registered namespace and a dot, e.g. combat.attack; game-defined actions use the reserved game namespace, e.g. game.hackTerminal. Namespace segments and action names begin with a lowercase ASCII letter followed by ASCII letters or digits; names are case-sensitive. No empty segments, whitespace or ambiguous normalization. Reserve game for game-defined actions and unqualified names for standards. A registration must reject duplicate full identifiers and conflicting namespace ownership; a game cannot replace a trusted handler by configuring its name.
+Standard action identifiers are unqualified lower camel case names reserved for the engine catalog (e.g. move, lieDown). Extension identifiers use a registered namespace and a dot, e.g. combat.attack; game-defined actions use the reserved game namespace, e.g. game.hackTerminal. Namespace segments and action names begin with a lowercase ASCII letter followed by ASCII letters or digits; names are case-sensitive. No empty segments, whitespace or ambiguous normalization. Qualified identifiers contain exactly two segments. Reserve game for game-defined actions, asterweave for future engine use, and unqualified names for standards. A registration must reject duplicate full identifiers and conflicting namespace ownership; a game cannot replace a trusted handler by configuring its name.
 
 The reserved game action namespace is specific to action identifiers. It is distinct from the author-selected game.namespace for qualified properties in [PROPERTIES.md](PROPERTIES.md). Do not assume the namespaces are interchangeable; any future unification requires an explicit decision.
 
-A registry is scoped to a runtime instance or an immutable definition set with isolated effective registrations. It resolves an action definition and trusted handler by exact type. Registry infrastructure does not depend on the dispatcher. The dispatcher consumes registry lookup and validation capabilities; movement supplies its actual handler later. Catalog entries are not registrations and do not imply implementation or availability.
+Each runtime privately owns an independent registry, separate from authoritative gameplay state. It resolves an action definition and trusted handler by exact type. Registry infrastructure does not depend on the dispatcher. The dispatcher consumes registry lookup and validation capabilities; movement supplies its actual handler later. Catalog entries are not registrations and do not imply implementation or availability.
 
 ## Definition metadata
 
@@ -19,7 +19,10 @@ A registry is scoped to a runtime instance or an immutable definition set with i
   "type": "move",
   "enabled": true,
   "turnCostSuccess": 1,
-  "turnCostFail": 0
+  "turnCostFail": 0,
+  "arguments": {
+    "direction": {"type": "string", "required": true, "allowedValues": ["north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "up", "down", "in", "out"]}
+  }
 }
 ```
 
@@ -29,8 +32,9 @@ A registry is scoped to a runtime instance or an immutable definition set with i
 | enabled | Required boolean effective availability; standard defaults are enabled when supported and included. |
 | turnCostSuccess | Required nonnegative safe integer effective cost for a completed success. |
 | turnCostFail | Required nonnegative safe integer effective cost for a completed failure. |
+| arguments | Required record of argument specifications keyed by argument name. |
 
-A complete registration also supplies an action-specific argument specification and a trusted handler association; the above JSON illustrates metadata, not executable registration or a finalized canonical game schema. Each argument specification identifies required/optional fields, value types, reference kinds and allowed values; validate shape before execution and validate world prerequisites in the runtime. The catalog gives initial conventions, not complete schemas for unimplemented mechanics. Native JavaScript validation is sufficient; no schema-library dependency.
+A complete registration also supplies a trusted handler association and optionally a specialized argument validator, separately from the data metadata. The above JSON illustrates internal metadata, not canonical game JSON. Each argument specification identifies required/optional fields, value types, reference kinds and allowed values; validate shape before execution and validate world prerequisites in the runtime. The catalog gives initial conventions, not complete schemas for unimplemented mechanics. Native JavaScript validation is sufficient; no schema-library dependency.
 
 Effective configuration is derived from trusted registered defaults and validated per-game overrides. Omitted overrides inherit defaults; zero and false are legitimate explicit overrides. Never read costs from submitted action arguments or caller metadata. Invalid costs (negative, fractional, nonfinite, unsafe integer or wrong type), unsupported types and attempts to replace handlers are rejected. Detect turn-counter overflow before committing. Definitions and effective metadata are detached from mutable caller-owned data; no cross-instance leakage. Dynamic registry mutation during dispatch is not supported by the Foundation contract.
 
@@ -41,6 +45,22 @@ Illustrative future override (not a canonical game-definition fragment):
 ```json
 {"type":"move","enabled":true,"turnCostSuccess":2,"turnCostFail":1}
 ```
+
+## Internal registration and lookup
+
+Trusted setup obtains registry-local Symbol capabilities for standard, game and explicitly claimed extension namespaces. Tokens from other registries, duplicate identifiers and conflicting namespace claims are rejected. Engine and game capabilities are issued through controlled internal construction. No public registration API is introduced.
+
+The registry supports namespace claims, registration, exact membership and definition lookup, resolution of protected executable associations, sorted definition enumeration, size and finalization status. Unknown identifiers resolve to undefined; disabled registrations remain discoverable. Enumeration is a frozen point-in-time array sorted by case-sensitive code units. Individual definitions are detached and recursively immutable; the executable association record is frozen but function behavior is trusted, not frozen or sandboxed.
+
+Registration is additive and atomic. Finalization is irreversible and idempotent outside an active modification. No replacement, removal or reopening is supported. Reentrant modifications are rejected, read-only lookup remains permitted, and unexpected exceptions release the modification guard. Registries and capabilities are excluded from gameplay snapshots and saves. Future reset preserves the registry. Production initialization does not register an action without a real handler.
+
+Expected failures return immutable internal records with status rejected and nonempty diagnostics; successful operations return completed and empty diagnostics. A successful namespace claim additionally returns the owner capability. Unexpected exceptions propagate to the appropriate orchestration boundary. The registry never executes gameplay handlers or constructs public action results.
+
+## Argument specification
+
+Each argument name follows the shared identifier grammar. Its specification contains required type and required (Boolean) attributes, with optional allowedValues and referenceKind. Supported types are string, number (finite), integer (safe), boolean, object (JSON record), array and null. Unknown attributes, unknown submitted arguments, coercion and implicit defaults are prohibited. Explicit null differs from absence. Allowed values are scalar and compatible with the declared type. Reference kinds must be supported by the world and participant contracts and apply to identifier strings. Generic validation checks structure and identifier syntax, not reference existence, accessibility or authority.
+
+Optional trusted synchronous specialized validators receive detached read-only arguments after generic validation succeeds and return structured findings; unexpected exceptions and invalid return contracts propagate as internal failures. Gameplay handlers are synchronous trusted functions. Their execution context and resolution contract belong to dispatcher design.
 
 ## Extension and game-defined actions
 
