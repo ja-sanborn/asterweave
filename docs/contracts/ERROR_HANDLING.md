@@ -19,12 +19,13 @@ Categories describe meaning, not detection mechanism. Platform failures may be e
 
 ## Public contracts and severity
 
-Preserve [definition diagnostics](GAME_DEFINITIONS.md#validation-and-diagnostics): code, severity, path and message are required. Foundation severity is exactly error. Warning and info are deferred; debug, trace and fatal are not validation severities. Severity is distinct from action status and runtime health.
+Preserve [definition diagnostics](GAME_DEFINITIONS.md#validation-and-diagnostics): source, code, severity, path and message are required for definition and initialization configuration findings. Foundation severity is exactly error. Warning and info are deferred; debug, trace and fatal are not validation severities. Severity is distinct from action status and runtime health.
 
 Example:
 
 ```json
 {
+  "source": "definition",
   "code": "UNKNOWN_REFERENCE",
   "severity": "error",
   "path": "/world/locations/1/exits/0/destinationId",
@@ -32,11 +33,11 @@ Example:
 }
 ```
 
-Paths identify validated input using JSON Pointer: empty string for root, zero-based array indices, tilde escaped as ~0 and slash as ~1. Missing fields use expected paths; duplicate IDs or directions identify the later occurrence. Messages are nonblank English text initially, not stable machine contracts.
+The required source identifies the input argument: definition for canonical data and options for initialization configuration. Paths are relative to that argument, consistently across standalone validation and initialization. Future operations define their own supported sources; do not add source to ordinary action errors. Paths identify validated input using JSON Pointer: empty string for root, zero-based array indices, tilde escaped as ~0 and slash as ~1. Missing fields use expected paths; duplicate IDs or directions identify the later occurrence. Messages are nonblank English text initially, not stable machine contracts.
 
 Preserve [action results](ACTIONS_AND_RESULTS.md#result-envelope): status completed, rejected or error; outcome success or failure only when completed; error object only for rejected/error, with required code and optional safe JSON-compatible details. Do not require definition diagnostic fields on action errors. Gameplay failure explanations are semantic outputs. The dispatcher uses existing action codes and zero committed turns for rejection/error.
 
-Initialization validates definitions and applicable configuration before publishing a runtime. Failure exposes no partial runtime. Exact validation/initialization entry points, result envelopes and configuration diagnostic paths remain FND-05 work. Unexpected initialization failures are translated according to the approved public API, without misrepresenting internal defects as invalid authored data.
+Initialization validates definitions and applicable configuration before publishing a runtime. Failure exposes no partial runtime. Configuration findings use source options and JSON Pointer paths relative to the options argument (for example /player/selectedActor); definition findings use source definition. Both appear in one diagnostics collection. Unexpected initialization failures are translated according to the approved public API, without misrepresenting internal defects as invalid authored data.
 
 [Save restoration](SAVE_DATA.md#compatibility-and-restore) rejects invalid candidates atomically; exact codes and public interfaces remain Phase 2 work. Future Creator diagnostics may reuse the definition convention where appropriate.
 
@@ -44,7 +45,7 @@ Initialization validates definitions and applicable configuration before publish
 
 [ADR 0020](../decisions/0020-standardized-operation-result-architecture.md) establishes OperationResult with specialized subclasses. The authoritative status is completed, rejected or error. Read-only isCompleted, isRejected and isError predicates derive from status; isSuccess equals isCompleted and isFailure is its inverse. This describes operation completion, not gameplay outcome. Preserve operation-specific payloads and errors. Results are engine-constructed and read-only, with detached recursively protected data and controlled operational references where required.
 
-ValidationResult and InitializationResult expose diagnostics (always a read-only array) and error (undefined except on error). Completed results have empty diagnostics; rejected results have one or more diagnostics and no error; error results have empty diagnostics and safe operation-specific error information. InitializationResult additionally exposes game only on completion, otherwise undefined. ValidationResult has no separate valid Boolean. No partial game is exposed. Concrete error codes and configuration diagnostic paths remain FND-05 work.
+ValidationResult and InitializationResult expose diagnostics (always a read-only array) and error (undefined except on error). Completed results have empty diagnostics; rejected results have one or more diagnostics and no error; error results have empty diagnostics and safe operation-specific error information. InitializationResult additionally exposes game only on completion, otherwise undefined. ValidationResult has no separate valid Boolean. No partial game is exposed. Additional concrete error codes remain FND-05 work.
 
 ValidationResult.toJSON returns a detached record containing status and diagnostics, with error only for error status. InitializationResult.toJSON throws TypeError in every status. Other result serialization follows its owning contract; omit derived predicates and preserve field omission rules. Do not expose raw exceptions or live operational objects. Ordinary getters and calculations do not require result wrappers.
 
@@ -58,7 +59,7 @@ Orchestration maps findings into operation-specific codes. For example, CAPACITY
 
 Collect independent findings when safe and useful. Use prerequisite-aware stages: safe data inspection, structural and version checks, identity collection, reference resolution, normalized candidate mapping and effective-state invariants. FND-05 uses GameDefinitionMapper to translate structurally valid input and resolve contractual defaults before reusable invariant checks; orchestration maps domain findings back to authored JSON Pointer paths. Do not make reusable validators depend on source paths, save envelopes or runtime storage. Mapping cannot repair invalid data; suppress dependent checks when mapping prerequisites are invalid. Configuration checks follow applicable prerequisites. Stop unsafe branches and suppress dependent findings when required data, identities or references are invalid. Do not traverse invalid cycles or compute capacities over invalid containment; do not interpret unsupported versions with the current schema. Continue independent checks where prerequisites remain valid.
 
-Order diagnostics deterministically for equivalent inputs using documented stage order, schema field order, array indices and case-sensitive code-unit ordering of unordered keys as applicable. Exact definition ordering and aggregation remain FND-05 work. No arbitrary diagnostic count cap; explicit resource limits may be designed separately. Never mutate caller input.
+Order definition findings before options findings, then use documented stage order, schema field order, array indices, case-sensitive ECMAScript code-unit ordering of unordered keys and defined validator check order as applicable. Suppress identical duplicate findings. Continue independent configuration checks when safe; suppress checks dependent on invalid definition prerequisites. No arbitrary diagnostic count cap; explicit resource limits may be designed separately. Never mutate caller input.
 
 ## Exceptions and translation
 

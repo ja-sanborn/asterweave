@@ -20,6 +20,8 @@ Concrete signatures, module entry path, exports, construction interfaces and lif
 
 Follow [ADR 0020](../decisions/0020-standardized-operation-result-architecture.md). Fallible public operations use operation-specific read-only result interfaces with common status semantics; ordinary getters and calculations return documented values. Concrete result classes and factories are internal. Supported serializable results implement toJSON and return detached JSON-compatible records; derived predicates are excluded and unavailable fields follow the operation envelope. ValidationResult supports serialization; InitializationResult explicitly throws TypeError from toJSON in every status. Serialization is not authorization and must never expose a live game reference. See the error-handling contract for result invariants.
 
+Validation and initialization share a single diagnostics collection with required source, code, severity, path and message fields. Source is definition or options, identifying the argument to which the JSON Pointer is relative (empty string denotes that argument's root). Standalone validation produces only definition findings. Initialization orders definition findings before options findings and preserves deterministic ordering within each source. Action error envelopes remain unchanged.
+
 ## Version authorities
 
 | Version | Authority and meaning |

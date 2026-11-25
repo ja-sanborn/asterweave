@@ -31,6 +31,8 @@ Players do not exist in physical World. Foundation permits zero (headless testin
 
 Only active actors can be controlled; an actor has at most one controlling player. Control changes and lifecycle changes must resolve selection/control atomically. Game logic may direct non-player actors; trusted gameplay logic is distinct from player-authorized requests. Actions retain explicit actorId; the host/public entry point must validate player control when operating on behalf of a player, never infer authorization from actorId alone. Headless trusted actions with no player preserve existing action tests. No accounts, authentication, networking or multiplayer implementation in Foundation. Actor-to-player lookup is derived.
 
+Initialization configuration diagnostics use source options and JSON Pointer paths relative to the options argument, for example /player/controlledActors/0. Definition findings use source definition; both belong to one ordered collection, with definition findings first. Independent safe configuration checks may proceed despite invalid definition data, but checks requiring invalid prerequisites must be suppressed. See [error handling](ERROR_HANDLING.md).
+
 ## Transactions and snapshots
 
 Follow the [error-handling contract](ERROR_HANDLING.md) for atomic failure, exception translation and fail-closed integrity. A failed operation may leave a usable runtime when committed integrity is assured; otherwise prohibit further gameplay mutations. Precise faulted-runtime lifecycle and recovery interfaces remain FND-06 work.

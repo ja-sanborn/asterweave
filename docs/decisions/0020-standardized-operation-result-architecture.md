@@ -14,6 +14,8 @@ Use explicitly named operation-specific properties rather than a mandatory gener
 
 FND-05 introduces ValidationResult and InitializationResult. Both expose diagnostics (always a read-only array) and error (undefined unless status is error). Completed results have empty diagnostics and no error; rejected results have one or more diagnostics and no error; error results have empty diagnostics and safe operation-specific error details. InitializationResult additionally exposes game, an initialized Asterweave instance only on completion and undefined otherwise. No separate valid Boolean or partial game publication.
 
+Definition and configuration diagnostics include a required source (definition or options), with JSON Pointer paths relative to that input argument. Standalone validation and initialization preserve the same definition paths; initialization aggregates both sources, definition first, with deterministic within-source ordering and cascade suppression. This intentional public diagnostic contract addition does not change action errors or game/save formats. See [error handling](../contracts/ERROR_HANDLING.md).
+
 ## Serialization (Decision 13)
 
 Define serializability per result type. Supported result classes implement the ECMAScript toJSON convention, returning detached JSON-compatible data in the documented operation-specific envelope. JSON.stringify invokes this method; do not rely on property enumerability or private field serialization. Omit derived status predicates and unavailable fields according to the applicable envelope. Serialization never grants authority to disclose data; hosts enforce audience and authorization.

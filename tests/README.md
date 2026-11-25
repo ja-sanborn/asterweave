@@ -68,3 +68,7 @@ Under [ADR 0020](../docs/decisions/0020-standardized-operation-result-architectu
 ## Candidate mapping verification
 
 FND-05 verifies that documented defaults and explicit equivalent authored values yield equivalent effective candidate state, mapping does not mutate input or repair invalid definitions, and standalone validation and initialization share applicable invariant checks. Test source-path translation for domain findings, invalid prerequisite suppression, invalid candidate rejection without game publication, immutable baseline finalization after successful checks, and independent domain validators that do not depend on authored JSON or persistence layouts. Future transactions and restoration reuse the same domain invariants. These are verification requirements, not implemented tests.
+
+## Diagnostic source verification
+
+FND-05 verifies required source values (definition and options), identical definition source/path semantics across standalone validation and initialization, argument-relative JSON Pointer escaping and root paths, one aggregated diagnostics collection with definition findings first, deterministic within-source order, duplicate suppression, independent safe configuration checks and suppression of checks with invalid definition prerequisites. Verify serialized validation diagnostics preserve source. Action error envelopes remain unchanged. These are test requirements, not implemented tests.

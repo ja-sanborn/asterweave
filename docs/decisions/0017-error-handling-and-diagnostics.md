@@ -37,3 +37,5 @@ Validation, dispatch and future restoration reuse domain invariants while transl
 This decision preserves existing action, definition and save formats and error meanings. Only applicable validation and initialization work belongs to FND-05. This record does not implement code or authorize additional runtime features.
 
 [ADR 0020](0020-standardized-operation-result-architecture.md) elaborates the approved common result base class, specialized interfaces and serialization conventions without replacing operation-specific error contracts or this failure taxonomy.
+
+FND-05 Decision 15 adds a required source to definition and initialization configuration diagnostics, identifying the input argument to which the JSON Pointer is relative. See the current [error-handling contract](../contracts/ERROR_HANDLING.md). Existing action error envelopes are unchanged.

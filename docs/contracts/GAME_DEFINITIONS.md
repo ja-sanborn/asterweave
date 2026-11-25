@@ -100,12 +100,13 @@ Return structured definition diagnostics, separate from gameplay action results.
 
 | Field | Type and meaning |
 | --- | --- |
+| source | Required string, exactly `definition` for definition findings |
 | code | Stable machine-readable string |
 | severity | String, exactly error for Foundation |
-| path | JSON Pointer to the offending field or object; empty string denotes the document root |
+| path | JSON Pointer relative to the identified source; empty string denotes its root |
 | message | Nonblank human-readable string; not a stable machine contract |
 
-Use zero-based array indices and JSON Pointer escaping (tilde becomes ~0, slash becomes ~1). For a missing required field use its expected path; for a duplicate ID or direction use the later occurrence. Avoid stack traces and unsafe object stringification. Multiple independent errors may be returned; suppress cascading reference errors when their prerequisites are invalid. Diagnostic order should be deterministic for equivalent inputs; exact aggregation and public validation API belong to FND-05.
+Use zero-based array indices and JSON Pointer escaping (tilde becomes ~0, slash becomes ~1). For a missing required field use its expected path; for a duplicate ID or direction use the later occurrence. Avoid stack traces and unsafe object stringification. Multiple independent errors may be returned; suppress cascading reference errors when their prerequisites are invalid. Definition diagnostics have the same source and paths in standalone validation and initialization. Order findings by pipeline stage, documented schema field order, array index, ECMAScript code-unit order for unordered keys, and defined validator check order. Suppress identical duplicate findings. Initialization configuration findings use source options and follow definition findings in the same collection; see [error handling](ERROR_HANDLING.md).
 
 | Initial code | Meaning |
 | --- | --- |
@@ -130,6 +131,7 @@ Example (if the first Hallway exit references a missing location):
 
 ```json
 {
+  "source": "definition",
   "code": "UNKNOWN_REFERENCE",
   "severity": "error",
   "path": "/world/locations/1/exits/0/destinationId",
