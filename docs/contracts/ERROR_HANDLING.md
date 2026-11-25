@@ -41,6 +41,8 @@ Initialization validates definitions and applicable configuration before publish
 
 [Save restoration](SAVE_DATA.md#compatibility-and-restore) rejects invalid candidates atomically; exact codes and public interfaces remain Phase 2 work. Future Creator diagnostics may reuse the definition convention where appropriate.
 
+Internal action registration and argument validation have their own diagnostic sources and immutable completed/rejected records, specified in [action definitions](ACTION_DEFINITIONS.md). These records are not public ActionResult or initialization diagnostics. Malformed specialized validator returns and unexpected reflective failures are internal exceptions; future dispatch translates them at its operation boundary.
+
 ## Standardized operation results
 
 [ADR 0020](../decisions/0020-standardized-operation-result-architecture.md) establishes OperationResult with specialized subclasses. The authoritative status is completed, rejected or error. Read-only isCompleted, isRejected and isError predicates derive from status; isSuccess equals isCompleted and isFailure is its inverse. This describes operation completion, not gameplay outcome. Preserve operation-specific payloads and errors. Results are engine-constructed and read-only, with detached recursively protected data and controlled operational references where required.

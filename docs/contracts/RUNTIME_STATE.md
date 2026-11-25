@@ -67,6 +67,8 @@ Sort each participant and player collection by ascending case-sensitive ECMAScri
 
 Snapshots support native JSON serialization, contain no live engine objects, credentials or host session data, and have no independently versioned format. Compatibility follows engine API SemVer. Full snapshots are trusted inspection data, not authorized player-visible descriptions; hosts must enforce audience boundaries. Future derived queries and player perception interfaces are separate contracts.
 
+The independent action registry is privately owned by the facade, not RuntimeState. Its definitions, handler associations and authority capabilities are excluded from effective-state snapshots and saved gameplay data. Future reset retains the finalized registry. See [action definitions](ACTION_DEFINITIONS.md).
+
 ## Knowledge and future capabilities
 
 No core knowledge/discovery subsystem, human player knowledge tracking or gameplay undo/back navigation. Player-controlled actors do not track knowledge by default. NPC or fictional character knowledge is optional game/extension state; actual world changes persist. Visibility/accessibility are evaluated by gameplay rules. Interaction/narrative context is persisted only where a future gameplay contract requires it; host state remains outside. Transaction rollback is not gameplay undo. Restore earlier independent saves to return to earlier state. Visual novel backward navigation is out of scope.

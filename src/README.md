@@ -1,6 +1,6 @@
 # Runtime source
 
-Platform-independent ECMAScript runtime modules. The runtime provides definition validation, isolated initialization and initial read-only inspection.
+Platform-independent ECMAScript runtime modules. The runtime provides definition validation, isolated initialization and initial read-only inspection and internal action registration and validation.
 
 The runtime owns validated definitions, authoritative state, domain invariants and semantic results. It must not depend on DOM, browser storage, Node-specific APIs, networking, filesystem, graphics or host implementations.
 
@@ -13,6 +13,7 @@ The named Asterweave export in [Asterweave.js](Asterweave.js) is the sole suppor
 | Directory | Responsibility |
 | --- | --- |
 | core | Initialization sequencing; no domain rules |
+| actions | Action identity, registration authority, immutable definitions, argument validation and protected handler resolution |
 | definition | Safe authored validation, identity and reference checks, candidate mapping and diagnostic translation |
 | diagnostics | Per-operation diagnostic collection and JSON Pointer paths |
 | results | Common status semantics, specialized immutable results and serialization |
@@ -20,7 +21,7 @@ The named Asterweave export in [Asterweave.js](Asterweave.js) is the sole suppor
 | state | Immutable baseline, initial runtime ownership, explicit player configuration and effective snapshots |
 | world | Participant identities, private registry, vocabulary and reusable effective-state invariants |
 
-World objects read authoritative properties through explicit collaborators; they do not maintain duplicate mutable gameplay records. RuntimeState owns the isolated baseline, empty initial differences, original configuration, World and optional separate Player. GameInitializer sequences validation and runtime construction; the facade translates unexpected failures into safe operation-specific results.
+World objects read authoritative properties through explicit collaborators; they do not maintain duplicate mutable gameplay records. RuntimeState owns the isolated baseline, empty initial differences, original configuration, World and optional separate Player. GameInitializer sequences validation and runtime construction, including creation and finalization of a separate action registry privately owned by the facade; the facade translates unexpected failures into safe operation-specific results.
 
 Gameplay, action dispatch, state mutations, reset, derived containment queries and persistence are not yet supported.
 

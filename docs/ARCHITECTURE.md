@@ -10,7 +10,8 @@ The runtime is environment-independent ECMAScript. It must not directly access t
 
 | Module | Responsibility |
 | --- | --- |
-| Core | Lifecycle, action registry, dispatch, validation, atomic state transitions |
+| Core | Lifecycle, orchestration, dispatch and atomic state transitions |
+| Actions | Independent action registry, registration authority, definition and argument validation |
 | Parser | Rule-based command interpretation and contextual object resolution |
 | Choice | Conditional choices and selection validation |
 | Narrative | Dialogue, sequences, branching, call/return and progression |
@@ -29,6 +30,10 @@ Locations, actors and entities share a common world-participant model. Authored 
 ### Foundation domain types
 
 The world model uses WorldObject with shallow Location, Actor and Entity subclasses, each with meaningful shared or category-specific behavior. World is separate from WorldObject and owns a private WorldObjectRegistry using a native Map keyed by shared stable participant IDs. The implicit root is resolved separately; inactive and destroyed identities remain registered. Derive category collections when needed, with deterministic enumeration. Player is a separate nonphysical domain type. Domain objects must not duplicate authoritative effective state; registry ownership is identity only, not containment, properties, turns, dispatch or player control. Construction remains engine-controlled. No authored item subclasses or process-wide singleton.
+
+### Action registry
+
+The facade privately owns RuntimeState and an independent ActionRegistry. GameInitializer creates and finalizes the registry after successful definition and configuration validation. Registry-local Symbol capabilities govern trusted standard, game and extension registration; definitions are detached and immutable, executable associations are protected, and modifications are additive and atomic during setup. Finalization prevents further changes. The actions domain depends only on shared utilities, diagnostics and authoritative world vocabulary, not state or orchestration. Production registries are empty until real handlers are available. See [ADR 0023](decisions/0023-action-registry-ownership-and-lifecycle.md) and [action definitions](contracts/ACTION_DEFINITIONS.md).
 
 ### Candidate state mapping
 
@@ -56,7 +61,7 @@ Actions identify an actor, action type and relevant targets. The runtime validat
 
 The action-driven design distinguishes standard, extension and game-defined action types. The registry resolves supported definitions and trusted handlers; it is independent of dispatch. Completed results distinguish gameplay success and failure, while rejected actions and execution errors commit no state or turns. The dispatcher exclusively selects configured success/failure costs and commits state and progression atomically. Foundation movement consumes one turn on success; invalid or unavailable exits consume none. Committed turns advance abstract game time; an optional clock/calendar translates them into fictional dates and durations. Intermediate scheduled turns cannot be skipped; interruption semantics are deferred.
 
-See the [action/result contract](contracts/ACTIONS_AND_RESULTS.md), [action definitions](contracts/ACTION_DEFINITIONS.md), [standard action catalog](contracts/STANDARD_ACTIONS.md), and ADRs [0006](decisions/0006-atomic-action-execution-and-turn-progression.md), [0007](decisions/0007-extensible-and-configurable-action-definitions.md), and [0008](decisions/0008-game-time-and-calendar-separation.md). These define design only; runtime support remains planned.
+See the [action/result contract](contracts/ACTIONS_AND_RESULTS.md), [action definitions](contracts/ACTION_DEFINITIONS.md), [standard action catalog](contracts/STANDARD_ACTIONS.md), and ADRs [0006](decisions/0006-atomic-action-execution-and-turn-progression.md), [0007](decisions/0007-extensible-and-configurable-action-definitions.md), and [0008](decisions/0008-game-time-and-calendar-separation.md). The independent registry and argument validation infrastructure are implemented; the dispatcher, gameplay transitions and turn progression remain planned.
 
 ## Game packages
 
