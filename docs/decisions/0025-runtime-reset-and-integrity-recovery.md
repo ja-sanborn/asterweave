@@ -16,6 +16,10 @@ Use specialized ResetResult with completed/rejected/error status and closed safe
 
 Recovery verification is bounded to engine-controlled structural and domain invariants: baseline, original configuration, reconstructed effective state, turn and override restoration, player and world identities, and retained registry ownership/finalization/structure. It does not prove handler correctness, repair executable code, establish environmental integrity or reverse external effects. An isolated reset failure preserves verified committed state; failed recovery of an already compromised runtime leaves it blocked. See the normative runtime state contract.
 
+### Detailed implementation
+
+Use RuntimeResetter with shared initial-state construction, the RuntimeState operation guard and prepared atomic publication. Keep private operational/compromised integrity status separate from transaction lifecycle; only validated administrative recovery clears compromise. Retain stable facade and registry identity. See [runtime implementation design](../RUNTIME_IMPLEMENTATION.md#reset-integrity-and-facade).
+
 ## Alternatives
 
 Requiring new facade construction transfers restoration responsibility to hosts. Selective reset risks inconsistent state. A general lifecycle state machine, public health property or custom exception hierarchy is unnecessary. Continuing after uncertain integrity or speculative repair fails closed-state requirements.

@@ -18,6 +18,10 @@ Reuse pure domain validation across initialization and candidate transitions, se
 
 Separate initialization viability, shared effective structural prerequisites and domain invariants, and forward-transition checks; preserve existing initialization diagnostics and independent findings. Lifecycle mechanics remain deferred while their invariants and player consistency are enforced. Share effective-property resolution across consumers without duplicating authoritative state. Separate argument structure/syntax, runtime reference existence/category and action-specific eligibility. Engine-established mutation capabilities are independent of actor control and registration ownership. Share synchronous-return protection where applicable without merging return contracts. Preserve inherited result semantics and deterministic rejection precedence with safe identity echo; trusted-host results are not remote-client privacy guarantees. Normative details remain in the linked contracts.
 
+### Detailed implementation
+
+Use the accepted [runtime implementation design](../RUNTIME_IMPLEMENTATION.md) for the focused PropertyOverrideStore, EffectiveStateReader, StateTransaction, ActionExecutionContext, ActionDispatcher and specialized result responsibilities. Use independent candidate collections, explicit presence entries, a four-state private transaction lifecycle and prepared RuntimeState publication. Retain a separate engine-established executable authority association, immediate context expiration and invocation-local violation tracking through outcome inspection. Preserve existing dependency direction and normative contracts; these details do not introduce public interfaces.
+
 ## Alternatives
 
 Live mutation with inverse journals risks incomplete rollback. Full baseline cloning duplicates immutable data. Copy-on-write adds complexity before measured need. Facade-owned or handler-owned orchestration couples responsibilities. A universal property dictionary or separate stores duplicate or weaken domain rules. Declarative-only handlers and middleware are premature.

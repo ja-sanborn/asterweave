@@ -23,6 +23,6 @@ The named Asterweave export in [Asterweave.js](Asterweave.js) is the sole suppor
 
 World objects read authoritative properties through explicit collaborators; they do not maintain duplicate mutable gameplay records. RuntimeState owns the isolated baseline, empty initial differences, original configuration, World and optional separate Player. GameInitializer sequences validation and runtime construction, including creation and finalization of a separate action registry privately owned by the facade; the facade translates unexpected failures into safe operation-specific results.
 
-Gameplay, action dispatch, state mutations, reset, derived containment queries and persistence are not yet supported.
+Gameplay, action dispatch, state mutations, reset, derived containment queries and persistence are not yet supported. The [accepted detailed runtime design](../docs/RUNTIME_IMPLEMENTATION.md) describes internal collaborators for dispatch, transactions and reset without claiming those capabilities are implemented.
 
 Read the [documentation index](../docs/README.md), [architecture](../docs/ARCHITECTURE.md), [coding standards](../docs/CODE_STYLE.md), [contracts](../docs/contracts/README.md) and [testing strategy](../tests/README.md).

@@ -17,6 +17,7 @@ Start here for the current technical design and development standards. See the [
 | Source | Responsibility |
 | --- | --- |
 | [Architecture](ARCHITECTURE.md) | Current system overview and boundaries |
+| [Runtime implementation design](RUNTIME_IMPLEMENTATION.md) | Accepted internal runtime collaboration and responsibilities |
 | [Accepted ADRs](decisions/README.md) | Decisions and rationale; respect explicit supersession |
 | [Normative contracts](contracts/README.md) | Required domain and public behavior |
 | [Coding standards](CODE_STYLE.md) | JavaScript implementation conventions |

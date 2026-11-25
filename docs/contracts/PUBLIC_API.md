@@ -43,7 +43,7 @@ The accepted synchronous instance method `dispatchAction(action)` returns an eng
 
 The accepted synchronous instance method `reset()` returns an engine-constructed ResetResult. It restores the original initialized state atomically without changing facade identity or the finalized registry. Reset is administrative, not a gameplay action; hosts own access to administrative operations. See [runtime state](RUNTIME_STATE.md#administrative-reset-and-integrity) and [error handling](ERROR_HANDLING.md).
 
-When committed integrity cannot be established, dispatch returns an error with EXECUTION_FAILED; turn and getStateSnapshot() throw a native Error with a safe fixed message, without exposing unverified state. gameId and gameVersion remain available from verified immutable metadata. Reset may attempt validated recovery. No public health flag, transaction, registry, unrestricted setter or handler-registration interface is introduced. Previously returned detached snapshots and results remain unchanged.
+When committed integrity cannot be established, dispatch returns an error with EXECUTION_FAILED; turn and getStateSnapshot() throw a native Error with a safe fixed message, without exposing unverified state. gameId and gameVersion remain available from verified immutable metadata. Reset may attempt validated recovery. No public health flag, transaction, registry, unrestricted setter or handler-registration interface is introduced. Previously returned detached snapshots and results remain unchanged. The frozen facade retains stable private runtime, dispatcher, resetter and registry collaborators; the [internal design](../RUNTIME_IMPLEMENTATION.md#reset-integrity-and-facade) does not introduce additional supported interfaces.
 
 ## Operation result interfaces
 
