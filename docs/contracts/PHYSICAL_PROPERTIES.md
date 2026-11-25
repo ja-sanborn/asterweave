@@ -1,6 +1,6 @@
 # Physical characteristics and capacity
 
-Status: Accepted contract; FND-05 initial physical range and finite capacity checks implemented, final review outstanding. FND-07 owns transfers and derived loads. Origin: [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23). See [ADR 0012](../decisions/0012-physical-properties-and-capacity.md) and [ADR 0022](../decisions/0022-flexible-physical-measurement-ranges.md) and [containment](WORLD_CONTAINMENT.md).
+Status: Accepted contract. See [ADR 0012](../decisions/0012-physical-properties-and-capacity.md), [ADR 0022](../decisions/0022-flexible-physical-measurement-ranges.md) and [containment](WORLD_CONTAINMENT.md).
 
 Physical characteristics are abstract gameplay points, not dimensions, kilograms or a physics simulation. Size and weight are independent author-defined positive safe-integer gameplay points. The following five-point classifications are optional authoring conventions, not engine limits. Games choose consistent independent size and weight scales.
 
@@ -44,6 +44,6 @@ Example: backpack size 3, weight 2 contains a notebook size 2, weight 2. Its dir
 
 ## Scope
 
-Initial values live in the canonical definition; FND-04 defines which values can change and how to preserve them. FND-05 validates initial values and all finite limits; FND-07 enforces them during internal containment transfers and derives loads. FND-09 verifies integration. No capacity-related action, physics, detailed geometry, inventory UI, dynamic lifecycle implementation or new dependency is introduced by this design. See [fixture](../../tests/fixtures/games/containment-foundation.json).
+Initial values live in the canonical definition; The runtime state and property contracts define which values can change and how to preserve them. Validate initial values and all finite limits; enforce them during internal containment transfers and derive loads. Verify integrated behavior when transfers are supported. No capacity-related action, physics, detailed geometry, inventory UI, dynamic lifecycle implementation or new dependency is introduced by this design. See [fixture](../../tests/fixtures/games/containment-foundation.json).
 
-FND-04 maps authored structural values to reserved asterweave properties and stores only current differences, including explicit removal of containment when an active participant leaves World. See [properties](PROPERTIES.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md). No duplicate authoritative values; core validation remains mandatory.
+Runtime state maps authored structural values to reserved asterweave properties and stores only current differences, including explicit removal of containment when an active participant leaves World. See [properties](PROPERTIES.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md). No duplicate authoritative values; core validation remains mandatory.

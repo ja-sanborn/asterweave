@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-The platform-independent runtime and modular architecture in ADRs [0001](0001-platform-independent-runtime.md) and [0016](0016-modular-architecture-and-design-patterns.md) need an explicit consumer boundary. [FND-05 (#7)](https://github.com/ja-sanborn/asterweave/issues/7) is the first substantive runtime implementation story. Engine releases, authored content, canonical definitions, saves and distribution packages have distinct compatibility concerns.
+The platform-independent runtime and modular architecture in ADRs [0001](0001-platform-independent-runtime.md) and [0016](0016-modular-architecture-and-design-patterns.md) need an explicit consumer boundary. The initial runtime implementation requires a defined public boundary. Engine releases, authored content, canonical definitions, saves and distribution packages have distinct compatibility concerns.
 
 ## Decision
 

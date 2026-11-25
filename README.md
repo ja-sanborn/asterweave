@@ -8,7 +8,7 @@ Inspired by classic parser adventures such as Zork, branching fiction, gamebooks
 
 ## Project status
 
-Asterweave is in Foundation development. Development and native test infrastructure are established. The architecture, canonical game-definition format 3.2.0, state/save design and project-wide standards are documented. FND-05 implements native definition validation, isolated initialization and read-only effective-state inspection. The implementation has passed native tests on its feature branch; final contract corrections and review remain outstanding. Action processing and gameplay remain planned; no playable release exists. The current private package is version 0.0.0.
+Asterweave is in Foundation development. Development and native test infrastructure are established. The architecture, canonical game-definition format 3.2.0, state/save design and project-wide standards are documented. The runtime supports native definition validation, isolated initialization and read-only effective-state inspection. Action processing and gameplay remain planned; no playable release exists. The current private package is version 0.0.0.
 
 ## Design goals
 
@@ -49,7 +49,7 @@ Start with the [technical documentation index](docs/README.md).
 | [Roadmap](docs/ROADMAP.md) | Development priorities |
 | [Future considerations](docs/FUTURE_CONSIDERATIONS.md) | Nonbinding ideas |
 
-The versioned game-author guide is planned under [FND-11 (#20)](https://github.com/ja-sanborn/asterweave/issues/20). The [public API contract](docs/contracts/PUBLIC_API.md) identifies the implemented FND-05 interface; other planned capabilities remain governed by their contracts and stories.
+A versioned game-author guide is planned. The [public API contract](docs/contracts/PUBLIC_API.md) identifies supported interfaces and their behavior. See the [roadmap](docs/ROADMAP.md) for planned capabilities.
 
 ## Repository layout
 

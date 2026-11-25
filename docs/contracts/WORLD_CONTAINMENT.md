@@ -1,6 +1,6 @@
 # Unified world containment and placement
 
-Status: Accepted contract; FND-05 initial participant identities and effective containment/lifecycle/association validation implemented, final review outstanding. Transfers, derived queries and gameplay transitions remain later work. Origin: [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23). See [ADR 0011](../decisions/0011-unified-world-containment.md), [canonical definitions](GAME_DEFINITIONS.md) and [physical properties](PHYSICAL_PROPERTIES.md).
+Status: Accepted contract. See [ADR 0011](../decisions/0011-unified-world-containment.md), [canonical definitions](GAME_DEFINITIONS.md) and [physical properties](PHYSICAL_PROPERTIES.md).
 
 ## Identity and hierarchy
 
@@ -52,8 +52,8 @@ The engine owns current containment, lifecycle and associations. Immutable initi
 {"parentId":"player","relationship":"carried"}
 ```
 
-FND-04 specifies state/snapshot/save structures and mutable properties, including gameplay-relevant associations and lifecycle. Human player knowledge is not tracked; fictional character knowledge is optional game/extension state, not a core subsystem. See [runtime state](RUNTIME_STATE.md). Restore must preserve current authoritative records, not recreate consumed objects or reset placements. FND-05 validates/initializes; FND-07 implements internal containment and capacity; FND-08 implements movement; FND-09 integrates. Player-facing container actions, perception, locks, dynamic creation, multiplayer, networking and storage are not introduced by this contract.
+The runtime state and save contracts specify state/snapshot/save structures and mutable properties, including gameplay-relevant associations and lifecycle. Human player knowledge is not tracked; fictional character knowledge is optional game/extension state, not a core subsystem. See [runtime state](RUNTIME_STATE.md). Restore must preserve current authoritative records, not recreate consumed objects or reset placements. Player-facing container actions, perception, locks, dynamic creation, multiplayer, networking and storage are not introduced by this contract.
 
 See [containment fixture](../../tests/fixtures/games/containment-foundation.json) and [Lantern House](../../tests/fixtures/games/minimal-foundation.json).
 
-FND-04 maps authored structural values to reserved asterweave properties and stores only current differences, including explicit removal of containment when an active participant leaves World. See [properties](PROPERTIES.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md). No duplicate authoritative values; core validation remains mandatory.
+Runtime state maps authored structural values to reserved asterweave properties and stores only current differences, including explicit removal of containment when an active participant leaves World. See [properties](PROPERTIES.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md). No duplicate authoritative values; core validation remains mandatory.

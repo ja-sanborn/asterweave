@@ -4,7 +4,7 @@ Status: Accepted.
 
 ## Context
 
-FND-05 validates the canonical definition before movement is implemented in FND-08. The four cardinal directions in ADR 0009 unnecessarily restrict classic adventures (including a future native Zork reference game) and other genres.
+Canonical definition validation precedes movement implementation. The four cardinal directions in ADR 0009 unnecessarily restrict classic adventures (including a future native Zork reference game) and other genres.
 
 ## Decision
 
@@ -26,7 +26,3 @@ Supersedes the direction restriction in [ADR 0009](0009-canonical-game-definitio
 Verify all twelve identifiers, duplicate and invalid direction rejection, destination references, directed semantics and exact format version. Future movement uses the same vocabulary. No runtime code, new dependency, parser or custom direction registration is introduced by this decision.
 
 [ADR 0022](0022-flexible-physical-measurement-ranges.md) supersedes the accepted format version with 3.2.0; the navigation vocabulary and semantics above remain in effect.
-
-## Implementation note
-
-FND-05 implements the immutable standard direction vocabulary and canonical exit validation, with native tests for all twelve directions. Final story review remains outstanding. Movement and parser aliases remain later work; the decision above is unchanged.

@@ -1,6 +1,6 @@
 # Runtime source
 
-Platform-independent ECMAScript runtime modules. FND-05 implements definition validation, isolated initialization and initial read-only inspection. Final contract audit corrections and review remain outstanding.
+Platform-independent ECMAScript runtime modules. The runtime provides definition validation, isolated initialization and initial read-only inspection.
 
 The runtime owns validated definitions, authoritative state, domain invariants and semantic results. It must not depend on DOM, browser storage, Node-specific APIs, networking, filesystem, graphics or host implementations.
 
@@ -22,6 +22,6 @@ The named Asterweave export in [Asterweave.js](Asterweave.js) is the sole suppor
 
 World objects read authoritative properties through explicit collaborators; they do not maintain duplicate mutable gameplay records. RuntimeState owns the isolated baseline, empty initial differences, original configuration, World and optional separate Player. GameInitializer sequences validation and runtime construction; the facade translates unexpected failures into safe operation-specific results.
 
-Gameplay, action dispatch, state mutations, reset, derived containment queries and persistence are not implemented by FND-05.
+Gameplay, action dispatch, state mutations, reset, derived containment queries and persistence are not yet supported.
 
 Read the [documentation index](../docs/README.md), [architecture](../docs/ARCHITECTURE.md), [coding standards](../docs/CODE_STYLE.md), [contracts](../docs/contracts/README.md) and [testing strategy](../tests/README.md).

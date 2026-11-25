@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-[FND-03 (issue #5)](https://github.com/ja-sanborn/asterweave/issues/5) establishes the canonical JSON authoring contract through [ADR 0003](0003-canonical-json-game-format.md) and [ADR 0009](0009-canonical-game-definition-contract.md). Authors may wish to conceal puzzle solutions, hidden locations and narrative content from casual inspection in distributed games. The initial distribution target is standalone offline HTML; the runtime must remain platform-independent under [ADR 0001](0001-platform-independent-runtime.md).
+The canonical definition design establishes the canonical JSON authoring contract through [ADR 0003](0003-canonical-json-game-format.md) and [ADR 0009](0009-canonical-game-definition-contract.md). Authors may wish to conceal puzzle solutions, hidden locations and narrative content from casual inspection in distributed games. The initial distribution target is standalone offline HTML; the runtime must remain platform-independent under [ADR 0001](0001-platform-independent-runtime.md).
 
 ## Decision
 
@@ -22,6 +22,6 @@ Distribute only plain JSON; embed encryption in the canonical schema or runtime 
 
 ## Consequences
 
-Foundation establishes the boundary only; no packaging or encryption code, new canonical fields, runtime implementation or dependencies are introduced. [Issue #22](https://github.com/ja-sanborn/asterweave/issues/22) owns package design, implementation, offline host verification, failure handling and author-facing documentation in Phase 2. Creator export integration is later Phase 4 work. FND-04 continues to own state and save contracts. This record complements ADRs 0001, 0003, 0005 and 0009 without superseding them.
+Foundation establishes the boundary only; no packaging or encryption code, new canonical fields, runtime implementation or dependencies are introduced. Phase 2 includes package design, implementation, offline host verification, failure handling and author-facing documentation. Creator export integration is later Phase 4 work. Runtime state and save data remain separate from distribution packaging. This record complements ADRs 0001, 0003, 0005 and 0009 without superseding them.
 
 See the [canonical definition contract](../contracts/GAME_DEFINITIONS.md) and [architecture](../ARCHITECTURE.md).

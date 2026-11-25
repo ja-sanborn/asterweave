@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-Asterweave processes externally supplied definitions, action requests, saves and configuration, and may later support imported packages and online hosts. Offline JavaScript runs in an environment controlled by its operator. Existing contracts require safe data validation, authorized transitions, state isolation and atomicity. [FND-05 (#7)](https://github.com/ja-sanborn/asterweave/issues/7) needs consistent technical security principles before implementation.
+Asterweave processes externally supplied definitions, action requests, saves and configuration, and may later support imported packages and online hosts. Offline JavaScript runs in an environment controlled by its operator. Existing contracts require safe data validation, authorized transitions, state isolation and atomicity. Initial runtime implementation requires consistent technical security principles.
 
 ## Decision
 

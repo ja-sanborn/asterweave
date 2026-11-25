@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-[FND-02 (issue #4)](https://github.com/ja-sanborn/asterweave/issues/4) defines turn progression. Stories differ in how fictional dates, clocks and durations work.
+The action contract defines turn progression. Stories differ in how fictional dates, clocks and durations work.
 
 ## Decision
 
@@ -16,4 +16,4 @@ Wall-clock-driven core; mandatory Gregorian calendar; unrelated turn and fiction
 
 ## Consequences
 
-Foundation requires turn progression only. [Issue #18](https://github.com/ja-sanborn/asterweave/issues/18) tracks optional clock/calendar support, with rules/events and persistence dependencies. See [ADR 0006](0006-atomic-action-execution-and-turn-progression.md). This record accepts architecture, not implementation.
+Foundation requires turn progression only. Optional clock/calendar support depends on rules/events and persistence. See [ADR 0006](0006-atomic-action-execution-and-turn-progression.md). This record accepts architecture, not implementation.

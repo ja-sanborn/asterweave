@@ -3,7 +3,7 @@
 Status: Accepted
 
 ## Context
-[FND-04 (issue #6)](https://github.com/ja-sanborn/asterweave/issues/6) establishes state and persistence contracts after FND-12.
+State and persistence contracts build on the unified containment design.
 
 ## Decision
 One authoritative current state per runtime without persistent game-instance identity. Distinguish game, world participant and runtime player identities; session/save identifiers are host-owned. Six scopes: world, location, entity, actor, player and directional relationship. One player can control multiple active actors, each with at most one controlling player; selected actor belongs to controlled set. Foundation permits zero or one player. Player records are dynamic, not physical participants. No human knowledge tracking or dedicated discovery subsystem; optional fictional knowledge belongs to game/extension properties. Host/session data is excluded.

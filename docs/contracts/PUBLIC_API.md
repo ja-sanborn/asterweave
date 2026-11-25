@@ -1,6 +1,6 @@
 # Public API and compatibility
 
-Status: Accepted contract; FND-05 facade and initial inspection implemented on the feature branch, final review outstanding. No production release. Origin: [ADR 0018](../decisions/0018-public-api-and-compatibility.md), [FND-05 (#7)](https://github.com/ja-sanborn/asterweave/issues/7).
+Status: Accepted contract. See [ADR 0018](../decisions/0018-public-api-and-compatibility.md).
 
 ## Consumer boundary
 
@@ -14,13 +14,13 @@ Document public input and output shapes, semantic behavior, validation, defaults
 
 Use supported queries and detached recursively read-only snapshots for inspection. Use authorized operations for changes; no writable live state or unrestricted setters. Preserve independent runtimes, atomicity and caller isolation under [runtime state](RUNTIME_STATE.md). A trusted inspection interface is not automatically appropriate for player exposure; hosts enforce authorization and audience scope.
 
-Concrete signatures, module entry path, exports, construction interfaces and lifecycle operations are defined and tested by their owning stories. No new interface or capability is specified merely by naming this boundary.
+Concrete signatures, module entry path, exports, construction interfaces and lifecycle operations must be explicitly documented and tested. No new interface or capability is specified merely by naming this boundary.
 
-## FND-05 facade and inspection
+## Validation, initialization and inspection API
 
 The named Asterweave class export in src/Asterweave.js is the primary public facade. Static validateGame(definition) returns ValidationResult; static initializeGame(definition, options) returns InitializationResult. Both are synchronous, accept parsed canonical data (not JSON text), and share definition validation. Initialization options are optional and follow the closed configuration contract in [runtime state](RUNTIME_STATE.md#players-and-actors). Initialization always validates, creates independent game state, and exposes a game only on success. Construction is engine-controlled; each instance owns one independent game.
 
-Instance getters gameId, gameVersion (authored content version) and turn return their documented scalar values directly. Instance getStateSnapshot() returns the detached, recursively read-only domain-organized effective state record defined in [runtime state](RUNTIME_STATE.md#effective-state-snapshot). It is constructed on demand and supports native JSON serialization. This trusted inspection interface is not a save interface or player perception API. FND-05 introduces initial inspection; FND-06 retains the same schema for subsequent committed state. No separate snapshot format version is introduced. Compatibility is governed by engine API SemVer.
+Instance getters gameId, gameVersion (authored content version) and turn return their documented scalar values directly. Instance getStateSnapshot() returns the detached, recursively read-only domain-organized effective state record defined in [runtime state](RUNTIME_STATE.md#effective-state-snapshot). It is constructed on demand and supports native JSON serialization. This trusted inspection interface is not a save interface or player perception API. Retain the same snapshot schema for subsequent committed state. No separate snapshot format version is introduced. Compatibility is governed by engine API SemVer.
 
 ### Initial usage
 

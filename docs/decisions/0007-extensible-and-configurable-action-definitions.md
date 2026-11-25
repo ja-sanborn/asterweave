@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-[FND-02 (issue #4)](https://github.com/ja-sanborn/asterweave/issues/4) requires one genre-independent action contract. A fixed list of implemented actions cannot accommodate every game.
+The unified action design requires one genre-independent action contract. A fixed list of implemented actions cannot accommodate every game.
 
 ## Decision
 
@@ -16,4 +16,4 @@ Hardcoded closed action enumeration; separate execution paths for extensions; ca
 
 ## Consequences
 
-[FND-10 (issue #15)](https://github.com/ja-sanborn/asterweave/issues/15) provides registry infrastructure before FND-06. [Configuration (#16)](https://github.com/ja-sanborn/asterweave/issues/16) and [declarative actions (#17)](https://github.com/ja-sanborn/asterweave/issues/17) follow later. See [definitions](../contracts/ACTION_DEFINITIONS.md) and [catalog](../contracts/STANDARD_ACTIONS.md). This decision does not implement handlers or finalize the game JSON schema.
+Registry infrastructure precedes dispatcher integration. Configurable and declarative actions follow later. See [definitions](../contracts/ACTION_DEFINITIONS.md) and [catalog](../contracts/STANDARD_ACTIONS.md). This decision does not implement handlers or finalize the game JSON schema.

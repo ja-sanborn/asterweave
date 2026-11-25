@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-[FND-05 (issue #7)](https://github.com/ja-sanborn/asterweave/issues/7) introduces definition validation and initialization. Existing contracts distinguish validation diagnostics, rejected actions, intentional gameplay failure and execution errors. A consistent architecture must preserve atomicity without coupling domain modules to callers, serialization, logging or presentation. See ADRs [0006](0006-atomic-action-execution-and-turn-progression.md), [0015](0015-state-isolation-and-persistence.md) and [0016](0016-modular-architecture-and-design-patterns.md).
+Initial runtime implementation introduces definition validation and initialization. Existing contracts distinguish validation diagnostics, rejected actions, intentional gameplay failure and execution errors. A consistent architecture must preserve atomicity without coupling domain modules to callers, serialization, logging or presentation. See ADRs [0006](0006-atomic-action-execution-and-turn-progression.md), [0015](0015-state-isolation-and-persistence.md) and [0016](0016-modular-architecture-and-design-patterns.md).
 
 ## Decision
 
@@ -16,7 +16,7 @@ Use native ECMAScript Error objects for unexpected failures and internal contrac
 
 Domain modules detect findings independently; orchestration aggregates and translates them into the appropriate public contract. Aggregate independent validation findings deterministically, suppress cascades and stop unsafe branches. Do not expose internal causes, stacks or sensitive values in public results.
 
-Stage candidate state and commit atomically. Rejections and execution errors preserve committed state and turns; completed gameplay failure may commit valid intentional consequences. Fail closed if committed integrity cannot be guaranteed. FND-06 defines any faulted-runtime lifecycle and recovery interface; restoration remains Phase 2.
+Stage candidate state and commit atomically. Rejections and execution errors preserve committed state and turns; completed gameplay failure may commit valid intentional consequences. Fail closed if committed integrity cannot be guaranteed. Any faulted-runtime lifecycle and recovery interface requires explicit design; restoration remains Phase 2.
 
 Core emits structured diagnostics, semantic results and appropriate exceptions; hosts and development tools own reporting, presentation and logging. Foundation introduces no core logger, global error bus, dependency or localization framework.
 
@@ -34,8 +34,8 @@ Use small cohesive types and functions as needed, applying Result Object, Notifi
 
 Validation, dispatch and future restoration reuse domain invariants while translating findings at their respective boundaries. Error behavior, isolation and failure paths require independent tests. The normative [error-handling contract](../contracts/ERROR_HANDLING.md) defines behavior; [coding standards](../CODE_STYLE.md#18-error-handling) define JavaScript conventions.
 
-This decision preserves existing action, definition and save formats and error meanings. Only applicable validation and initialization work belongs to FND-05. This record does not implement code or authorize additional runtime features.
+This decision preserves existing action, definition and save formats and error meanings. Apply the requirements to validation and initialization and to subsequent operations as introduced. This record does not implement code or authorize additional runtime features.
 
 [ADR 0020](0020-standardized-operation-result-architecture.md) elaborates the approved common result base class, specialized interfaces and serialization conventions without replacing operation-specific error contracts or this failure taxonomy.
 
-FND-05 Decision 15 adds a required source to definition and initialization configuration diagnostics, identifying the input argument to which the JSON Pointer is relative. See the current [error-handling contract](../contracts/ERROR_HANDLING.md). Existing action error envelopes are unchanged.
+A subsequent diagnostic design decision adds a required source to definition and initialization configuration diagnostics, identifying the input argument to which the JSON Pointer is relative. See the current [error-handling contract](../contracts/ERROR_HANDLING.md). Existing action error envelopes are unchanged.

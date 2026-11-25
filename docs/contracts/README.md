@@ -1,10 +1,10 @@
 # Engine contracts
 
-These documents specify accepted behavior. Implementation status is tracked separately from normative design; FND-05 provides initial validation, initialization and inspection on the feature branch, with final review outstanding. Consult the [documentation index](../README.md), [architecture](../ARCHITECTURE.md) and [ADR catalog](../decisions/README.md). Implementation scope and verification are tracked by [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues).
+These documents specify accepted behavior. Implementation status is tracked separately from normative design. Consult the [documentation index](../README.md), [architecture](../ARCHITECTURE.md) and [ADR catalog](../decisions/README.md). Implementation scope and verification are tracked by [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues).
 
 | Contract | Responsibility | Related ADRs |
 | --- | --- | --- |
-| [ACTIONS_AND_RESULTS](ACTIONS_AND_RESULTS.md) | Action and result envelopes, 0020, 0021 | 0002, 0006, 0017 |
+| [ACTIONS_AND_RESULTS](ACTIONS_AND_RESULTS.md) | Action and result envelopes | 0002, 0006, 0017, 0020, 0021 |
 | [ACTION_DEFINITIONS](ACTION_DEFINITIONS.md) | Action registration and configuration | 0007 |
 | [STANDARD_ACTIONS](STANDARD_ACTIONS.md) | Standard action reference catalog; availability is not implied | 0007 |
 | [GAME_DEFINITIONS](GAME_DEFINITIONS.md) | Canonical JSON format 3.2.0 | 0003, 0009, 0011, 0013, 0021, 0022 |

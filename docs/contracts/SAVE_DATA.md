@@ -1,6 +1,6 @@
 # Save data
 
-Status: Accepted design; serialization/restoration implementation deferred to Phase 2 ([issue #25](https://github.com/ja-sanborn/asterweave/issues/25)). Origin: [FND-04 (#6)](https://github.com/ja-sanborn/asterweave/issues/6). See [ADR 0015](../decisions/0015-state-isolation-and-persistence.md), [runtime state](RUNTIME_STATE.md) and [properties](PROPERTIES.md).
+Status: Accepted design; serialization/restoration implementation is planned for Phase 2. See [ADR 0015](../decisions/0015-state-isolation-and-persistence.md), [runtime state](RUNTIME_STATE.md) and [properties](PROPERTIES.md).
 
 ## Envelope 1.0.0
 

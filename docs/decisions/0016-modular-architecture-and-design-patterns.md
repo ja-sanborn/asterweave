@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-[FND-05 (issue #7)](https://github.com/ja-sanborn/asterweave/issues/7) begins implementation of the runtime after the definition, containment and state contracts were accepted. Initialization, action execution, containment changes and future restoration must enforce the same domain invariants without depending on each other's orchestration or serialized representations. The runtime must remain platform-independent, deterministic and independently testable.
+Initial runtime implementation begins after the definition, containment and state contracts were accepted. Initialization, action execution, containment changes and future restoration must enforce the same domain invariants without depending on each other's orchestration or serialized representations. The runtime must remain platform-independent, deterministic and independently testable.
 
 ## Decision
 
