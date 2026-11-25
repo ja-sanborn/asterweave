@@ -4,7 +4,7 @@ Status: Accepted.
 
 ## Context
 
-FND-05 establishes the first public validation and initialization operations. Decisions 4, 5 and 13 establish a consistent object-oriented Result Object pattern while preserving the operation-specific contracts and failure taxonomy in [ADR 0017](0017-error-handling-and-diagnostics.md) and the public boundary in [ADR 0018](0018-public-api-and-compatibility.md).
+Initial runtime design establishes the first public validation and initialization operations. The result design establishes a consistent object-oriented Result Object pattern while preserving the operation-specific contracts and failure taxonomy in [ADR 0017](0017-error-handling-and-diagnostics.md) and the public boundary in [ADR 0018](0018-public-api-and-compatibility.md).
 
 ## Decision
 
@@ -12,7 +12,7 @@ Use an internal OperationResult base class and shallow, operation-specific subcl
 
 Use explicitly named operation-specific properties rather than a mandatory generic payload or universal error object. Engine-controlled construction enforces result invariants. Results are read-only, with detached recursively protected result-owned data. A controlled operational reference (such as an initialized game) remains usable through its supported interface but cannot be replaced in the result. Document consumer interfaces; concrete constructors, factories and inheritance remain internal. Ordinary getters, predicates and calculations return their documented values directly. Use native exceptions and operation-boundary translation under ADR 0017.
 
-FND-05 introduces ValidationResult and InitializationResult. Both expose diagnostics (always a read-only array) and error (undefined unless status is error). Completed results have empty diagnostics and no error; rejected results have one or more diagnostics and no error; error results have empty diagnostics and safe operation-specific error details. InitializationResult additionally exposes game, an initialized Asterweave instance only on completion and undefined otherwise. No separate valid Boolean or partial game publication.
+The initial public operations use ValidationResult and InitializationResult. Both expose diagnostics (always a read-only array) and error (undefined unless status is error). Completed results have empty diagnostics and no error; rejected results have one or more diagnostics and no error; error results have empty diagnostics and safe operation-specific error details. InitializationResult additionally exposes game, an initialized Asterweave instance only on completion and undefined otherwise. No separate valid Boolean or partial game publication.
 
 Definition and configuration diagnostics include a required source (definition or options), with JSON Pointer paths relative to that input argument. Standalone validation and initialization preserve the same definition paths; initialization aggregates both sources, definition first, with deterministic within-source ordering and cascade suppression. This intentional public diagnostic contract addition does not change action errors or game/save formats. See [error handling](../contracts/ERROR_HANDLING.md).
 
@@ -34,10 +34,6 @@ Future ActionResult serialization preserves the existing action result envelope,
 
 ## Consequences and verification
 
-Document and test status predicates, result invariants, immutable detached data, construction control, operation-specific envelopes, serialization field presence and omission, and TypeError for unsupported serialization. Preserve the existing action contracts and exception boundaries. Introduce only the result types needed by each story. No schema version change, implementation, dependency or release is implied.
+Document and test status predicates, result invariants, immutable detached data, construction control, operation-specific envelopes, serialization field presence and omission, and TypeError for unsupported serialization. Preserve the existing action contracts and exception boundaries. Introduce result types only as required by supported operations. No schema version change, implementation, dependency or release is implied.
 
 See [public API](../contracts/PUBLIC_API.md), [error handling](../contracts/ERROR_HANDLING.md), [action results](../contracts/ACTIONS_AND_RESULTS.md), [coding standards](../CODE_STYLE.md) and [testing strategy](../../tests/README.md).
-
-## Implementation note
-
-FND-05 implements the common operation result, validation and initialization result classes and their public boundary translation and serialization tests. Final story review remains outstanding. Action results and save/restore results remain future work under their owning contracts. The decision above is unchanged.

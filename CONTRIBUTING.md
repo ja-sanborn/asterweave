@@ -1,6 +1,6 @@
 # Contributing to Asterweave
 
-Asterweave is in its initial design phase. Discuss substantial changes through GitHub issues before implementation.
+Discuss substantial changes through GitHub issues before implementation.
 
 ## Getting started
 

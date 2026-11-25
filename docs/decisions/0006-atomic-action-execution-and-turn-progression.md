@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-[FND-02 (issue #4)](https://github.com/ja-sanborn/asterweave/issues/4) elaborates the unified action principle in [ADR 0002](0002-unified-action-contract.md). A valid gameplay attempt can fail without being an invalid action or an engine failure.
+The action and result contract elaborates the unified action principle in [ADR 0002](0002-unified-action-contract.md). A valid gameplay attempt can fail without being an invalid action or an engine failure.
 
 ## Decision
 
@@ -16,4 +16,4 @@ Handler-owned turns; a single ambiguous success/failure status; fixed costs for 
 
 ## Consequences
 
-FND-06 implements transaction guarantees and dispatcher integration; FND-08 implements movement. Configuration and event scheduling are later capabilities. See [action and result contracts](../contracts/ACTIONS_AND_RESULTS.md). This record accepts a design, not implemented behavior.
+Transaction guarantees and dispatcher integration precede movement implementation. Configuration and event scheduling are later capabilities. See [action and result contracts](../contracts/ACTIONS_AND_RESULTS.md). This record accepts a design, not implemented behavior.

@@ -1,6 +1,6 @@
 # Namespaced properties
 
-Status: Accepted contract; FND-05 initial property mapping, ownership checks and read-only inspection implemented. Mutation and override normalization remain FND-06 work; final FND-05 review outstanding. Origin: [FND-04 (#6)](https://github.com/ja-sanborn/asterweave/issues/6). See [ADR 0013](../decisions/0013-namespaced-properties-and-runtime-state.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md).
+Status: Accepted contract. See [ADR 0013](../decisions/0013-namespaced-properties-and-runtime-state.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md).
 
 ## Ownership and values
 
@@ -44,6 +44,6 @@ Compare JSON values structurally: scalars by value and type (negative zero equal
 {"scope":"entity","id":"brassLantern","values":{"stateFoundation.fuel":85,"stateFoundation.target":null},"removed":["stateFoundation.label"]}
 ```
 
-Conceptual operations: read initial/effective property, check existence and changed status, stage set/reset/remove, and retrieve detached snapshots. FND-05 exposes getStateSnapshot() under the [effective state snapshot contract](RUNTIME_STATE.md#effective-state-snapshot); each scoped subject includes applicable effective qualified properties, with absent or removed values omitted and explicit null preserved. The remaining JavaScript property operation interfaces belong to their owning implementation stories. Changes to reserved engine properties use appropriate authorized engine operations; property ownership does not bypass core validation. Changes are atomic with world state and turn progression. See [runtime state](RUNTIME_STATE.md).
+Conceptual operations: read initial/effective property, check existence and changed status, stage set/reset/remove, and retrieve detached snapshots. The public API exposes getStateSnapshot() under the [effective state snapshot contract](RUNTIME_STATE.md#effective-state-snapshot); each scoped subject includes applicable effective qualified properties, with absent or removed values omitted and explicit null preserved. The remaining JavaScript property operation interfaces require explicit public or internal interface contracts as appropriate. Changes to reserved engine properties use appropriate authorized engine operations; property ownership does not bypass core validation. Changes are atomic with world state and turn progression. See [runtime state](RUNTIME_STATE.md).
 
 Future capabilities define their state contracts as developed, prefer existing scopes and namespaces, and preserve deterministic continuation. No speculative combat, quest, calendar, random or event sections.

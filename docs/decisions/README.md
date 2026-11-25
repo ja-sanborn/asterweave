@@ -2,7 +2,7 @@
 
 ADRs record significant architectural decisions, context, alternatives and consequences. See the [documentation index](../README.md), [architecture](../ARCHITECTURE.md) and [normative contracts](../contracts/README.md).
 
-Use sequential filenames such as `0001-platform-independent-runtime.md`. Each record contains a title, status (Proposed, Accepted, Superseded or Rejected), context, decision, alternatives and consequences. Link originating issues and superseding records when available. Preserve historical decisions; append explicit subsequent-decision notes instead of silently rewriting history. Accepted design does not establish implemented behavior.
+Use sequential filenames such as `0001-platform-independent-runtime.md`. Each record contains a title, status (Proposed, Accepted, Superseded or Rejected), context, decision, alternatives and consequences. Link superseding records and relevant technical contracts. Preserve historical decisions and their rationale; append explicit subsequent-decision notes instead of silently rewriting history. Keep individual issue assignments, branch progress and CI execution reports in GitHub Issues and pull requests rather than ADRs. Accepted design does not establish implemented behavior.
 
 | ADR | Subject | Status and relationship |
 | --- | --- | --- |
@@ -14,10 +14,10 @@ Use sequential filenames such as `0001-platform-independent-runtime.md`. Each re
 | [0006](0006-atomic-action-execution-and-turn-progression.md) | Atomic action execution and turn progression | Accepted |
 | [0007](0007-extensible-and-configurable-action-definitions.md) | Extensible and configurable action definitions | Accepted |
 | [0008](0008-game-time-and-calendar-separation.md) | Game time and calendar separation | Accepted |
-| [0009](0009-canonical-game-definition-contract.md) | Canonical game-definition contract | Accepted; schema/version portions superseded by 0011–0013 |
+| [0009](0009-canonical-game-definition-contract.md) | Canonical game-definition contract | Accepted; schema/version portions superseded by 0011–0013, 0021–0022 |
 | [0010](0010-game-packaging-and-content-protection.md) | Game packaging and content protection | Accepted |
-| [0011](0011-unified-world-containment.md) | Unified world containment | Accepted; format version superseded by 0013 |
-| [0012](0012-physical-properties-and-capacity.md) | Physical properties and capacity | Accepted |
+| [0011](0011-unified-world-containment.md) | Unified world containment | Accepted; format version superseded by 0013, 0021–0022 |
+| [0012](0012-physical-properties-and-capacity.md) | Physical properties and capacity | Accepted; measurement ranges superseded by 0022 |
 | [0013](0013-namespaced-properties-and-runtime-state.md) | Namespaced properties and runtime state | Accepted |
 | [0014](0014-player-identity-and-state-scopes.md) | Player identity and state scopes | Accepted |
 | [0015](0015-state-isolation-and-persistence.md) | State isolation and persistence | Accepted |

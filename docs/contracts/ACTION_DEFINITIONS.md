@@ -1,6 +1,6 @@
 # Action definitions and registration
 
-Status: Accepted design; implementation pending. Origin: [FND-02, issue #4](https://github.com/ja-sanborn/asterweave/issues/4).
+Status: Accepted design; action registration and configuration are planned.
 
 See [action/result envelopes](ACTIONS_AND_RESULTS.md), [standard catalog](STANDARD_ACTIONS.md) and [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md).
 
@@ -8,7 +8,7 @@ See [action/result envelopes](ACTIONS_AND_RESULTS.md), [standard catalog](STANDA
 
 Standard action identifiers are unqualified lower camel case names reserved for the engine catalog (e.g. move, lieDown). Extension identifiers use a registered namespace and a dot, e.g. combat.attack; game-defined actions use the reserved game namespace, e.g. game.hackTerminal. Namespace segments and action names begin with a lowercase ASCII letter followed by ASCII letters or digits; names are case-sensitive. No empty segments, whitespace or ambiguous normalization. Reserve game for game-defined actions and unqualified names for standards. A registration must reject duplicate full identifiers and conflicting namespace ownership; a game cannot replace a trusted handler by configuring its name.
 
-The reserved game action namespace is specific to action identifiers. It is distinct from the author-selected game.namespace for qualified properties in [PROPERTIES.md](PROPERTIES.md). Do not assume the namespaces are interchangeable; any future unification requires an explicit decision in the applicable story.
+The reserved game action namespace is specific to action identifiers. It is distinct from the author-selected game.namespace for qualified properties in [PROPERTIES.md](PROPERTIES.md). Do not assume the namespaces are interchangeable; any future unification requires an explicit decision.
 
 A registry is scoped to a runtime instance or an immutable definition set with isolated effective registrations. It resolves an action definition and trusted handler by exact type. Registry infrastructure does not depend on the dispatcher. The dispatcher consumes registry lookup and validation capabilities; movement supplies its actual handler later. Catalog entries are not registrations and do not imply implementation or availability.
 
@@ -34,7 +34,7 @@ A complete registration also supplies an action-specific argument specification 
 
 Effective configuration is derived from trusted registered defaults and validated per-game overrides. Omitted overrides inherit defaults; zero and false are legitimate explicit overrides. Never read costs from submitted action arguments or caller metadata. Invalid costs (negative, fractional, nonfinite, unsafe integer or wrong type), unsupported types and attempts to replace handlers are rejected. Detect turn-counter overflow before committing. Definitions and effective metadata are detached from mutable caller-owned data; no cross-instance leakage. Dynamic registry mutation during dispatch is not supported by the Foundation contract.
 
-Foundation only requires move with costs 1/0. Game configuration of supported actions is subsequent work; the canonical JSON location and versioning are coordinated with FND-03 and the configuration story, not prescribed here.
+Foundation only requires move with costs 1/0. Game configuration of supported actions is subsequent work; the canonical JSON location and versioning must be defined in the canonical definition contract when configuration is introduced, not prescribed here.
 
 Illustrative future override (not a canonical game-definition fragment):
 
@@ -48,4 +48,4 @@ Trusted JavaScript extensions may register handlers and argument validators thro
 
 Future declarative custom actions use validated JSON data for arguments, conditions, effects, outcomes, semantic outputs and turn costs. They must not execute arbitrary code. Creator can author those definitions later; it is not required at runtime. Both registration paths must use the same dispatch and result contracts.
 
-Registry implementation: [FND-10, issue #15](https://github.com/ja-sanborn/asterweave/issues/15). Dispatcher integration: [FND-06, issue #8](https://github.com/ja-sanborn/asterweave/issues/8). Configurable actions: [issue #16](https://github.com/ja-sanborn/asterweave/issues/16). Declarative actions: [issue #17](https://github.com/ja-sanborn/asterweave/issues/17). No implementation is introduced by this specification.
+The independent registry precedes dispatcher integration. Configurable standard actions and declarative custom actions require explicit additional contracts.

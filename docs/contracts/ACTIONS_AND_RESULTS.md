@@ -1,6 +1,6 @@
 # Action and result contracts
 
-Status: Accepted design; implementation pending. Origin: [FND-02, issue #4](https://github.com/ja-sanborn/asterweave/issues/4).
+Status: Accepted design; action execution is planned.
 
 This specification elaborates [ADR 0002](../decisions/0002-unified-action-contract.md) and [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md). Commands, choices, narrative and direct callers submit the same platform-independent data. Only the dispatcher authorizes and commits world transitions.
 

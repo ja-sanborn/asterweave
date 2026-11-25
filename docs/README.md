@@ -1,6 +1,6 @@
 # Documentation
 
-Start here for the current technical design and development standards. See the [project README](../README.md) for an introduction. Asterweave is in Foundation development; accepted designs are not evidence of implemented or tested capabilities. FND-05 provides initial validation, initialization and inspection on the implementation branch; see the [public API](contracts/PUBLIC_API.md) and [roadmap](ROADMAP.md) for scope and status.
+Start here for the current technical design and development standards. See the [project README](../README.md) for an introduction. Asterweave is in Foundation development; accepted designs are not evidence of implemented or tested capabilities. See the [public API](contracts/PUBLIC_API.md) for supported interfaces and the [roadmap](ROADMAP.md) for planned capabilities.
 
 ## Reading paths
 
@@ -8,7 +8,7 @@ Start here for the current technical design and development standards. See the [
 | --- | --- | --- |
 | Engine developer | [Architecture](ARCHITECTURE.md), [coding standards](CODE_STYLE.md) | [Contracts](contracts/README.md), [decisions](decisions/README.md), [testing](../tests/README.md), relevant issue |
 | AI contributor | [AGENTS.md](../AGENTS.md), this index | Same standards, contracts, decisions, tests and issue as human contributors |
-| Game author | [Canonical definitions](contracts/GAME_DEFINITIONS.md), [examples](../examples/README.md) | World/property contracts and [planned author guide (#20)](https://github.com/ja-sanborn/asterweave/issues/20); no playable runtime yet |
+| Game author | [Canonical definitions](contracts/GAME_DEFINITIONS.md), [examples](../examples/README.md) | World/property contracts and planned author guide; no playable runtime yet |
 | Host developer | [Public API](contracts/PUBLIC_API.md), [hosts](../hosts/README.md) | [Security model](contracts/SECURITY_MODEL.md), [error handling](contracts/ERROR_HANDLING.md), actions and persistence contracts |
 | Creator or extension developer | [Creator](../creator/README.md), [extensions](../extensions/README.md) | Relevant canonical data, public API and security contracts |
 
@@ -28,7 +28,7 @@ Start here for the current technical design and development standards. See the [
 | [Future considerations](FUTURE_CONSIDERATIONS.md) | Nonbinding ideas, not implementation authorization |
 | Source and actual test results | Evidence of implemented and verified behavior, not automatic authority to change contracts |
 
-Read the current branch and relevant issue, follow cross-references and explicit supersession notes. Surface conflicts between documents, issues and code before proceeding; do not silently choose a different interpretation. Historical ADR text is retained for context. Update affected authoritative documents and indexes together when decisions change.
+Read the current branch and relevant issue, follow cross-references and explicit supersession notes. Surface conflicts between documents, issues and code before proceeding; do not silently choose a different interpretation. Historical ADR text is retained for context. Update affected authoritative documents and indexes together when decisions change. Keep living documentation capability-oriented: use contracts and ADRs for technical requirements and rationale, and GitHub Issues and pull requests for individual work assignments, progress, and execution evidence. Avoid ticket-specific headings, branch status and historical CI reports in living documents.
 
 ## Current contract versions
 
