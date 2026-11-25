@@ -40,18 +40,7 @@ export function planWorldOperation(state, operation, id, targetId, relationship)
     const reason = operation === 'relocate'
         ? relocate(plan, id, targetId, relationship)
         : associate(plan, operation, id, targetId, relationship);
-    const failure = reason ?? plan.validate();
-    if (failure !== undefined) {
-        return Object.freeze({
-            result: Object.freeze({ status: 'rejected', reason: failure }),
-            changes: Object.freeze([]),
-        });
-    }
-    const changes = plan.changes();
-    return Object.freeze({
-        result: Object.freeze({ status: 'completed', changed: changes.length > 0 }),
-        changes,
-    });
+    return plan.finish(reason);
 }
 
 /**

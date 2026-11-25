@@ -16,7 +16,7 @@ import { inspectJsonData } from '../shared/jsonData.js';
 import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
 import { LIFECYCLE_STATES, CONTAINMENT_RELATIONSHIPS, ASSOCIATION_RELATIONSHIPS,
     WORLD_ID } from '../world/worldRelationships.js';
-import { INTRINSIC_MEASUREMENTS, MEASUREMENT_LIMITS } from '../world/physicalMeasurements.js';
+import { INTRINSIC_MEASUREMENTS, MEASUREMENT_LIMITS, isPhysicalMeasurementValue } from '../world/physicalMeasurements.js';
 import { isStandardDirection } from '../world/navigationDirections.js';
 import { isGamePropertyKey } from './validateProperties.js';
 import { validatePropertyAddress } from './propertyAddress.js';
@@ -105,8 +105,7 @@ export function validateEffectiveStructure(input) {
             }
             for (const key of [...INTRINSIC_MEASUREMENTS, ...MEASUREMENT_LIMITS]) {
                 const value = p['asterweave.' + key];
-                if (value !== undefined && (!Number.isSafeInteger(value)
-                    || value < (INTRINSIC_MEASUREMENTS.includes(key) ? 1 : 0))) {
+                if (value !== undefined && !isPhysicalMeasurementValue(key, value)) {
                     return false;
                 }
             }

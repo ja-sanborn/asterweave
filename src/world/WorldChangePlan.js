@@ -82,6 +82,26 @@ export class WorldChangePlan {
         return reason;
     }
 
+    /**
+     * Completes preflight with a semantic result and no writes on rejection.
+     * @param {string} [reason] - Operation-specific rejection before invariant validation.
+     * @returns {object} Internal result and write plan.
+     */
+    finish(reason) {
+        const failure = reason ?? this.validate();
+        if (failure !== undefined) {
+            return Object.freeze({
+                result: Object.freeze({ status: 'rejected', reason: failure }),
+                changes: Object.freeze([]),
+            });
+        }
+        const changes = this.changes();
+        return Object.freeze({
+            result: Object.freeze({ status: 'completed', changed: changes.length > 0 }),
+            changes,
+        });
+    }
+
     /** @returns {ReadonlyArray<object>} Detached internal write plan. */
     changes() {
         const changes = [];

@@ -171,3 +171,113 @@ test('malformed or unknown operation arguments invalidate even if caught', () =>
         assert.deepEqual(state.readEffectiveState(), before);
     }
 });
+
+test('physical property mutations normalize baseline values and explicit removals', () => {
+    const { state, run } = setup((action, context) => {
+        assert.equal(context.setPhysicalProperty('rug', 'weight', 3).changed, true);
+        assert.equal(context.setPhysicalProperty('rug', 'weight', 3).changed, false);
+        assert.equal(context.removePhysicalProperty('rug', 'weight').changed, true);
+        assert.equal(context.removePhysicalProperty('rug', 'weight').changed, false);
+        assert.equal(context.resetPhysicalProperty('rug', 'weight').changed, true);
+        assert.equal(context.setPhysicalProperty('rug', 'sizeCapacity', 0).changed, true);
+        assert.equal(context.resetPhysicalProperty('rug', 'sizeCapacity').changed, true);
+        return completed();
+    }, ['modifyPhysicalProperties']);
+    assert.equal(run().status, 'completed');
+    assert.deepEqual(state.overrides, []);
+});
+
+test('removing an authored optional measurement commits explicit absence', () => {
+    const { state, run } = setup((action, context) => {
+        assert.equal(context.removePhysicalProperty('rug', 'weight').changed, true);
+        return completed();
+    }, ['modifyPhysicalProperties']);
+    assert.equal(run().status, 'completed');
+    assert.equal(Object.hasOwn(state.readWorldProperties('rug'), 'asterweave.weight'), false);
+    assert.deepEqual(state.overrides, [
+        { scope: 'entity', id: 'rug', removed: ['asterweave.weight'] },
+    ]);
+});
+
+test('physical restrictions reject shrinking occupied containers and removing required scores', () => {
+    const { state, run } = setup((action, context) => {
+        for (const [id, key, value, reason] of [
+            ['backpack', 'sizeCapacity', 1, 'CAPACITY_EXCEEDED'],
+            ['backpack', 'maxItemWeight', 1, 'CAPACITY_EXCEEDED'],
+            ['backpack', 'isContainer', false, 'INVALID_CONTAINMENT'],
+            ['notebook', 'weight', 4, 'CAPACITY_EXCEEDED'],
+        ]) {
+            assert.equal(context.setPhysicalProperty(id, key, value).reason, reason);
+        }
+        assert.equal(context.removePhysicalProperty('notebook', 'weight').reason,
+            'UNKNOWN_MEASUREMENT');
+        assert.equal(context.setPhysicalProperty('world', 'weight', 1).status, 'rejected');
+        return completed();
+    }, ['modifyPhysicalProperties']);
+    assert.equal(run().status, 'completed');
+    assert.deepEqual(state.overrides, []);
+});
+
+test('physical weight changes revalidate ancestors and preserve prior successful staging', () => {
+    const { state, run } = setup((action, context) => {
+        assert.equal(context.setPhysicalProperty('driver', 'weightCapacity', 4).changed, true);
+        assert.equal(context.setPhysicalProperty('notebook', 'weight', 3).reason,
+            'CAPACITY_EXCEEDED');
+        assert.equal(context.relocate('notebook', 'garage', 'in').changed, true);
+        assert.equal(context.setPhysicalProperty('backpack', 'isContainer', false).changed, true);
+        return completed();
+    }, ['modifyPhysicalProperties', 'relocate']);
+    assert.equal(run().status, 'completed');
+    assert.equal(state.readWorldProperties('driver')['asterweave.weightCapacity'], 4);
+    assert.equal(state.readWorldProperties('notebook')['asterweave.weight'], 2);
+    assert.equal(state.readWorldProperties('backpack')['asterweave.isContainer'], false);
+    assert.equal(state.readWorldQueries().parent('notebook'), 'garage');
+});
+
+test('reset revalidates baseline limits against current candidate contents', () => {
+    const { state, run } = setup((action, context) => {
+        assert.equal(context.removePhysicalProperty('safe', 'maxItemSize').changed, true);
+        assert.equal(context.relocate('table', 'safe', 'in').reason, 'CAPACITY_EXCEEDED');
+        assert.equal(context.removePhysicalProperty('safe', 'maxItemWeight').changed, true);
+        assert.equal(context.relocate('table', 'safe', 'in').changed, true);
+        assert.equal(context.resetPhysicalProperty('safe', 'maxItemSize').reason,
+            'CAPACITY_EXCEEDED');
+        return completed();
+    }, ['modifyPhysicalProperties', 'relocate']);
+    assert.equal(run().status, 'completed');
+    assert.equal(Object.hasOwn(state.readWorldProperties('safe'), 'asterweave.maxItemSize'), false);
+    assert.equal(state.readWorldQueries().parent('table'), 'safe');
+});
+
+test('physical mutation authority is independent and malformed values invalidate transactions', () => {
+    for (const [grants, operation] of [
+        [[], (context) => context.setPhysicalProperty('rug', 'size', 2)],
+        [['modifyPhysicalProperties'], (context) => context.setPhysicalProperty('rug', 'size', 0)],
+        [['modifyPhysicalProperties'], (context) => context.setPhysicalProperty('rug', 'weight', null)],
+        [['modifyPhysicalProperties'], (context) =>
+            context.setPhysicalProperty('rug', 'sizeCapacity', Number.MAX_SAFE_INTEGER + 1)],
+        [['modifyPhysicalProperties'], (context) => context.removePhysicalProperty('rug', 'isContainer')],
+        [['modifyPhysicalProperties'], (context) => context.setPhysicalProperty('rug', 'lifecycle', 'inactive')],
+        [['modifyPhysicalProperties'], (context) =>
+            context.setProperty({ scope: 'entity', id: 'rug' }, 'asterweave.weight', 1)],
+    ]) {
+        const { state, run } = setup((action, context) => {
+            assert.throws(() => operation(context), TypeError);
+            return completed();
+        }, grants);
+        const before = state.readEffectiveState();
+        assert.equal(run().status, 'error');
+        assert.deepEqual(state.readEffectiveState(), before);
+    }
+});
+
+test('physical mutations on nonactive identities preserve lifecycle and roll back on rejection', () => {
+    const { state, run } = setup((action, context) => {
+        assert.equal(context.setPhysicalProperty('visitor', 'size', 5).changed, true);
+        assert.equal(context.setPhysicalProperty('brokenBottle', 'weight', 2).changed, true);
+        return { status: 'rejected', error: { code: 'ACTION_UNAVAILABLE' } };
+    }, ['modifyPhysicalProperties']);
+    const before = state.readEffectiveState();
+    assert.equal(run().status, 'rejected');
+    assert.deepEqual(state.readEffectiveState(), before);
+});

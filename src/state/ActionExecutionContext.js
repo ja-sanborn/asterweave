@@ -181,6 +181,40 @@ export class ActionExecutionContext {
     }
 
     /**
+     * Sets a restricted physical property.
+     * @param {string} id - Participant identity.
+     * @param {string} name - Unqualified physical property name.
+     * @param {*} value - Proposed value.
+     * @returns {object} Semantic operation result.
+     */
+    setPhysicalProperty(id, name, value) {
+        return this.#operationAuthority('modifyPhysicalProperties')
+            .physicalPropertyOperation('set', id, name, value);
+    }
+
+    /**
+     * Removes a restricted physical property.
+     * @param {string} id - Participant identity.
+     * @param {string} name - Unqualified physical property name.
+     * @returns {object} Semantic operation result.
+     */
+    removePhysicalProperty(id, name) {
+        return this.#operationAuthority('modifyPhysicalProperties')
+            .physicalPropertyOperation('remove', id, name);
+    }
+
+    /**
+     * Resets a restricted physical property.
+     * @param {string} id - Participant identity.
+     * @param {string} name - Unqualified physical property name.
+     * @returns {object} Semantic operation result.
+     */
+    resetPhysicalProperty(id, name) {
+        return this.#operationAuthority('modifyPhysicalProperties')
+            .physicalPropertyOperation('reset', id, name);
+    }
+
+    /**
      * @param {object} output - Semantic output.
      */
     emitOutput(output) { this.#active().stageOutput(output); }

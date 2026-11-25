@@ -10,6 +10,8 @@
  * @module state/StateTransaction
  */
 
+import { WORLD_ID } from '../world/worldRelationships.js';
+import { planPhysicalProperty, requirePhysicalPropertyRequest } from '../world/planPhysicalProperty.js';
 import { planWorldOperation } from '../world/planWorldOperation.js';
 import { EffectiveStateReader } from './EffectiveStateReader.js';
 import { isGamePropertyKey } from './validateProperties.js';
@@ -176,19 +178,52 @@ export class StateTransaction {
      */
     worldOperation(operation, id, targetId, relationship) {
         return this.#perform(() => {
-            const { reader, overrides } = this.#candidate;
-            const { result, changes } = planWorldOperation(
+            const { reader } = this.#candidate;
+            const proposal = planWorldOperation(
                 reader.readEffectiveState(), operation, id, targetId, relationship,
             );
-            for (const { address, key, value } of changes) {
-                const initial = reader.getInitialProperty(address, key);
-                if (value === undefined) {
-                    overrides.remove(address, key, initial);
-                } else {
-                    overrides.set(address, key, value, initial);
-                }
+            return this.#stageWorldPlan(proposal);
+        });
+    }
+
+    /**
+     * Stages normalized writes from a successful world proposal.
+     * @param {object} proposal - Internal validated result and changes.
+     * @returns {object} Semantic result only.
+     */
+    #stageWorldPlan({ result, changes }) {
+        const { reader, overrides } = this.#candidate;
+        for (const { address, key, value } of changes) {
+            const initial = reader.getInitialProperty(address, key);
+            if (value === undefined) {
+                overrides.remove(address, key, initial);
+            } else {
+                overrides.set(address, key, value, initial);
             }
-            return result;
+        }
+        return result;
+    }
+
+    /**
+     * Resolves a restricted physical property mutation and validates the proposal.
+     * @param {string} operation - Set, remove or reset.
+     * @param {string} id - Participant identity.
+     * @param {string} name - Unqualified physical property name.
+     * @param {*} [value] - New value for set.
+     * @returns {object} Semantic result.
+     */
+    physicalPropertyOperation(operation, id, name, value) {
+        return this.#perform(() => {
+            requirePhysicalPropertyRequest(operation, id, name, value);
+            const { reader } = this.#candidate;
+            let proposed = value;
+            if (operation === 'reset' && id !== WORLD_ID) {
+                const address = { scope: reader.participantKind(id), id };
+                proposed = reader.getInitialProperty(address, 'asterweave.' + name).value;
+            }
+            return this.#stageWorldPlan(planPhysicalProperty(
+                reader.readEffectiveState(), id, name, proposed,
+            ));
         });
     }
 
