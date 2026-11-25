@@ -32,7 +32,7 @@ when changing the manifest. No third-party npm dependencies are required.
 
 Follow [coding standards](docs/CODE_STYLE.md) for source organization, naming, formatting, license headers, JSDoc, validation and maintainability. Follow [ADR 0016](docs/decisions/0016-modular-architecture-and-design-patterns.md) for modular architecture and design patterns.
 Use native `node:test` and `node:assert/strict`; see [test guidance](tests/README.md).
-CI runs on Linux for pull requests targeting main and pushes to main.
+CI runs on Linux for pull requests targeting main and pushes to main, feature/**, fix/**, refactor/** and docs/**. When local execution is unavailable, contributors may commit focused changes with their applicable tests to an authorized working branch and use CI as the test environment. Verify the exact commit SHA, successful test job and relevant logs before advancing to the next implementation increment. Correct failures first; report pending or unavailable results as unverified. Existing PR, merge and issue closure authorization requirements remain unchanged.
 Do not introduce additional tooling or dependencies without discussion.
 
 ## Workflow

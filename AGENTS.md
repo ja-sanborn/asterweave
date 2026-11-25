@@ -28,6 +28,8 @@ Accepted ADRs govern decisions; current normative contracts govern behavior; cod
 
 Follow the [testing strategy](tests/README.md) and definition of done. Test relevant domain, contract, integration, security, negative, boundary, determinism, isolation and architecture behavior; test hosts separately. Use native tooling and meaningful behavioral coverage. Report actual checks/results and limitations. Do not claim planned capabilities are implemented or tested.
 
+When a supported local test environment is unavailable, use the existing GitHub Actions CI on an authorized feature, fix, refactor or docs branch. Commit a focused increment together with its applicable tests, then verify the CI run for that exact commit SHA, including the test job conclusion and relevant logs. Until successful verification, treat the increment as unverified; correct failures before advancing to another implementation increment. Missing, queued, cancelled or inaccessible results are not passing tests. Remote verification does not authorize a pull request, merge or issue closure.
+
 ## Issue-driven workflow and authorization
 
 - GitHub Issues are the authoritative backlog. Search existing issues before creating new ones; use templates and testable acceptance criteria. Track defects as bugs.

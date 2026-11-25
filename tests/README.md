@@ -16,6 +16,10 @@ test hosts separately. A failing assertion must result in a nonzero exit
 status. The current smoke test verifies ES module imports and native assertions,
 not engine behavior.
 
+## Remote branch verification
+
+Local execution with the supported Node.js version is preferred when available. When it is unavailable, the existing Linux CI may execute npm ci and npm test after each focused commit to an authorized feature, fix, refactor or docs branch. Include applicable tests in the same increment. Match the workflow run to the exact commit SHA, verify the test job and inspect relevant logs (including test counts and failures). A missing, pending, cancelled or inaccessible run does not establish success. Resolve failed checks before advancing to the next implementation increment. Preserve existing main and pull request verification; this alternative does not authorize a PR, merge or issue closure.
+
 ## Strategy and scope
 
 Use native Node.js tooling and the existing Linux CI configuration under [ADR 0005](../docs/decisions/0005-development-and-testing-tooling.md). No third-party testing dependencies. Apply [coding standards](../docs/CODE_STYLE.md), [public API](../docs/contracts/PUBLIC_API.md), [security model](../docs/contracts/SECURITY_MODEL.md) and [error handling](../docs/contracts/ERROR_HANDLING.md). Test capabilities when implemented; fixtures and planned contracts do not establish passing behavior.
