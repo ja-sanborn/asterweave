@@ -38,7 +38,7 @@ A complete registration also supplies a trusted handler association and optional
 
 Effective configuration is derived from trusted registered defaults and validated per-game overrides. Omitted overrides inherit defaults; zero and false are legitimate explicit overrides. Never read costs from submitted action arguments or caller metadata. Invalid costs (negative, fractional, nonfinite, unsafe integer or wrong type), unsupported types and attempts to replace handlers are rejected. Detect turn-counter overflow before committing. Definitions and effective metadata are detached from mutable caller-owned data; no cross-instance leakage. Dynamic registry mutation during dispatch is not supported by the Foundation contract.
 
-Foundation only requires move with costs 1/0. Game configuration of supported actions is subsequent work; the canonical JSON location and versioning must be defined in the canonical definition contract when configuration is introduced, not prescribed here.
+Foundation only requires move with costs 1/0. The internal immutable MOVE_DEFINITION in src/actions/standardDefinitions.js reuses the authoritative STANDARD_DIRECTIONS vocabulary. It is metadata only: tests associate it with a test-only handler, and production registration requires the actual navigation handler. Game configuration of supported actions is subsequent work; the canonical JSON location and versioning must be defined in the canonical definition contract when configuration is introduced, not prescribed here.
 
 Illustrative future override (not a canonical game-definition fragment):
 
