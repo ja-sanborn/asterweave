@@ -18,7 +18,7 @@ Concrete signatures, module entry path, exports, construction interfaces and lif
 
 ## Validation, initialization and inspection API
 
-The named Asterweave class export in src/Asterweave.js is the primary public facade. Static validateGame(definition) returns ValidationResult; static initializeGame(definition, options) returns InitializationResult. Both are synchronous, accept parsed canonical data (not JSON text), and share definition validation. Initialization options are optional and follow the closed configuration contract in [runtime state](RUNTIME_STATE.md#players-and-actors). Initialization always validates, creates independent game state, and exposes a game only on success. Construction is engine-controlled; each instance owns one independent game. Each initialized facade instance also privately owns an independent finalized action registry, which is not exposed by the facade, initialization options or snapshots. No public registration or dispatch interface is provided.
+The named Asterweave class export in src/Asterweave.js is the primary public facade. Static validateGame(definition) returns ValidationResult; static initializeGame(definition, options) returns InitializationResult. Both are synchronous, accept parsed canonical data (not JSON text), and share definition validation. Initialization options are optional and follow the closed configuration contract in [runtime state](RUNTIME_STATE.md#players-and-actors). Initialization always validates, creates independent game state, and exposes a game only on success. Construction is engine-controlled; each instance owns one independent game. Each initialized facade instance also privately owns an independent finalized action registry, which is not exposed by the facade, initialization options or snapshots. No public registration interface is provided. The dispatch and reset interfaces below are accepted design, not yet implemented.
 
 Instance getters gameId, gameVersion (authored content version) and turn return their documented scalar values directly. Instance getStateSnapshot() returns the detached, recursively read-only domain-organized effective state record defined in [runtime state](RUNTIME_STATE.md#effective-state-snapshot). It is constructed on demand and supports native JSON serialization. This trusted inspection interface is not a save interface or player perception API. Retain the same snapshot schema for subsequent committed state. No separate snapshot format version is introduced. Compatibility is governed by engine API SemVer.
 
@@ -35,7 +35,15 @@ if (result.isCompleted) {
 }
 ```
 
-The caller supplies parsed canonical data; the import path is relative to a consumer at the repository root. Validation alone publishes no game. Initialization validates independently even after a successful standalone check. Rejection exposes diagnostics and no game; unexpected failure exposes a safe error and no game. See [error handling](ERROR_HANDLING.md). This interface does not yet execute actions, mutate state, reset, save or restore games.
+The caller supplies parsed canonical data; the import path is relative to a consumer at the repository root. Validation alone publishes no game. Initialization validates independently even after a successful standalone check. Rejection exposes diagnostics and no game; unexpected failure exposes a safe error and no game. See [error handling](ERROR_HANDLING.md). The implemented interface does not yet execute actions, mutate state or reset. Save and restore remain deferred.
+
+## Action dispatch and reset
+
+The accepted synchronous instance method `dispatchAction(action)` returns an engine-constructed ActionResult following [actions and results](ACTIONS_AND_RESULTS.md). The explicit acting actor must be active and controlled by the configured player; selection is not authority. No-player configuration grants no public dispatch authority. Separately authorized internal headless or game-logic submission uses the same dispatcher but is not a public interface. Reentrant submission rejects without changing state.
+
+The accepted synchronous instance method `reset()` returns an engine-constructed ResetResult. It restores the original initialized state atomically without changing facade identity or the finalized registry. Reset is administrative, not a gameplay action; hosts own access to administrative operations. See [runtime state](RUNTIME_STATE.md#administrative-reset-and-integrity) and [error handling](ERROR_HANDLING.md).
+
+When committed integrity cannot be established, dispatch returns an error with EXECUTION_FAILED; turn and getStateSnapshot() throw a native Error with a safe fixed message, without exposing unverified state. gameId and gameVersion remain available from verified immutable metadata. Reset may attempt validated recovery. No public health flag, transaction, registry, unrestricted setter or handler-registration interface is introduced. Previously returned detached snapshots and results remain unchanged.
 
 ## Operation result interfaces
 

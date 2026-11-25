@@ -43,6 +43,16 @@ Initialization validates definitions and applicable configuration before publish
 
 Internal action registration and argument validation have their own diagnostic sources and immutable completed/rejected records, specified in [action definitions](ACTION_DEFINITIONS.md). These records are not public ActionResult or initialization diagnostics. Malformed specialized validator returns and unexpected reflective failures are internal exceptions; future dispatch translates them at its operation boundary.
 
+## Runtime execution failures
+
+Reentrant dispatch rejects with ACTION_UNAVAILABLE. Compromised runtime dispatch returns EXECUTION_FAILED. Expected gameplay restrictions are domain rejections; unexpected handler return, prohibited handler mutation, malformed mutation data, overflow or candidate invariant failure is an execution error. Programming or integrity failures invalidate the candidate even if the handler catches an exception. Translate at orchestration boundaries without exposing raw causes, stacks or unauthorized state. Ordinary isolated failures leave a verified committed runtime usable.
+
+## Reset result
+
+ResetResult is an operation-specific read-only result extending OperationResult. Status is completed, rejected or error. The error field is absent on completion; otherwise it is a closed record containing only code. RESET_UNAVAILABLE is a rejection when another runtime operation is active; RESET_FAILED is an unexpected reset or integrity-establishment failure. No actor, gameplay outcome, turns or semantic outputs. toJSON returns detached status and error where applicable, excluding derived predicates. Construction remains engine-controlled.
+
+When committed integrity is uncertain, turn and getStateSnapshot() throw a native Error with a safe fixed message rather than expose invalid state. Verified immutable game metadata remains accessible. Recovery requires successful validated reset; failed recovery does not publish a candidate or authorize gameplay. See [ADR 0025](../decisions/0025-runtime-reset-and-integrity-recovery.md).
+
 ## Standardized operation results
 
 [ADR 0020](../decisions/0020-standardized-operation-result-architecture.md) establishes OperationResult with specialized subclasses. The authoritative status is completed, rejected or error. Read-only isCompleted, isRejected and isError predicates derive from status; isSuccess equals isCompleted and isFailure is its inverse. This describes operation completion, not gameplay outcome. Preserve operation-specific payloads and errors. Results are engine-constructed and read-only, with detached recursively protected data and controlled operational references where required.
@@ -75,7 +85,7 @@ Domain modules own detection through narrow contracts; orchestration owns public
 
 Follow [runtime state](RUNTIME_STATE.md#transactions-and-snapshots) and [action results](ACTIONS_AND_RESULTS.md#turn-and-transaction-invariants). Stage candidate changes, validate before commit and release committed semantic outputs only after successful commit. Discard staged changes, turns and gameplay outputs on rejection/error, including random/event state when implemented. Intentional completed failure may commit valid consequences and configured cost. Initialization failure publishes no runtime; failed reset/restore preserves committed state. Host storage failure does not authorize core mutations.
 
-A failed operation is not necessarily a failed runtime. Continue only when committed integrity is assured. Otherwise fail closed: prohibit further gameplay mutations rather than attempt speculative repair or continue on potentially corrupt state. Any faulted-runtime lifecycle and recovery interfaces require an explicit contract; no new public status or recovery guarantee is implied. Transaction rollback is not gameplay undo.
+A failed operation is not necessarily a failed runtime. Continue only when committed integrity is assured. Otherwise fail closed: prohibit further gameplay mutations rather than attempt speculative repair or continue on potentially corrupt state. The accepted recovery contract is specified in [runtime state](RUNTIME_STATE.md#administrative-reset-and-integrity); no public health status is exposed. Transaction rollback is not gameplay undo.
 
 ## Reporting, security and localization
 
