@@ -12,6 +12,8 @@ Use [GitHub Private Vulnerability Reporting](https://github.com/ja-sanborn/aster
 
 ## Security Scope
 
+The technical [security model](docs/contracts/SECURITY_MODEL.md) and [ADR 0019](docs/decisions/0019-security-and-trust-boundaries.md) define engine and host trust boundaries, data safety and resource ownership. This policy governs vulnerability reporting and supported-version policy.
+
 Relevant concerns include unsafe handling of game definitions and save files, unintended execution of untrusted content, state validation failures with security impact, and security issues in hosts, authoring tools and extensions maintained by this project.
 
 Executable JavaScript extensions are trusted code, not sandboxed data. Offline game packages and saves are not designed to prevent players from inspecting or modifying their own local content. Future online hosts must enforce authentication, authorization, server-authoritative state and appropriate message privacy.

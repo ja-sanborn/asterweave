@@ -1,6 +1,6 @@
 # Unified world containment and placement
 
-Status: Accepted design; implementation pending. Origin: [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23). See [ADR 0011](../decisions/0011-unified-world-containment.md), [canonical definitions](GAME_DEFINITIONS.md) and [physical properties](PHYSICAL_PROPERTIES.md).
+Status: Accepted contract; FND-05 initial participant identities and effective containment/lifecycle/association validation implemented, final review outstanding. Transfers, derived queries and gameplay transitions remain later work. Origin: [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23). See [ADR 0011](../decisions/0011-unified-world-containment.md), [canonical definitions](GAME_DEFINITIONS.md) and [physical properties](PHYSICAL_PROPERTIES.md).
 
 ## Identity and hierarchy
 
@@ -32,13 +32,13 @@ Direct contents are immediate children; recursive contents are all descendants. 
 
 ## Associations
 
-Optional initialAssociations is an array of closed objects with required targetId and relationship. Standard association identifiers are under, behind, beside and near. Associations are directed records on a subject; no implied reverse record. Zero or more may coexist with containment, but reject duplicate (targetId, relationship) pairs, self-targets, root targets and missing/inactive/destroyed endpoints. Foundation requires both endpoints active and sharing the same immediate parent, which provides a deterministic local spatial frame. Association cycles are not containment cycles. Associations do not carry a target or subject during movement. A candidate transition must remove associations made invalid by lifecycle or changes to the shared immediate parent, atomically with the transition; future rules may additionally reevaluate positions within a frame. Moving a rug out of the room leaves a key there; looking behind a bookshelf can reveal a door without moving either. Visibility, knowledge and accessibility remain separate future rules and actor-specific state.
+Optional initialAssociations is an array of closed objects with required targetId and relationship. Standard association identifiers are under, behind, beside and near. Associations are directed records on a subject; no implied reverse record. Zero or more may coexist with containment, but reject duplicate (targetId, relationship) pairs, self-targets, root targets and missing/inactive/destroyed endpoints. Foundation requires both endpoints active and sharing the same immediate parent, which provides a deterministic local spatial frame. Association cycles are not containment cycles. Associations do not carry a target or subject during movement. A candidate transition must remove associations made invalid by lifecycle or changes to the shared immediate parent, atomically with the transition; future rules may additionally reevaluate positions within a frame. Moving a rug out of the room leaves a key there; looking behind a bookshelf can reveal a door without moving either. Visibility and accessibility remain separate future rules. Fictional character knowledge may be optional game/extension state; no core human knowledge tracking.
 
 ```json
 {"targetId":"rug","relationship":"under"}
 ```
 
-Prefer standard engine relationships when semantics fit; synonyms are vocabulary, not new structural relationships. Future extension or game-defined identifiers may use owned namespaces following [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md). Each definition must explicitly classify containment versus association and comply with core invariants. Format 3.0.0 accepts only the standard identifiers; custom registration and authoring are deferred.
+Prefer standard engine relationships when semantics fit; synonyms are vocabulary, not new structural relationships. Future extension or game-defined identifiers may use owned namespaces following [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md). Each definition must explicitly classify containment versus association and comply with core invariants. Format 3.2.0 accepts only the standard identifiers; custom registration and authoring are deferred.
 
 ## Lifecycle
 
@@ -52,7 +52,7 @@ The engine owns current containment, lifecycle and associations. Immutable initi
 {"parentId":"player","relationship":"carried"}
 ```
 
-FND-04 specifies state/snapshot/save structures and mutable properties, including gameplay-relevant associations, lifecycle and actor knowledge. Restore must preserve current authoritative records, not recreate consumed objects or reset placements. FND-05 validates/initializes; FND-07 implements internal containment and capacity; FND-08 implements movement; FND-09 integrates. Player-facing container actions, perception, locks, dynamic creation, multiplayer, networking and storage are not introduced by this contract.
+FND-04 specifies state/snapshot/save structures and mutable properties, including gameplay-relevant associations and lifecycle. Human player knowledge is not tracked; fictional character knowledge is optional game/extension state, not a core subsystem. See [runtime state](RUNTIME_STATE.md). Restore must preserve current authoritative records, not recreate consumed objects or reset placements. FND-05 validates/initializes; FND-07 implements internal containment and capacity; FND-08 implements movement; FND-09 integrates. Player-facing container actions, perception, locks, dynamic creation, multiplayer, networking and storage are not introduced by this contract.
 
 See [containment fixture](../../tests/fixtures/games/containment-foundation.json) and [Lantern House](../../tests/fixtures/games/minimal-foundation.json).
 

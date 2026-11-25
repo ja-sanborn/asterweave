@@ -1,6 +1,6 @@
 # Asterweave architecture
 
-Status: initial design; action, game-definition, containment and physical capacity contracts are defined; state/save contracts are defined; runtime implementation remains pending.
+Status: accepted foundational design and development standards; FND-05 initial validation, initialization and inspection are implemented on the feature branch; final audit and review remain outstanding. Gameplay and persistence remain planned. See the [documentation index](README.md) and [contract catalog](contracts/README.md).
 
 ## Boundaries
 
@@ -20,6 +20,32 @@ The runtime is environment-independent ECMAScript. It must not directly access t
 
 These are logical boundaries; physical module organization will evolve as contracts are defined. The parser and choice modules are optional where a game does not need them.
 
+## Modular implementation
+
+Follow [ADR 0016](decisions/0016-modular-architecture-and-design-patterns.md) and [coding standards](CODE_STYLE.md). Organize cohesive domain types in separate modules; use native classes for encapsulation where appropriate and pure functions for domain calculations and validation. Prefer composition, explicit dependencies and acyclic module boundaries. A public facade hides internal organization; platform adapters depend on core contracts, not the reverse.
+
+Locations, actors and entities share a common world-participant model. Authored objects are data, not individual JavaScript classes, and container capability is a property. Domain objects must not duplicate authoritative mutable state. Definition validation, baseline mapping and effective-state invariant validation are distinct responsibilities; initialization, future transactions and restoration reuse the same domain validators without coupling them to serialized representations or orchestration. Concrete module interfaces remain subject to implementation-story approval.
+
+### Foundation domain types
+
+FND-05 establishes WorldObject with shallow Location, Actor and Entity subclasses, each with meaningful shared or category-specific behavior. World is separate from WorldObject and owns a private WorldObjectRegistry using a native Map keyed by shared stable participant IDs. The implicit root is resolved separately; inactive and destroyed identities remain registered. Derive category collections when needed, with deterministic enumeration. Player is a separate nonphysical domain type. Domain objects must not duplicate authoritative effective state; registry ownership is identity only, not containment, properties, turns, dispatch or player control. Construction remains engine-controlled. No authored item subclasses or process-wide singleton.
+
+### Candidate state mapping
+
+FND-05 uses an ordered validation pipeline and an internal GameDefinitionMapper (Data Mapper pattern). Safely inspect and isolate canonical input; validate schema, version, identities and references; map structurally valid data into a normalized candidate with documented defaults; validate effective domain invariants; validate applicable initialization configuration; and only then finalize the immutable baseline and publish an independent game. Standalone validation uses the same applicable mapping and invariant checks without publishing a game. Invalid candidates are discarded. The mapper translates representations, not gameplay rules, and must not repair invalid input. Domain validators use narrow effective-state contracts, independent of authored paths, storage layouts, the facade and result types. Orchestration translates domain findings into operation-specific diagnostics. Future transactions and restoration reuse the domain validators without requiring the authored definition pipeline.
+
+## Public API and compatibility
+
+Follow [ADR 0018](decisions/0018-public-api-and-compatibility.md) and the [public API contract](contracts/PUBLIC_API.md). One primary facade exposes explicitly documented interfaces; supported factories control construction of engine-owned objects. Internal exports are not automatically public. Engine releases use semantic versioning; pre-1.0 changes are documented and data-format versions remain independent. Concrete interfaces are decided in their owning stories.
+
+## Security and resource ownership
+
+Follow [ADR 0019](decisions/0019-security-and-trust-boundaries.md) and the [security model](contracts/SECURITY_MODEL.md). Treat external data as untrusted, validate authorization and invariants, isolate state and commit atomically. Executable extensions are trusted code, not sandboxed data. Hosts own authentication, storage, network and presentation protections. Use safe algorithms and explicit resource ownership; introduce concrete limits and disposal interfaces only when justified.
+
+## Error handling and diagnostics
+
+Follow [ADR 0017](decisions/0017-error-handling-and-diagnostics.md) and the [error-handling contract](contracts/ERROR_HANDLING.md). Distinguish data validation, operation rejection, intentional gameplay failure, execution failure, programming error and platform failure. Domain modules detect findings independently; orchestration aggregates and translates them into existing operation-specific contracts. Expected failures use structured diagnostics or results, while unexpected failures may use native exceptions internally. Preserve atomicity and fail closed if committed integrity cannot be guaranteed. Hosts own reporting and logging; no core logger or global error bus in Foundation. Concrete public initialization and recovery interfaces remain in their owning implementation stories.
+
 ## Action flow
 
     Host input -> Parser, choice, narrative or direct action submission
@@ -34,7 +60,7 @@ See the [action/result contract](contracts/ACTIONS_AND_RESULTS.md), [action defi
 
 ## Game packages
 
-The [canonical game-definition contract](contracts/GAME_DEFINITIONS.md) defines the initial world, game identity and format/content versions under [ADR 0009](decisions/0009-canonical-game-definition-contract.md). Foundation format 3.0.0 supports locations, directed exits, actors and entities with unified initial containment, lifecycle, spatial associations and optional physical characteristics; narrative, vocabulary, rules and optional extension requirements are future schema work. Stable world IDs connect definitions. Definitions are immutable during play; mutable instance state is separate. Native validation and initialization remain FND-05 work. Custom JavaScript extensions may register behavior through explicit contracts. Untrusted executable extensions must not be treated as safe data.
+The [canonical game-definition contract](contracts/GAME_DEFINITIONS.md) defines the initial world, game identity and format/content versions under [ADR 0009](decisions/0009-canonical-game-definition-contract.md). Foundation format 3.2.0 supports locations, directed exits, actors and entities with unified initial containment, lifecycle, spatial associations and optional physical characteristics; narrative, vocabulary, rules and optional extension requirements are future schema work. Stable world IDs connect definitions. Definitions are immutable during play; mutable instance state is separate. Native validation and initialization are implemented in FND-05; gameplay remains future work. Custom JavaScript extensions may register behavior through explicit contracts. Untrusted executable extensions must not be treated as safe data.
 
 Creator is an optional development-time module that translates readable authoring definitions into the canonical JSON format, validates references and exports game packages. It is not distributed with finished games.
 
@@ -44,7 +70,7 @@ Keep the readable canonical JSON definition distinct from distributed packages. 
 
 ## State and saves
 
-Track player location, inventory, entity state, merchant stock, relationships, quests, flags, pending events, narrative position and parser context as appropriate. Use one authoritative containment tree rooted at engine-recognized, non-navigable World. Actor locations, inventories and loads are derived. Containment transports descendants; spatial associations do not. Lifecycle and capacity invariants apply to all candidate transitions. See [containment](contracts/WORLD_CONTAINMENT.md), [physical properties](contracts/PHYSICAL_PROPERTIES.md), [ADR 0011](decisions/0011-unified-world-containment.md) and [ADR 0012](decisions/0012-physical-properties-and-capacity.md). Legal ownership, visibility and access are separate game mechanics.
+Derive actor location and inventory from authoritative containment; players and actors are distinct. Track entity state and relationships, and future merchant stock, quests, flags, pending events, narrative position and parser context only as their contracts require. Use one authoritative containment tree rooted at engine-recognized, non-navigable World. Actor locations, inventories and loads are derived. Containment transports descendants; spatial associations do not. Lifecycle and capacity invariants apply to all candidate transitions. See [containment](contracts/WORLD_CONTAINMENT.md), [physical properties](contracts/PHYSICAL_PROPERTIES.md), [ADR 0011](decisions/0011-unified-world-containment.md) and [ADR 0012](decisions/0012-physical-properties-and-capacity.md). Legal ownership, visibility and access are separate game mechanics.
 
 Store only normalized current overrides against the immutable baseline and supported dynamic data. Six gameplay scopes: world, location, entity, actor, player and directional relationship. Namespaces identify the engine, game or extension. Players and actors are distinct; no persistent instance ID. Save format 1.0.0 requires exact game/content/definition version matching and complete candidate validation before atomic replacement. Future capabilities define dynamic state, randomness and event persistence when developed. See [properties](contracts/PROPERTIES.md), [runtime state](contracts/RUNTIME_STATE.md) and [save data](contracts/SAVE_DATA.md).
 
@@ -60,6 +86,8 @@ Visual and audio presentation are optional extensions. The engine emits semantic
 
 ## Testing
 
-Test the runtime headlessly with game fixtures, action sequences, invalid commands, rule enforcement, save/restore equivalence and deterministic replay where applicable. Test host adapters separately.
+The [testing strategy](../tests/README.md) establishes unit, contract, integration, security and architecture verification, meaningful behavioral coverage and implementation-story completion criteria. Use review and native automated checks where useful.
+
+Test the runtime headlessly with game fixtures, action sequences, invalid commands, rule enforcement, save/restore equivalence and deterministic execution and test reproducibility where applicable, without requiring action-history replay for persistence. Test host adapters separately.
 
 Development uses Node.js 26 LTS, npm and the native test runner, with no third-party npm dependencies. These tools do not enter the runtime or standalone game distributions. See [ADR 0005](decisions/0005-development-and-testing-tooling.md).

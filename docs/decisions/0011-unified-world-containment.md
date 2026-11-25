@@ -16,4 +16,4 @@ Separate inventories/locations/containers; multiple roots; generic unrestricted 
 ## Consequences
 The [containment contract](../contracts/WORLD_CONTAINMENT.md) is normative. FND-04 follows this design; FND-05 implements validation/initialization, FND-07 internal containment, FND-08 navigation and FND-09 integration. No gameplay runtime, custom registration, lifecycle actions, visibility system or multiplayer implementation is introduced. Preserve ADRs 0001–0008.
 
-FND-04 [ADR 0013](0013-namespaced-properties-and-runtime-state.md) supersedes the accepted format version with 3.0.0; the historical decision above is retained. See the current [canonical contract](../contracts/GAME_DEFINITIONS.md).
+FND-04 [ADR 0013](0013-namespaced-properties-and-runtime-state.md) supersedes the accepted format version with 3.0.0; ADRs [0021](0021-standard-navigation-vocabulary.md) and [0022](0022-flexible-physical-measurement-ranges.md) subsequently advance the format to 3.2.0; the historical decision above is retained. See the current [canonical contract](../contracts/GAME_DEFINITIONS.md).

@@ -28,4 +28,4 @@ body:
     id: design
     attributes:
       label: Design considerations
-      description: Relevant contracts, architecture, alternatives or related issues.
+      description: Identify applicable contracts and ADRs, architecture alternatives, related issues, dependencies, public API and compatibility impacts, security/trust boundaries and verification needs.

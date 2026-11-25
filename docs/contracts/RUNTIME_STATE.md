@@ -1,6 +1,6 @@
 # Runtime state
 
-Status: Accepted design; implementation pending. Origin: [FND-04 (#6)](https://github.com/ja-sanborn/asterweave/issues/6). See [properties](PROPERTIES.md), [save data](SAVE_DATA.md), ADRs [0013](../decisions/0013-namespaced-properties-and-runtime-state.md), [0014](../decisions/0014-player-identity-and-state-scopes.md) and [0015](../decisions/0015-state-isolation-and-persistence.md).
+Status: Accepted contract; FND-05 isolated initial state, explicit player configuration and effective snapshots implemented, final review outstanding. Transactions, mutations and reset remain FND-06 work; save/restore remains Phase 2. Origin: [FND-04 (#6)](https://github.com/ja-sanborn/asterweave/issues/6). See [properties](PROPERTIES.md), [save data](SAVE_DATA.md), ADRs [0013](../decisions/0013-namespaced-properties-and-runtime-state.md), [0014](../decisions/0014-player-identity-and-state-scopes.md) and [0015](../decisions/0015-state-isolation-and-persistence.md).
 
 ## Authority and scopes
 
@@ -21,19 +21,51 @@ Override records are closed objects with scope and scope-specific identity (id f
 {"scope":"relationship","from":{"scope":"actor","id":"guide"},"to":{"scope":"actor","id":"adventurer"},"values":{"stateFoundation.trust":3}}
 ```
 
+## Initial candidate state
+
+Under [ADR 0016](../decisions/0016-modular-architecture-and-design-patterns.md), FND-05 maps structurally validated canonical data into an isolated normalized candidate through GameDefinitionMapper, resolving documented baseline defaults. Validate effective domain invariants and applicable initialization configuration before finalizing the immutable baseline and publishing an independent game. Candidate data is not committed state; discard invalid candidates. Standalone definition validation uses the same applicable mapping and invariant checks without constructing a public game. Domain validators depend on effective values, not canonical JSON paths or override/save storage. Future transactions and restoration reuse these invariants with their own candidate representations and operation-specific translation. Do not introduce duplicate authoritative state or duplicate domain rules.
+
 ## Players and actors
 
 Players do not exist in physical World. Foundation permits zero (headless testing) or one player; future hosts may support more. Player IDs follow world ID grammar but use a separate scope; they are not accounts. Runtime initialization explicitly supplies optional player configuration, including id, controlled actor IDs and optional selected actor; no implicit player from an actor name. Retain a detached initialization configuration for reset. Initial player state is runtime-created and stored fully, not duplicated in override records. Player properties include required asterweave.controlledActors (distinct actor IDs, ordered array) and optional asterweave.selectedActor (actor ID in the controlled list); omission means no selected actor, including when no actors are controlled. Other game/extension properties follow common rules.
 
+The optional second argument to initializeGame is a closed options object. Omission means no explicit player; its only supported key in FND-05 is player. If supplied, player is a closed object with required id and controlledActors (ordered distinct active actor IDs), optional selectedActor and optional initialProperties. Omit selectedActor to leave selection absent even for a single controlled actor. An empty controlledActors array is allowed. Reject unknown fields, non-data input, invalid references or values; do not coerce or infer defaults beyond documented omissions. initialProperties is a qualified game-owned property map (omission means empty); reject reserved asterweave keys and unavailable extension namespaces. The engine derives controlledActors and selectedActor properties from their dedicated fields, not from initialProperties. Preserve a detached immutable copy of original configuration for reset; store complete player state separately from authored overrides. No credentials, host settings or human knowledge tracking.
+
 Only active actors can be controlled; an actor has at most one controlling player. Control changes and lifecycle changes must resolve selection/control atomically. Game logic may direct non-player actors; trusted gameplay logic is distinct from player-authorized requests. Actions retain explicit actorId; the host/public entry point must validate player control when operating on behalf of a player, never infer authorization from actorId alone. Headless trusted actions with no player preserve existing action tests. No accounts, authentication, networking or multiplayer implementation in Foundation. Actor-to-player lookup is derived.
 
+Initialization configuration diagnostics use source options and JSON Pointer paths relative to the options argument, for example /player/controlledActors/0. Definition findings use source definition; both belong to one ordered collection, with definition findings first. Independent safe configuration checks may proceed despite invalid definition data, but checks requiring invalid prerequisites must be suppressed. See [error handling](ERROR_HANDLING.md).
+
 ## Transactions and snapshots
+
+Follow the [error-handling contract](ERROR_HANDLING.md) for atomic failure, exception translation and fail-closed integrity. A failed operation may leave a usable runtime when committed integrity is assured; otherwise prohibit further gameplay mutations. Precise faulted-runtime lifecycle and recovery interfaces remain FND-06 work.
 
 All gameplay mutations are staged within an authorized action transaction. Validate property ownership and component restrictions, effective core invariants (including FND-12 hierarchy, lifecycle, associations and capacities), actor control and turn costs before committing. Rejected/error results discard all staged changes, turns and success outputs. Completed failure may commit intentional valid consequences under ADR 0006. No direct public writable state reference/setter. Reset and future restore are separate atomic administrative operations; they do not consume gameplay turns. Reset clears overrides and dynamic data, restores authored defaults and original initialization configuration, and does not affect external saves.
 
 Snapshots are detached, recursively read-only effective values, including unchanged authored values and current overrides; later gameplay cannot alter earlier snapshots. Copy arrays/objects before freezing; never freeze caller input or expose live state. Snapshot/derived query order is deterministic; use stable case-sensitive code-unit ordering for identifiers/keys, preserve semantic array order. Cache only if observable behavior is identical. No duplicate authoritative inventories, locations, loads or actor-to-player mappings. Trusted snapshots are not automatically safe for player exposure; future hosts enforce authorization and scoped outputs.
 
 World asterweave.turn starts at 0, is a nonnegative safe integer and advances exclusively through dispatcher-selected completed outcome costs. Reject overflow atomically. Zero-turn completed actions may change state; real-world elapsed time does not advance gameplay. Restore/reset may replace the counter administratively. All actors share it. Future events, RNG and calendar state preserve deterministic continuation when implemented.
+
+## Effective state snapshot
+
+FND-05 establishes the public getStateSnapshot() method for initial effective state inspection. FND-06 extends the same interface to committed gameplay state; do not introduce a temporary or incompatible snapshot schema. Construct snapshots on demand as detached, recursively read-only, ordinary JSON-compatible data. A snapshot is neither a canonical definition nor a save file.
+
+The root has the following required fields:
+
+| Field | Shape |
+| --- | --- |
+| game | Record containing id, title, namespace, version (content version), formatVersion (definition format version) |
+| world | Record containing properties |
+| locations | Array of records containing id, properties, exits |
+| actors | Array of records containing id, properties |
+| entities | Array of records containing id, properties |
+| players | Array of records containing id, properties |
+| relationships | Array of records containing from, to, properties |
+
+All fields are required; empty collections are empty arrays. Properties are maps of all applicable effective qualified values, including resolved engine defaults, unchanged baseline values and current overrides. Missing or removed values are omitted; explicit null, false and zero are preserved. Do not include override records or removal markers. The structural id identifies the record; where the property contract defines asterweave.id, its effective value agrees with that identity. Location exits are detached immutable Foundation definition data, preserving authored array order. Include inactive and destroyed participant identities. Directed relationships use the typed endpoints defined above; omit records with no effective relationship properties.
+
+Sort each participant and player collection by ascending case-sensitive ECMAScript code-unit ID order. Sort relationships by source scope, source ID (absent for World), destination scope, then destination ID, using the same ordering. Construct property maps in code-unit key order; preserve semantic array order, including controlled actors, exits and arrays within property values. JSON object member order is not semantic. Containment is represented by the effective qualified property, not an additional placement field. Do not include derived inventories, effective actor location, recursive contents, physical loads or reverse actor-to-player lookup as independent snapshot fields.
+
+Snapshots support native JSON serialization, contain no live engine objects, credentials or host session data, and have no independently versioned format. Compatibility follows engine API SemVer. Full snapshots are trusted inspection data, not authorized player-visible descriptions; hosts must enforce audience boundaries. Future derived queries and player perception interfaces are separate contracts.
 
 ## Knowledge and future capabilities
 

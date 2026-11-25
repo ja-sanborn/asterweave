@@ -8,7 +8,7 @@ Inspired by classic parser adventures such as Zork, branching fiction, gamebooks
 
 ## Project status
 
-Asterweave is establishing its headless runtime foundation. Action, result, canonical game-definition, world containment, physical capacity and runtime state/persistence contracts are defined as architecture; the gameplay capabilities below are planned, not implemented. There is no playable release yet.
+Asterweave is in Foundation development. Development and native test infrastructure are established. The architecture, canonical game-definition format 3.2.0, state/save design and project-wide standards are documented. FND-05 implements native definition validation, isolated initialization and read-only effective-state inspection. The implementation has passed native tests on its feature branch; final contract corrections and review remain outstanding. Action processing and gameplay remain planned; no playable release exists. The current private package is version 0.0.0.
 
 ## Design goals
 
@@ -31,11 +31,25 @@ Asterweave is establishing its headless runtime foundation. Action, result, cano
 
 ## Architecture
 
-The command parser, choice engine and narrative systems submit actions to the same action-driven core. The core validates actions, applies rules, updates world state and returns structured results. Hosts handle input, output and persistence. Game packages define content independently of both the authoring tools and the player interface.
+The planned command parser, choice engine and narrative systems submit actions to a shared, platform-independent core. The core validates requests, applies domain rules, commits state atomically and returns semantic results. Hosts handle input, output, logging, storage and platform security. Creator compiles authoring content to canonical JSON and is not required in finished games.
 
-The first milestone is a small, playable text-only adventure running offline in a browser. Online hosting, multiplayer and graphical presentation are future extensions, not prerequisites.
+The initial Foundation milestone is a headless runtime; the first playable target is a text-only offline browser adventure in Phase 2. Online hosting, multiplayer and graphical presentation are later capabilities.
 
-See [Architecture](docs/ARCHITECTURE.md), [action and result contracts](docs/contracts/ACTIONS_AND_RESULTS.md), [action definitions](docs/contracts/ACTION_DEFINITIONS.md), [standard action catalog](docs/contracts/STANDARD_ACTIONS.md), [canonical game definitions](docs/contracts/GAME_DEFINITIONS.md), [world containment](docs/contracts/WORLD_CONTAINMENT.md), [physical properties](docs/contracts/PHYSICAL_PROPERTIES.md), [properties](docs/contracts/PROPERTIES.md), [runtime state](docs/contracts/RUNTIME_STATE.md), [save data](docs/contracts/SAVE_DATA.md), and [Roadmap](docs/ROADMAP.md) for the design. [Future considerations](docs/FUTURE_CONSIDERATIONS.md) records nonbinding initiatives.
+## Documentation
+
+Start with the [technical documentation index](docs/README.md).
+
+| Resource | Purpose |
+| --- | --- |
+| [Architecture](docs/ARCHITECTURE.md) | System design and boundaries |
+| [Engine contracts](docs/contracts/README.md) | Required behavior and data formats |
+| [Architecture decisions](docs/decisions/README.md) | Accepted decisions and historical context |
+| [Coding standards](docs/CODE_STYLE.md) | JavaScript conventions |
+| [Testing strategy](tests/README.md) | Verification and definition of done |
+| [Roadmap](docs/ROADMAP.md) | Development priorities |
+| [Future considerations](docs/FUTURE_CONSIDERATIONS.md) | Nonbinding ideas |
+
+The versioned game-author guide is planned under [FND-11 (#20)](https://github.com/ja-sanborn/asterweave/issues/20). The [public API contract](docs/contracts/PUBLIC_API.md) identifies the implemented FND-05 interface; other planned capabilities remain governed by their contracts and stories.
 
 ## Repository layout
 
@@ -62,7 +76,11 @@ Node.js is for development and compatible hosts, not a requirement for standalon
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues) track user stories, technical tasks and defects. AI coding agents should follow [AGENTS.md](AGENTS.md). The project is currently establishing its foundations, so substantial architectural changes should be discussed before implementation.
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the [coding standards](docs/CODE_STYLE.md). [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues) track user stories, technical tasks and defects. AI coding agents must follow [AGENTS.md](AGENTS.md); human and AI contributors use the same [technical documentation index](docs/README.md). The project is currently establishing its foundations, so substantial architectural changes should be discussed before implementation.
+
+## Security
+
+See the [technical security model](docs/contracts/SECURITY_MODEL.md) for trust boundaries and [SECURITY.md](SECURITY.md) for private vulnerability reporting. Do not disclose vulnerabilities in public issues.
 
 ## License and attribution
 

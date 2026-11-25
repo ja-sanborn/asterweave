@@ -1,6 +1,6 @@
 # Namespaced properties
 
-Status: Accepted design; implementation pending. Origin: [FND-04 (#6)](https://github.com/ja-sanborn/asterweave/issues/6). See [ADR 0013](../decisions/0013-namespaced-properties-and-runtime-state.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md).
+Status: Accepted contract; FND-05 initial property mapping, ownership checks and read-only inspection implemented. Mutation and override normalization remain FND-06 work; final FND-05 review outstanding. Origin: [FND-04 (#6)](https://github.com/ja-sanborn/asterweave/issues/6). See [ADR 0013](../decisions/0013-namespaced-properties-and-runtime-state.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md).
 
 ## Ownership and values
 
@@ -12,7 +12,7 @@ Values support booleans, finite numbers, strings, dense arrays, plain data objec
 
 ## Authored baseline
 
-Canonical format 3.0.0 adds required game.namespace and optional initialProperties maps to world and each authored participant; optional world.initialRelationships supplies directed initial relationship properties. Maps contain qualified game-owned keys (and registered extension keys when supported), never asterweave keys. Omitted map means empty. No generic property-declaration or arbitrary extension section. Structural fields remain the sole authored source of engine values, mapped as follows:
+Canonical format 3.0.0 introduced (retained in 3.2.0) required game.namespace and optional initialProperties maps to world and each authored participant; optional world.initialRelationships supplies directed initial relationship properties. Maps contain qualified game-owned keys (and registered extension keys when supported), never asterweave keys. Omitted map means empty. No generic property-declaration or arbitrary extension section. Structural fields remain the sole authored source of engine values, mapped as follows:
 
 | Engine property (asterweave prefix) | Initial source / effective default | Mutability |
 | --- | --- | --- |
@@ -32,6 +32,8 @@ Canonical format 3.0.0 adds required game.namespace and optional initialProperti
 
 World has no authored physical fields, containment or mutable name/lifecycle. World associations are not supported. Player id is immutable; player records are not authored world participants. Exits are immutable Foundation definition data, not mutable properties. Required structural properties cannot be removed; optional physical values may be removed only through authorized core operations that revalidate all affected invariants. Engine defaults cannot be suppressed by removal (e.g. isContainer must be set explicitly). An inactive/destroyed participant has no containment; remove a formerly present containment with an explicit removal marker. Lifecycle cannot resurrect destroyed participants during forward play. See [containment](WORLD_CONTAINMENT.md) and [physical properties](PHYSICAL_PROPERTIES.md).
 
+Initial player properties are supplied through optional options.player.initialProperties at initialization, not the authored definition. Apply the same game-owned qualified map rules as authored initialProperties; reserved engine keys and unavailable extension namespaces are rejected. Player control and selection are initialized through dedicated configuration fields and mapped to their reserved properties. Store complete runtime player properties separately from baseline overrides; see [runtime state](RUNTIME_STATE.md#players-and-actors).
+
 ## Overrides
 
 Store only current differences from the immutable baseline. For a property read: explicit removal means absent; otherwise an override wins; otherwise return the baseline (or absence). Reset deletes override and removal marker. Setting a baseline-equal value removes its override; dynamically introduced values with no baseline are recorded, including null. Removing a dynamic property deletes it; removing a present baseline property records a removal marker if permitted. Removing an already absent property is a no-op. No historic changes are retained. Do not confuse false, zero, null or empty values with absence. Default engine values participate in baseline comparison.
@@ -42,6 +44,6 @@ Compare JSON values structurally: scalars by value and type (negative zero equal
 {"scope":"entity","id":"brassLantern","values":{"stateFoundation.fuel":85,"stateFoundation.target":null},"removed":["stateFoundation.label"]}
 ```
 
-Conceptual operations: read initial/effective property, check existence and changed status, stage set/reset/remove, and retrieve detached snapshots. Exact JavaScript API belongs to implementation stories. Changes to reserved engine properties use appropriate authorized engine operations; property ownership does not bypass core validation. Changes are atomic with world state and turn progression. See [runtime state](RUNTIME_STATE.md).
+Conceptual operations: read initial/effective property, check existence and changed status, stage set/reset/remove, and retrieve detached snapshots. FND-05 exposes getStateSnapshot() under the [effective state snapshot contract](RUNTIME_STATE.md#effective-state-snapshot); each scoped subject includes applicable effective qualified properties, with absent or removed values omitted and explicit null preserved. The remaining JavaScript property operation interfaces belong to their owning implementation stories. Changes to reserved engine properties use appropriate authorized engine operations; property ownership does not bypass core validation. Changes are atomic with world state and turn progression. See [runtime state](RUNTIME_STATE.md).
 
 Future capabilities define their state contracts as developed, prefer existing scopes and namespaces, and preserve deterministic continuation. No speculative combat, quest, calendar, random or event sections.

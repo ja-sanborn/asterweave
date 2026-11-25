@@ -19,7 +19,7 @@ This specification elaborates [ADR 0002](../decisions/0002-unified-action-contra
 
 Use JSON-compatible data only: null, booleans, strings, finite numbers, arrays and plain data objects. Reject cycles, functions, accessors, undefined, nonfinite numbers and non-data objects. Required IDs must be nonempty strings; do not coerce or trim inputs to make them valid. Reject unknown envelope fields and unrecognized arguments unless the specific definition explicitly permits them. Do not accept turn costs, raw command syntax, UI events, credentials, handler references or platform-specific metadata. Resolve actor authority, visibility, containment and other prerequisites in the engine, not just in the caller. Hosts must authenticate/authorize callers separately.
 
-Arguments use descriptive lower camel case keys. Use stable IDs rather than display names or live objects: targetId for a primary entity, objectId for a manipulated item where a separate target is needed, destinationId for a destination, instrumentId for a tool, recipientId for a receiving actor, topicId/choiceId for authored topics/choices. A relation is a canonical semantic value (e.g. in, on, under, behind), not a parser token. Direction is a canonical exit identifier as agreed with the game definition; Foundation uses north, south, east, west and may support other explicitly defined directions. See the [catalog](STANDARD_ACTIONS.md). Action inputs and outputs must be detached from mutable runtime state.
+Arguments use descriptive lower camel case keys. Use stable IDs rather than display names or live objects: targetId for a primary entity, objectId for a manipulated item where a separate target is needed, destinationId for a destination, instrumentId for a tool, recipientId for a receiving actor, topicId/choiceId for authored topics/choices. A relation is a canonical semantic value (e.g. in, on, under, behind), not a parser token. Direction is a canonical exit identifier as agreed with the game definition; Foundation uses the twelve standard navigation identifiers defined in [canonical definitions](GAME_DEFINITIONS.md#locations-and-exits); aliases and custom identifiers are not accepted as Foundation canonical directions. See the [catalog](STANDARD_ACTIONS.md). Action inputs and outputs must be detached from mutable runtime state.
 
 ## Result envelope
 
@@ -52,7 +52,11 @@ Arguments use descriptive lower camel case keys. Use stable IDs rather than disp
 
 A completed failure is an intentionally resolved gameplay attempt, not a validation rejection or technical failure. It can commit intentional consequences and its configured failure cost. Rejection or execution error commits no engine-owned state change and advances zero turns; discard staged success/failure outputs. Safe diagnostics may still be returned to the submitting caller. A malformed request must not require a valid actor or request ID to receive a result. No stack traces, secrets, or live state references.
 
+The future action result class follows [ADR 0020](../decisions/0020-standardized-operation-result-architecture.md). Its public read-only accessors and derived status predicates are distinct from the serialized envelope above. Its toJSON method returns detached data preserving the documented fields, omission rules and output order; derived Boolean predicates are not serialized. This does not change action outcomes, turn costs, error vocabulary or authorization requirements.
+
 ### Error vocabulary
+
+Follow the common [error-handling contract](ERROR_HANDLING.md). Preserve this operation-specific error record and code vocabulary; definition diagnostic fields are not required here. Orchestration translates domain findings into these codes, and unexpected exceptions are translated at the dispatcher boundary without exposing internal causes or stacks.
 
 The error object requires a stable code string and may contain JSON-compatible safe details. Initial codes:
 

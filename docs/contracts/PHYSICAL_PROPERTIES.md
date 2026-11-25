@@ -1,8 +1,8 @@
 # Physical characteristics and capacity
 
-Status: Accepted design; implementation pending. Origin: [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23). See [ADR 0012](../decisions/0012-physical-properties-and-capacity.md) and [containment](WORLD_CONTAINMENT.md).
+Status: Accepted contract; FND-05 initial physical range and finite capacity checks implemented, final review outstanding. FND-07 owns transfers and derived loads. Origin: [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23). See [ADR 0012](../decisions/0012-physical-properties-and-capacity.md) and [ADR 0022](../decisions/0022-flexible-physical-measurement-ranges.md) and [containment](WORLD_CONTAINMENT.md).
 
-Physical characteristics are abstract gameplay points, not dimensions, kilograms or a physics simulation. Size and weight are independent author-defined integer classifications.
+Physical characteristics are abstract gameplay points, not dimensions, kilograms or a physics simulation. Size and weight are independent author-defined positive safe-integer gameplay points. The following five-point classifications are optional authoring conventions, not engine limits. Games choose consistent independent size and weight scales.
 
 | Value | Size | Weight |
 | --- | --- | --- |
@@ -21,10 +21,10 @@ Every authored location, actor or entity may have an optional closed physical ob
 | Field | Type | Omitted behavior |
 | --- | --- | --- |
 | isContainer | Boolean | true for locations, false for actors/entities |
-| size | Integer 1–5 | Unspecified |
-| weight | Integer 1–5 | Unspecified |
-| maxItemSize | Integer 0–5 | No individual size restriction |
-| maxItemWeight | Integer 0–5 | No individual weight restriction |
+| size | Positive safe integer | Unspecified |
+| weight | Positive safe integer | Unspecified |
+| maxItemSize | Nonnegative safe integer | No individual size restriction |
+| maxItemWeight | Nonnegative safe integer | No individual weight restriction |
 | sizeCapacity | Nonnegative safe integer | Unlimited |
 | weightCapacity | Nonnegative safe integer | Unlimited |
 
@@ -36,9 +36,9 @@ Unlimited is represented by omission, not null, Infinity or a special string. Ze
 
 ## Capacity invariants
 
-For every non-root active parent, all direct children (all containment relationships) must meet any finite individual size/weight limits using each child's own external size and intrinsic weight classification. The total size is the sum of direct children's external sizes; nested contents do not enlarge a container. The total weight is the sum of intrinsic weights of all descendants, each counted once, excluding the parent itself. A loaded child's intrinsic weight remains a 1–5 classification; its recursive weight may exceed 5 and contributes to the cumulative weight capacity, not the individual class limit. Authors should set cumulative limits to control loaded weight. There is no geometry or automatic packing simulation.
+For every non-root active parent, all direct children (all containment relationships) must meet any finite individual size/weight limits using each child's own external size and intrinsic weight points. The total size is the sum of direct children's external sizes; nested contents do not enlarge a container. The total weight is the sum of intrinsic weights of all descendants, each counted once, excluding the parent itself. A loaded child's intrinsic weight remains its authored or effective intrinsic value; its recursive weight may exceed that value and contributes to the cumulative weight capacity, not the individual intrinsic limit. Authors should set cumulative limits to control loaded weight. There is no geometry or automatic packing simulation.
 
-If an applicable finite limit needs a missing size/weight value, reject the definition or proposed transition, rather than treating unknown as zero. A zero individual or cumulative limit rejects any direct child (even if its score is unspecified). No calculation is required for an absent limit; derived loads with unknown inputs are unspecified, not zero. Check safe-integer arithmetic without overflow (reject when a required finite-limit comparison cannot be satisfied; do not silently round). Empty contents contribute zero. Explicitly validate every affected ancestor on candidate state, including when a descendant changes physical values; never double-count a subtree moved between branches of the same ancestor. All limits are inclusive. World is exempt, but its descendants' own limits still apply.
+If an applicable finite limit needs a missing size/weight value, reject the definition or proposed transition, rather than treating unknown as zero. A zero individual or cumulative limit rejects any direct child (even if its score is unspecified). No calculation is required for an absent limit; derived loads with unknown inputs are unspecified, not zero. Check safe-integer arithmetic without overflow, including aggregation of individually valid large values (reject when a required finite-limit comparison cannot be satisfied; do not silently round). Empty contents contribute zero. Explicitly validate every affected ancestor on candidate state, including when a descendant changes physical values; never double-count a subtree moved between branches of the same ancestor. All limits are inclusive. World is exempt, but its descendants' own limits still apply.
 
 Example: backpack size 3, weight 2 contains a notebook size 2, weight 2. Its direct contents use size 2 and weight 2; the actor carrying it uses size 3 and weight 4. Adding a weight-5 item fails the backpack's maxItemWeight 3 regardless of spare total capacity. If an actor's remaining cumulative weight is insufficient, adding a small object to the backpack also fails atomically. A car with maxItemSize 4 and total size capacity 30 cannot accept a size-5 vehicle even when empty.
 

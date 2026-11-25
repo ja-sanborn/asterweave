@@ -1,32 +1,43 @@
 # Asterweave — Agent Instructions
 
-Asterweave is an independent, open-source interactive fiction engine created by JA Sanborn and licensed under MPL 2.0. See [README](README.md), [architecture](docs/ARCHITECTURE.md), [roadmap](docs/ROADMAP.md), [contributing](CONTRIBUTING.md) and [security policy](SECURITY.md).
+Asterweave is an independent, open-source interactive fiction engine created by JA Sanborn, licensed under MPL 2.0. Read the [project README](README.md) and [documentation index](docs/README.md).
 
-## Architecture and code
+## Mandatory reading and authority
 
-- Use standard ECMAScript, ES modules and zero third-party core runtime dependencies. Node.js is permitted for development and compatible hosts.
-- Keep `src/` independent of DOM, storage, networking, filesystem, graphics and Node-specific APIs. Put platform integration in `hosts/`, authoring tools in `creator/`, optional mechanics and presentation in `extensions/`, examples in `examples/` and tests in `tests/`.
-- Use deterministic, explicit actions with actor identity. Commands and choices share the action dispatcher; neither owns world logic. Return semantic results, not rendered interfaces.
-- Keep immutable, versioned JSON definitions separate from mutable state. Use stable IDs, one authoritative World containment hierarchy, validated save/restore and storage adapters. Treat executable extensions as trusted code, not safe data. Prefer standard engine capabilities and relationships; use validated extension points only where needed. Enforce lifecycle, association and capacity invariants without duplicating placement.
-- Design for multiple actors but implement single-player offline text gameplay first. Keep Creator and unused optional modules out of game distributions.
-- Use descriptive English identifiers, focused modules, explicit contracts and consistent formatting. Avoid premature optimization, global mutable state and circular dependencies.
-- Discuss major changes, new dependencies and breaking contracts before implementation. Record significant accepted decisions in `docs/decisions/`.
+Before work, inspect the current branch, relevant GitHub issue, dependencies, acceptance criteria and affected files. Read [architecture](docs/ARCHITECTURE.md), [coding standards](docs/CODE_STYLE.md), [testing strategy](tests/README.md), [contributing](CONTRIBUTING.md), relevant [contracts](docs/contracts/README.md) and [ADRs](docs/decisions/README.md). Follow [security policy](SECURITY.md).
 
-## Issue-driven workflow
+Accepted ADRs govern decisions; current normative contracts govern behavior; coding standards govern source; tests and actual results provide implementation evidence. GitHub Issues govern actionable scope and [roadmap](docs/ROADMAP.md) priorities. Future considerations are nonbinding. Respect explicit supersession and surface conflicts between docs, issues and code before proceeding. Do not silently change accepted contracts.
 
-GitHub Issues are the authoritative development backlog and user stories. Read the relevant issue, acceptance criteria, dependencies and repository state before implementing. Search for existing issues before creating new ones. Discuss ambiguous requirements rather than silently expanding scope.
+## Architecture and coding
 
-- Use user stories for features and technical enablers, with measurable acceptance criteria. Track defects as bug issues.
-- Brainstorming does not authorize issue creation or code changes. Create or update issues when requested.
-- Use focused feature, fix, refactor or documentation branches and pull requests targeting `main`. Reference the corresponding issue; use a closing keyword only when the PR fully satisfies it.
-- Never bypass branch protection, commit directly to main without explicit authorization, or merge without authorization.
-- Add or update headless tests for behavior, invalid actions, deterministic transitions and save/restore as applicable. Test hosts separately. Run available checks and report actual results or limitations.
-- Update documentation and issue progress based on evidence. Do not claim planned features are implemented or tests/commits succeeded without verification.
+- Use standard ECMAScript, ES modules and zero third-party runtime/development npm dependencies under current Foundation decisions. Node.js is permitted for development and compatible hosts.
+- Keep src independent of DOM, storage, networking, filesystem, graphics and Node-specific APIs. Hosts integrate platforms; Creator is optional authoring; extensions provide optional mechanics/presentation. Exclude Creator and unused optional modules from distributions.
+- Follow ADR 0016: cohesive domain modules, one principal type per file, native encapsulation, composition, narrow explicit dependencies, no circular imports or global mutable state. Use independently testable domain logic and separate orchestration.
+- Follow [public API](docs/contracts/PUBLIC_API.md): one primary facade, engine-controlled construction, intentional documented public interfaces, compatibility review and independent version authorities.
+- Use descriptive English identifiers, required license headers and JSDoc for public and private members, and EditorConfig formatting. Avoid speculative frameworks and premature optimization.
+- Commands and choices share explicit actor-identified actions and one dispatcher; neither owns world logic. Return semantic results, not rendered interfaces. Design for multiple actors but implement single-player offline text first.
+
+## Security, errors and state
+
+- Follow [security model](docs/contracts/SECURITY_MODEL.md) and [error handling](docs/contracts/ERROR_HANDLING.md): validate external data, authorization, references and invariants; use safe algorithms and explicit resource ownership. Executable extensions are trusted code, not sandboxed data.
+- Preserve operation-specific diagnostics/results, domain-owned codes, deterministic aggregation, exception cause when wrapping, atomic failure and fail-closed integrity. No core operational logger; hosts own reporting and platform security.
+- Use immutable isolated definitions, normalized overrides, qualified component-owned properties, six gameplay scopes and one authoritative World containment hierarchy. Derive actor location, inventory and loads; enforce lifecycle, association and capacity invariants without duplicating placement.
+- No persistent instance ID, human knowledge tracking or gameplay undo. Keep detached recursively read-only snapshots and engine-owned transactions. Storage adapters remain outside core; save implementation is Phase 2. See [properties](docs/contracts/PROPERTIES.md), [runtime state](docs/contracts/RUNTIME_STATE.md) and [save data](docs/contracts/SAVE_DATA.md).
+
+## Testing and completion
+
+Follow the [testing strategy](tests/README.md) and definition of done. Test relevant domain, contract, integration, security, negative, boundary, determinism, isolation and architecture behavior; test hosts separately. Use native tooling and meaningful behavioral coverage. Report actual checks/results and limitations. Do not claim planned capabilities are implemented or tested.
+
+When a supported local test environment is unavailable, use the existing GitHub Actions CI on an authorized feature, fix, refactor or docs branch. Commit a focused increment together with its applicable tests, then verify the CI run for that exact commit SHA, including the test job conclusion and relevant logs. Until successful verification, treat the increment as unverified; correct failures before advancing to another implementation increment. Missing, queued, cancelled or inaccessible results are not passing tests. Remote verification does not authorize a pull request, merge or issue closure.
+
+## Issue-driven workflow and authorization
+
+- GitHub Issues are the authoritative backlog. Search existing issues before creating new ones; use templates and testable acceptance criteria. Track defects as bugs.
+- Brainstorming or review does not authorize issue creation, repository changes or implementation. Respect explicit scope and approval; documentation approval does not authorize code. Discuss significant architecture, dependencies and breaking changes first.
+- Use focused feature, fix, refactor or docs branches. Open PRs targeting main when authorized; do not create a PR when the user requests branch-only work. Reference issues; use closing keywords only when criteria are fully met.
+- Never bypass branch protection, commit directly to main without explicit authorization, merge without authorization or close issues without authorization and evidence of completion.
+- Update affected tests, docs, indexes and ADRs as appropriate. Preserve historical decisions and record accepted changes. Verify commits and report progress accurately.
 
 ## Licensing and safety
 
-Preserve LICENSE, NOTICE, AUTHORS.md and applicable MPL notices. Include MPL Exhibit A notices and SPDX-License-Identifier: MPL-2.0 in covered source files. Preserve required notices in distributions. Never commit credentials, unpublished private stories, local saves or generated builds. Report vulnerabilities privately according to SECURITY.md.
-
-The repository is the durable source of truth. Surface conflicts between issues, architecture and implementation before proceeding. Prioritize small, working, tested increments over feature breadth.
-
-State contracts: use immutable baseline plus normalized overrides, qualified component-owned properties and six gameplay scopes; no persistent instance ID, human knowledge tracking or gameplay undo. Preserve engine-owned transactions and detached recursively read-only snapshots. See [properties](docs/contracts/PROPERTIES.md), [runtime state](docs/contracts/RUNTIME_STATE.md) and [save data](docs/contracts/SAVE_DATA.md).
+Preserve LICENSE, NOTICE and AUTHORS.md. Include MPL Exhibit A notices and SPDX-License-Identifier: MPL-2.0 in covered source files and preserve required distribution notices. Never commit credentials, unpublished private stories, local saves or generated builds. Report vulnerabilities privately under SECURITY.md. Prioritize small, working, tested increments over feature breadth.

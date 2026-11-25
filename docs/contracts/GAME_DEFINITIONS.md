@@ -1,8 +1,8 @@
 # Canonical JSON game definitions
 
-Status: Accepted design; validation and runtime implementation pending. Origin: [FND-03, issue #5](https://github.com/ja-sanborn/asterweave/issues/5), revised by [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23) and [FND-04, issue #6](https://github.com/ja-sanborn/asterweave/issues/6).
+Status: Accepted contract; FND-05 validation and initialization implemented on the feature branch, final audit and review outstanding. Origin: [FND-03, issue #5](https://github.com/ja-sanborn/asterweave/issues/5), revised by [FND-12, issue #23](https://github.com/ja-sanborn/asterweave/issues/23) and [FND-04, issue #6](https://github.com/ja-sanborn/asterweave/issues/6).
 
-This contract elaborates [ADR 0003](../decisions/0003-canonical-json-game-format.md) and [ADR 0009](../decisions/0009-canonical-game-definition-contract.md). [ADRs 0011](../decisions/0011-unified-world-containment.md) and [0012](../decisions/0012-physical-properties-and-capacity.md) supersede the version and placement portions of ADR 0009. [ADRs 0013](../decisions/0013-namespaced-properties-and-runtime-state.md)–[0015](../decisions/0015-state-isolation-and-persistence.md) elaborate state and supersede the accepted format version. Authors and future Creator tools produce the same JSON document. The runtime consumes data independently of Creator, hosts and distribution packaging.
+This contract elaborates [ADR 0003](../decisions/0003-canonical-json-game-format.md) and [ADR 0009](../decisions/0009-canonical-game-definition-contract.md). [ADRs 0011](../decisions/0011-unified-world-containment.md) and [0012](../decisions/0012-physical-properties-and-capacity.md) supersede the version and placement portions of ADR 0009. [ADRs 0013](../decisions/0013-namespaced-properties-and-runtime-state.md)–[0015](../decisions/0015-state-isolation-and-persistence.md) elaborate state and supersede the accepted format version. [ADR 0021](../decisions/0021-standard-navigation-vocabulary.md) expands navigation; [ADR 0022](../decisions/0022-flexible-physical-measurement-ranges.md) establishes the current format 3.2.0 and expanded measurement ranges. Authors and future Creator tools produce the same JSON document. The runtime consumes data independently of Creator, hosts and distribution packaging.
 
 ## Authoring and distribution boundary
 
@@ -18,11 +18,11 @@ A definition is one UTF-8 JSON object. JSON member order is not semantic; array 
 
 | Field | Required | Type and constraints |
 | --- | --- | --- |
-| formatVersion | Yes | String, exactly `3.0.0` for Foundation |
+| formatVersion | Yes | String, exactly `3.2.0` for Foundation |
 | game | Yes | Game identity object |
 | world | Yes | Initial world object |
 
-Format and content versions use three nonnegative decimal integer components separated by dots, with no leading zero except zero itself, no prefix, suffix or whitespace (grammar: `(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)`, matched against the entire string). Format major revisions represent breaking interpretation changes; minor revisions represent compatible additions for newer readers; patch revisions represent compatible corrections. This does not promise forward compatibility: Foundation recognizes exactly 3.0.0. Version 2.0.0 replaced the pre-runtime 1.0.0 initialLocationId and initialPlacement fields with unified containment. Version 3.0.0 adds required game.namespace and optional initial properties and relationships. No 1.0.0 or 2.0.0 reader or migration is required for Foundation. Future readers must explicitly identify supported versions and reject unsupported versions clearly; migration is not required in Foundation. Content versions are author-managed release identifiers; authors should increment them when changing released definitions. Neither version is the engine package version. Save compatibility and migration policy belong to [FND-04](https://github.com/ja-sanborn/asterweave/issues/6).
+Format and content versions use three nonnegative decimal integer components separated by dots, with no leading zero except zero itself, no prefix, suffix or whitespace (grammar: `(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)`, matched against the entire string). Format major revisions represent breaking interpretation changes; minor revisions represent compatible additions for newer readers; patch revisions represent compatible corrections. This does not promise forward compatibility: Foundation recognizes exactly 3.2.0. Version 2.0.0 replaced the pre-runtime 1.0.0 initialLocationId and initialPlacement fields with unified containment. Version 3.0.0 adds required game.namespace and optional initial properties and relationships. Version 3.1.0 expands the standard navigation vocabulary without changing the exit record shape or existing direction semantics (see [ADR 0021](../decisions/0021-standard-navigation-vocabulary.md)). Version 3.2.0 expands physical measurement ranges to safe integers without changing existing capacity semantics (see [ADR 0022](../decisions/0022-flexible-physical-measurement-ranges.md)). No 1.0.0, 2.0.0, 3.0.0 or 3.1.0 reader or migration is required for Foundation. Future readers must explicitly identify supported versions and reject unsupported versions clearly; migration is not required in Foundation. Content versions are author-managed release identifiers; authors should increment them when changing released definitions. Neither version is the engine package version. Save compatibility and migration policy belong to [FND-04](https://github.com/ja-sanborn/asterweave/issues/6).
 
 ## Game identity
 
@@ -74,13 +74,25 @@ Each initialRelationships entry is a closed object with required from, to and in
 
 ### Locations and exits
 
-Locations additionally require exits, a dense array of closed objects with required direction (north, south, east or west) and destinationId (existing authored location ID, never world). Directions are unique per source. Exits are directed, self-loops and disconnected navigation graphs are permitted, and no reverse exit is implied. An exit may reference an inactive authored location, but movement to it is unavailable until active. Containment does not create exits. Foundation movement requires an immediate active location parent via in, updates containment to the destination and preserves descendants; vehicle boarding and other modes are deferred.
+Locations additionally require exits, a dense array of closed objects with required direction (one of the twelve standard identifiers below) and destinationId (existing authored location ID, never world). Directions are unique per source. Exits are directed, self-loops and disconnected navigation graphs are permitted, and no reverse exit is implied. An exit may reference an inactive authored location, but movement to it is unavailable until active. Containment does not create exits. Foundation movement requires an immediate active location parent via in, updates containment to the destination and preserves descendants; vehicle boarding and other modes are deferred.
+
+The standard navigation identifiers are north, south, east, west, northeast, northwest, southeast, southwest, up, down, in and out. Match exactly and case-sensitively. Parser abbreviations and aliases are not canonical identifiers. Definition validation and future movement share a domain-owned immutable standard vocabulary. Directions are semantic exit identifiers, not coordinates or containment relationships. No automatic inverse exit or geometric interpretation is implied. Custom identifiers require a future explicit registration and ownership contract; reject them in 3.2.0. Conditional availability, hidden exits, door-controlled traversal and state-dependent destinations remain future navigation capabilities; the current exit record retains a fixed destination.
 
 ## Definition and runtime boundary
 
 Definitions remain immutable; initialization must not mutate caller data and later caller mutations must not affect instances. Independent instances must not share mutable state. Current containment, lifecycle, associations and mutable physical properties are engine-owned. Derived queries do not duplicate authoritative placement. [FND-04 state](RUNTIME_STATE.md), [properties](PROPERTIES.md) and [save data](SAVE_DATA.md) define override semantics, player control and snapshots; FND-05 validates and initializes. No turn counter, save state or session credentials belong in the definition.
 
 ## Validation and diagnostics
+
+### Candidate mapping and invariant checks
+
+The FND-05 GameDefinitionValidator orchestrates safe data inspection, structural/version validation, identity collection and reference resolution. The internal GameDefinitionMapper maps structurally valid data into isolated normalized candidate state, applying only defaults documented by this contract and [properties](PROPERTIES.md). Pure mapping functions may perform individual transformations. Reusable domain validators evaluate effective containment, lifecycle, associations, physical capacity and qualified property invariants against this candidate, not the authored JSON layout. The mapper must not silently repair data, mutate caller input, publish a game or decide domain validity.
+
+Suppress checks whose prerequisites are invalid and continue independent safe checks where possible; never resolve ambiguous identities or invent missing required values during mapping. Orchestration retains sufficient source correspondence to translate domain findings into authored JSON Pointer paths. Both standalone validation and initialization use the same applicable mapping and invariant checks. Initialization additionally validates its configuration and finalizes the immutable baseline only after all required checks succeed. Invalid candidates are discarded; standalone validation publishes no game. See [runtime state](RUNTIME_STATE.md) and [ADR 0016](../decisions/0016-modular-architecture-and-design-patterns.md).
+
+### Data and diagnostic requirements
+
+Follow the common [error-handling contract](ERROR_HANDLING.md). Preserve the definition-specific diagnostic structure and code vocabulary below; aggregate independent findings safely and suppress dependent cascades. Unexpected internal failures are not authored-data diagnostics merely because they arise during validation.
 
 FND-05 implements native ECMAScript validation with no external schema library or platform APIs. Validate the complete definition before initializing state. Reject malformed or unsupported input without exposing partially initialized state. Validate object/array shapes and allowed fields, version and scalar grammar, global identity uniqueness, references, containment cycles and ancestry, lifecycle, associations, physical field ranges and all applicable capacity invariants, game namespace, qualified initial property maps and directed relationship references. Identity collection precedes reference resolution so forward references are allowed.
 
@@ -90,12 +102,13 @@ Return structured definition diagnostics, separate from gameplay action results.
 
 | Field | Type and meaning |
 | --- | --- |
+| source | Required string, exactly `definition` for definition findings |
 | code | Stable machine-readable string |
 | severity | String, exactly error for Foundation |
-| path | JSON Pointer to the offending field or object; empty string denotes the document root |
+| path | JSON Pointer relative to the identified source; empty string denotes its root |
 | message | Nonblank human-readable string; not a stable machine contract |
 
-Use zero-based array indices and JSON Pointer escaping (tilde becomes ~0, slash becomes ~1). For a missing required field use its expected path; for a duplicate ID or direction use the later occurrence. Avoid stack traces and unsafe object stringification. Multiple independent errors may be returned; suppress cascading reference errors when their prerequisites are invalid. Diagnostic order should be deterministic for equivalent inputs; exact aggregation and public validation API belong to FND-05.
+Use zero-based array indices and JSON Pointer escaping (tilde becomes ~0, slash becomes ~1). For a missing required field use its expected path; for a duplicate ID or direction use the later occurrence. Avoid stack traces and unsafe object stringification. Multiple independent errors may be returned; suppress cascading reference errors when their prerequisites are invalid. Definition diagnostics have the same source and paths in standalone validation and initialization. Order findings by pipeline stage, documented schema field order, array index, ECMAScript code-unit order for unordered keys, and defined validator check order. Suppress identical duplicate findings. Initialization configuration findings use source options and follow definition findings in the same collection; see [error handling](ERROR_HANDLING.md).
 
 | Initial code | Meaning |
 | --- | --- |
@@ -120,6 +133,7 @@ Example (if the first Hallway exit references a missing location):
 
 ```json
 {
+  "source": "definition",
   "code": "UNKNOWN_REFERENCE",
   "severity": "error",
   "path": "/world/locations/1/exits/0/destinationId",
@@ -129,11 +143,11 @@ Example (if the first Hallway exit references a missing location):
 
 ## Smallest representative game
 
-This is a complete valid Foundation definition, although not yet executable:
+This is a complete Foundation definition suitable for validation and initialization. Gameplay execution remains future work:
 
 ```json
 {
-  "formatVersion": "3.0.0",
+  "formatVersion": "3.2.0",
   "game": {
     "id": "org.example.smallWorld",
     "namespace": "smallWorld",
@@ -161,7 +175,7 @@ This is a complete valid Foundation definition, although not yet executable:
 }
 ```
 
-The reusable [Lantern House fixture](../../tests/fixtures/games/minimal-foundation.json) has three locations, one actor and two entities. Entrance and Hallway have reciprocal east/west exits; Hallway has a one-way east exit to Library. A lantern starts in Entrance, and a notebook is carried by the actor. The [containment fixture](../../tests/fixtures/games/containment-foundation.json) adds nested locations, actors in vehicles, physical limits, spatial associations and inactive/destroyed entities. Both fixtures support the planned FND-05 validation, FND-07 containment/capacity and FND-09 integration checks.
+The reusable [Lantern House fixture](../../tests/fixtures/games/minimal-foundation.json) has three locations, one actor and two entities. Entrance and Hallway have reciprocal east/west exits; Hallway has a one-way east exit to Library. A lantern starts in Entrance, and a notebook is carried by the actor. The [containment fixture](../../tests/fixtures/games/containment-foundation.json) adds nested locations, actors in vehicles, physical limits, spatial associations and inactive/destroyed entities. Both fixtures are exercised by FND-05 validation and initialization tests; FND-07 containment/capacity and FND-09 gameplay integration remain future work.
 
 ## Action compatibility and future sections
 
@@ -173,7 +187,7 @@ The fixture supports the existing [action/result contract](ACTIONS_AND_RESULTS.m
 
 The actor ID resolves to an active actor, and the direction selects an authored exit from that actor's immediate active location parent. The destination is not caller-selected. Foundation move costs 1/0; unavailable exits are rejected with EXIT_UNAVAILABLE and zero committed turns. Dispatch and registry, not the definition, own execution and turn costs. See [action definitions](ACTION_DEFINITIONS.md), [standard catalog](STANDARD_ACTIONS.md), and [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md).
 
-Future conceptual root sections (names tentative, not accepted fields in 3.0.0):
+Future conceptual root sections (names tentative, not accepted fields in 3.2.0):
 
 | Section | Intended responsibility |
 | --- | --- |
@@ -187,6 +201,6 @@ Future conceptual root sections (names tentative, not accepted fields in 3.0.0):
 
 Future schema revisions define supported fields and compatibility explicitly. Do not add empty placeholders or arbitrary extension bags now. [Issue #16](https://github.com/ja-sanborn/asterweave/issues/16) defines standard overrides; [#17](https://github.com/ja-sanborn/asterweave/issues/17) defines declarative actions. Preserve existing action namespaces, trusted handler separation and independent success/failure costs under [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md). JSON must never select arbitrary executable code or replace trusted handlers. [Issue #18](https://github.com/ja-sanborn/asterweave/issues/18) owns optional time configuration under [ADR 0008](../decisions/0008-game-time-and-calendar-separation.md); committed turns remain authoritative.
 
-No parser, narrative, rules, events, calendar, Creator, host or runtime validation is implemented by this specification. The future author guide ([FND-11](https://github.com/ja-sanborn/asterweave/issues/20)) will document verified usage after integrated Foundation testing.
+FND-05 implements runtime definition validation and initialization; parser, narrative, rules, events, calendar, Creator and host capabilities remain future work. The future author guide ([FND-11](https://github.com/ja-sanborn/asterweave/issues/20)) will document verified usage after integrated Foundation testing.
 
 The [state fixture](../../tests/fixtures/games/state-foundation.json) illustrates initial properties and relationships; its synthetic [save](../../tests/fixtures/saves/state-foundation.json) is a contract example, not executable save functionality.

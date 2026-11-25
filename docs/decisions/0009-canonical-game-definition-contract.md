@@ -1,6 +1,6 @@
 # 0009 — Canonical game-definition contract
 
-Status: Accepted; version and placement/schema portions superseded by [ADR 0011](0011-unified-world-containment.md) and [ADR 0012](0012-physical-properties-and-capacity.md). The current normative contract is format 2.0.0. Historical decision below is retained.
+Status: Accepted; version and placement/schema portions superseded by [ADR 0011](0011-unified-world-containment.md) and [ADR 0012](0012-physical-properties-and-capacity.md). [ADR 0013](0013-namespaced-properties-and-runtime-state.md) subsequently supersedes the format version; [ADR 0021](0021-standard-navigation-vocabulary.md) supersedes the four-direction vocabulary and advances the format to 3.1.0; [ADR 0022](0022-flexible-physical-measurement-ranges.md) subsequently advances the current normative format to 3.2.0. Historical decision below is retained.
 
 ## Context
 
@@ -20,4 +20,4 @@ Unversioned or executable definitions; per-category IDs; implicit reverse exits;
 
 The [game-definition contract](../contracts/GAME_DEFINITIONS.md) is normative for Foundation; the [fixture](../../tests/fixtures/games/minimal-foundation.json) is reusable for downstream verification. FND-04 owns runtime state and save contracts; FND-05 owns validation and initialization implementation. Strict version acceptance avoids silent unsupported behavior but requires explicit future compatibility policy. Arrays permit duplicate-ID and direction detection after JSON parsing. No runtime or new dependency is introduced. This elaborates rather than supersedes ADR 0003 and preserves ADRs 0001–0008.
 
-FND-04 [ADR 0013](0013-namespaced-properties-and-runtime-state.md) supersedes the accepted format version with 3.0.0; the historical decision above is retained. See the current [canonical contract](../contracts/GAME_DEFINITIONS.md).
+FND-04 [ADR 0013](0013-namespaced-properties-and-runtime-state.md) supersedes the accepted format version with 3.0.0; ADR 0021 subsequently advances it to 3.1.0 and expands navigation; ADR 0022 advances it to 3.2.0 and expands physical measurements; the historical decision above is retained. See the current [canonical contract](../contracts/GAME_DEFINITIONS.md).
