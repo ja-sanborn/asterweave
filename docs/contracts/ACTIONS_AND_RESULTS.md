@@ -1,6 +1,6 @@
 # Action and result contracts
 
-Status: Accepted design; action execution is planned.
+Status: Runtime action execution infrastructure; production gameplay handlers remain deferred.
 
 This specification elaborates [ADR 0002](../decisions/0002-unified-action-contract.md) and [ADR 0006](../decisions/0006-atomic-action-execution-and-turn-progression.md). Commands, choices, narrative and direct callers submit the same platform-independent data. Only the dispatcher authorizes and commits world transitions.
 
@@ -95,7 +95,7 @@ Expected domain precondition failures are rejections. Unexpected malformed retur
 
 ## Representative examples
 
-Illustrative well-formed Foundation movement request (execution is not yet implemented):
+Illustrative well-formed Foundation movement request (the production movement handler remains deferred):
 
 ```json
 {"actorId":"player","type":"move","args":{"direction":"north"}}

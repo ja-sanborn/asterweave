@@ -16,6 +16,7 @@ import { inspectJsonData } from '../shared/jsonData.js';
 import { isIdentifier, isQualifiedKey } from '../shared/identifiers.js';
 import { appendPointer } from '../diagnostics/jsonPointer.js';
 import { DiagnosticCollector } from '../diagnostics/DiagnosticCollector.js';
+import { isControllableActor, isSelectionValid } from './validateControlMembership.js';
 import { validateGameProperties } from './validateProperties.js';
 
 /** @type {Readonly<object>} Initialization configuration diagnostic codes. */
@@ -100,7 +101,7 @@ function checkPlayer(player, candidate, report) {
     }
     if (Object.hasOwn(player, 'selectedActor')
         && checkIdentifier(player.selectedActor, '/player/selectedActor', report)
-        && controlled !== undefined && !controlled.has(player.selectedActor)) {
+        && controlled !== undefined && !isSelectionValid(controlled, player.selectedActor)) {
         report(C.INVALID_VALUE, '/player/selectedActor', 'Selected actor must be controlled.');
     }
     if (Object.hasOwn(player, 'initialProperties')) {
@@ -181,7 +182,7 @@ function checkControlledActors(value, candidate, report) {
             if (actor === undefined) {
                 report(otherIds.has(id) ? C.INVALID_REFERENCE_KIND : C.UNKNOWN_REFERENCE,
                     pointer, 'Controlled identity must refer to an actor.');
-            } else if (actor.properties['asterweave.lifecycle'] !== 'active') {
+            } else if (!isControllableActor(actor.properties)) {
                 report(C.INVALID_VALUE, pointer, 'Controlled actor must be active.');
             }
         }

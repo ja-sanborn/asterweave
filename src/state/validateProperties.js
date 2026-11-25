@@ -10,6 +10,7 @@
  * @module state/validateProperties
  */
 
+import { addressLeaf } from './typedAddressIndex.js';
 import { isQualifiedKey } from '../shared/identifiers.js';
 import { PROPERTY_CODES as C } from './propertyDiagnostics.js';
 
@@ -34,12 +35,12 @@ export function validateGameProperties(properties, namespace, report) {
  * @param {Function} report - Callback (code, index, message).
  */
 export function validateRelationshipPairs(relationships, report) {
-    const seen = new Set();
+    const seen = new Map();
     for (const [index, { from, to }] of relationships.entries()) {
-        const key = JSON.stringify([from.scope, from.id ?? '', to.scope, to.id ?? '']);
-        if (seen.has(key)) {
+        const address = { scope: 'relationship', from, to };
+        if (addressLeaf(seen, address) !== undefined) {
             report(C.INVALID_VALUE, index, 'Duplicate directed relationship pair.');
         }
-        seen.add(key);
+        addressLeaf(seen, address, () => true);
     }
 }

@@ -1,0 +1,88 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+/**
+ * @fileoverview Shared effective-state invariants and forward transition checks.
+ * @module state/validateEffectiveState
+ */
+
+import { validateEffectiveStructure } from './validateEffectiveStructure.js';
+import { validateWorldState } from '../world/validateWorldState.js';
+import { validateRelationshipPairs } from './validateProperties.js';
+import { validateControlMembership } from './validateControlMembership.js';
+import { resolveEndpoint } from './resolvePropertySubject.js';
+import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
+import { areJsonValuesEqual } from '../shared/jsonEquality.js';
+
+/**
+ * Verifies complete effective state, independent of authored JSON.
+ * @param {object} state - Effective candidate.
+ * @param {boolean} [initial] - Apply initialization viability.
+ * @returns {boolean} Validity.
+ */
+export function validateEffectiveState(state, initial = false) {
+    if (!validateEffectiveStructure(state)) {
+        return false;
+    }
+    let valid = true;
+    const reject = () => { valid = false; };
+    validateWorldState(state, reject, initial);
+    validateRelationshipPairs(state.relationships, reject);
+    for (const { from, to } of state.relationships) {
+        if (!resolveEndpoint(state, from) || !resolveEndpoint(state, to)) {
+            valid = false;
+        }
+    }
+    const locations = new Set(state.locations.map(({ id }) => id));
+    for (const { exits } of state.locations) {
+        const directions = new Set();
+        for (const exit of exits) {
+            if (!locations.has(exit.destinationId) || directions.has(exit.direction)) {
+                valid = false;
+            }
+            directions.add(exit.direction);
+        }
+    }
+    const actors = new Map(state.actors.map(({ id, properties }) => [id, properties]));
+    for (const { properties } of state.players) {
+        const controlled = properties['asterweave.controlledActors'];
+        if (!validateControlMembership(controlled, properties['asterweave.selectedActor'],
+            (id) => actors.get(id))) {
+            valid = false;
+        }
+    }
+    return valid;
+}
+
+/**
+ * Checks stable identities and irreversible destruction on forward gameplay.
+ * @param {object} committed - Verified committed view.
+ * @param {object} candidate - Validated candidate view.
+ * @returns {boolean} Validity.
+ */
+export function validateStateTransition(committed, candidate) {
+    if (!areJsonValuesEqual(committed.game, candidate.game)
+        || candidate.world.properties['asterweave.turn'] < committed.world.properties['asterweave.turn']
+        || !areJsonValuesEqual(committed.players.map(({ id }) => id), candidate.players.map(({ id }) => id))) {
+        return false;
+    }
+    for (const { collection } of PARTICIPANT_CATEGORIES) {
+        const next = new Map(candidate[collection].map((record) => [record.id, record]));
+        if (next.size !== committed[collection].length) {
+            return false;
+        }
+        for (const record of committed[collection]) {
+            const replacement = next.get(record.id);
+            if (!replacement || (record.properties['asterweave.lifecycle'] === 'destroyed'
+                && replacement.properties['asterweave.lifecycle'] !== 'destroyed')
+                || !areJsonValuesEqual(record.exits, replacement.exits)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}

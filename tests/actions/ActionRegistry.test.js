@@ -194,3 +194,25 @@ test('association reflection failure releases the registry modification guard', 
     assert.equal(registry.size, 0);
     assert.equal(registry.register(engineOwner, definition('look'), handler).status, 'completed');
 });
+
+test('mutation grants are separate from registration authority and remain valid after finalization', () => {
+    const { registry, gameOwner, grantOwner } = ActionRegistry.create();
+    registry.register(gameOwner, definition('game.bell'), handler);
+    assert.deepEqual(registry.mutationGrants('game.bell'), { namespaces: [], operations: [] });
+    const valid = { namespaces: ['zork'], operations: ['grantControl'] };
+    assert.throws(() => registry.establishMutationGrants(gameOwner, 'game.bell', valid), TypeError);
+    for (const invalid of [
+        { namespaces: ['asterweave'], operations: [] },
+        { namespaces: ['zork', 'zork'], operations: [] },
+        { namespaces: [], operations: ['advanceTurns'] },
+        { namespaces: [], operations: [], extra: true },
+    ]) {
+        assert.throws(() => registry.establishMutationGrants(grantOwner, 'game.bell', invalid), TypeError);
+    }
+    registry.establishMutationGrants(grantOwner, 'game.bell', valid);
+    valid.namespaces.push('other');
+    assert.deepEqual(registry.mutationGrants('game.bell').namespaces, ['zork']);
+    registry.finalize();
+    assert.equal(registry.verifyIntegrity(), true);
+    assert.throws(() => registry.establishMutationGrants(grantOwner, 'game.bell', valid), TypeError);
+});

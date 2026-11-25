@@ -33,7 +33,7 @@ test('public module exposes only the named facade and requires controlled constr
     assert.ok(result.game instanceof Asterweave);
     assert.deepEqual(Object.getOwnPropertyNames(result.game), []);
     assert.deepEqual(Object.getOwnPropertyNames(Asterweave.prototype).sort(), [
-        'constructor', 'gameId', 'gameVersion', 'getStateSnapshot', 'turn',
+        'constructor', 'dispatchAction', 'gameId', 'gameVersion', 'getStateSnapshot', 'reset', 'turn',
     ]);
     assert.throws(() => {
         result.game.turn = 1;
@@ -126,4 +126,20 @@ test('public validation never invokes ordinary getters', () => {
     assert.ok(Asterweave.validateGame(definition).isRejected);
     assert.ok(Asterweave.initializeGame(definition).isRejected);
     assert.equal(called, false);
+});
+
+test('public dispatch enforces explicit actor control and retains empty production registry', () => {
+    const action = { type: 'move', actorId: 'player', args: { direction: 'east' } };
+    const noPlayer = Asterweave.initializeGame(fixture()).game;
+    assert.equal(noPlayer.dispatchAction(action).error.code, 'ACTION_FORBIDDEN');
+    const game = Asterweave.initializeGame(fixture(), {
+        player: { id: 'playerOne', controlledActors: ['player'] },
+    }).game;
+    assert.equal(game.dispatchAction(action).error.code, 'UNKNOWN_ACTION_TYPE');
+    assert.equal(game.dispatchAction(null).error.code, 'INVALID_ACTION');
+    assert.equal(game.turn, 0);
+    const before = game.getStateSnapshot();
+    assert.deepEqual(game.reset().toJSON(), { status: 'completed' });
+    assert.deepEqual(game.getStateSnapshot(), before);
+    assert.ok(Object.isFrozen(game));
 });

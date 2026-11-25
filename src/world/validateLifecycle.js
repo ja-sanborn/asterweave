@@ -20,13 +20,9 @@ import { WORLD_CODES as C } from './worldDiagnostics.js';
  */
 export function validateLifecycle(participants, report) {
     const invalid = new Set();
-    const activeKinds = new Set();
-    for (const [id, { kind, properties }] of participants) {
+    for (const [id, { properties }] of participants) {
         const active = properties['asterweave.lifecycle'] === 'active';
         const placed = Object.hasOwn(properties, 'asterweave.containment');
-        if (active) {
-            activeKinds.add(kind);
-        }
         if (active !== placed) {
             invalid.add(id);
             report(C.INVALID_LIFECYCLE, id, 'containment', active
@@ -36,11 +32,6 @@ export function validateLifecycle(participants, report) {
         if (!active && properties['asterweave.associations'].length > 0) {
             report(C.INVALID_LIFECYCLE, id, 'associations',
                 'Nonactive participant must not have associations.');
-        }
-    }
-    for (const kind of ['location', 'actor']) {
-        if (!activeKinds.has(kind)) {
-            report(C.INVALID_LIFECYCLE, undefined, kind, 'At least one active participant is required.');
         }
     }
     return invalid;
