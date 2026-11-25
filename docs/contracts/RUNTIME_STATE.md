@@ -21,6 +21,10 @@ Override records are closed objects with scope and scope-specific identity (id f
 {"scope":"relationship","from":{"scope":"actor","id":"guide"},"to":{"scope":"actor","id":"adventurer"},"values":{"stateFoundation.trust":3}}
 ```
 
+## Initial candidate state
+
+Under [ADR 0016](../decisions/0016-modular-architecture-and-design-patterns.md), FND-05 maps structurally validated canonical data into an isolated normalized candidate through GameDefinitionMapper, resolving documented baseline defaults. Validate effective domain invariants and applicable initialization configuration before finalizing the immutable baseline and publishing an independent game. Candidate data is not committed state; discard invalid candidates. Standalone definition validation uses the same applicable mapping and invariant checks without constructing a public game. Domain validators depend on effective values, not canonical JSON paths or override/save storage. Future transactions and restoration reuse these invariants with their own candidate representations and operation-specific translation. Do not introduce duplicate authoritative state or duplicate domain rules.
+
 ## Players and actors
 
 Players do not exist in physical World. Foundation permits zero (headless testing) or one player; future hosts may support more. Player IDs follow world ID grammar but use a separate scope; they are not accounts. Runtime initialization explicitly supplies optional player configuration, including id, controlled actor IDs and optional selected actor; no implicit player from an actor name. Retain a detached initialization configuration for reset. Initial player state is runtime-created and stored fully, not duplicated in override records. Player properties include required asterweave.controlledActors (distinct actor IDs, ordered array) and optional asterweave.selectedActor (actor ID in the controlled list); omission means no selected actor, including when no actors are controlled. Other game/extension properties follow common rules.

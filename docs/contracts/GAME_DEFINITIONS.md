@@ -82,6 +82,14 @@ Definitions remain immutable; initialization must not mutate caller data and lat
 
 ## Validation and diagnostics
 
+### Candidate mapping and invariant checks
+
+The FND-05 GameDefinitionValidator orchestrates safe data inspection, structural/version validation, identity collection and reference resolution. The internal GameDefinitionMapper maps structurally valid data into isolated normalized candidate state, applying only defaults documented by this contract and [properties](PROPERTIES.md). Pure mapping functions may perform individual transformations. Reusable domain validators evaluate effective containment, lifecycle, associations, physical capacity and qualified property invariants against this candidate, not the authored JSON layout. The mapper must not silently repair data, mutate caller input, publish a game or decide domain validity.
+
+Suppress checks whose prerequisites are invalid and continue independent safe checks where possible; never resolve ambiguous identities or invent missing required values during mapping. Orchestration retains sufficient source correspondence to translate domain findings into authored JSON Pointer paths. Both standalone validation and initialization use the same applicable mapping and invariant checks. Initialization additionally validates its configuration and finalizes the immutable baseline only after all required checks succeed. Invalid candidates are discarded; standalone validation publishes no game. See [runtime state](RUNTIME_STATE.md) and [ADR 0016](../decisions/0016-modular-architecture-and-design-patterns.md).
+
+### Data and diagnostic requirements
+
 Follow the common [error-handling contract](ERROR_HANDLING.md). Preserve the definition-specific diagnostic structure and code vocabulary below; aggregate independent findings safely and suppress dependent cascades. Unexpected internal failures are not authored-data diagnostics merely because they arise during validation.
 
 FND-05 implements native ECMAScript validation with no external schema library or platform APIs. Validate the complete definition before initializing state. Reject malformed or unsupported input without exposing partially initialized state. Validate object/array shapes and allowed fields, version and scalar grammar, global identity uniqueness, references, containment cycles and ancestry, lifecycle, associations, physical field ranges and all applicable capacity invariants, game namespace, qualified initial property maps and directed relationship references. Identity collection precedes reference resolution so forward references are allowed.

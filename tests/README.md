@@ -64,3 +64,7 @@ The [state game fixture](fixtures/games/state-foundation.json) and [synthetic sa
 ## Operation result verification
 
 Under [ADR 0020](../docs/decisions/0020-standardized-operation-result-architecture.md), test status predicates and operation-specific invariants, controlled construction, detached recursively read-only result data and safe failure translation. For FND-05 verify ValidationResult.toJSON and JSON.stringify field presence/omission in all statuses, exclusion of derived predicates, and InitializationResult serialization throwing TypeError in all statuses without exposing live game state. Future action tests verify serialized envelope compatibility and ordered outputs. These are requirements, not implemented tests.
+
+## Candidate mapping verification
+
+FND-05 verifies that documented defaults and explicit equivalent authored values yield equivalent effective candidate state, mapping does not mutate input or repair invalid definitions, and standalone validation and initialization share applicable invariant checks. Test source-path translation for domain findings, invalid prerequisite suppression, invalid candidate rejection without game publication, immutable baseline finalization after successful checks, and independent domain validators that do not depend on authored JSON or persistence layouts. Future transactions and restoration reuse the same domain invariants. These are verification requirements, not implemented tests.
