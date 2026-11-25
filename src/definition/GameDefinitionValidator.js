@@ -13,6 +13,7 @@
 import { GameDefinitionMapper } from './GameDefinitionMapper.js';
 import { participants } from './validateIdentity.js';
 import { appendPointer } from '../diagnostics/jsonPointer.js';
+import { WORLD_CODES } from '../world/worldDiagnostics.js';
 import { validateLifecycle } from '../world/validateLifecycle.js';
 import { validateContainment } from '../world/validateContainment.js';
 import { validateAssociations } from '../world/validateAssociations.js';
@@ -66,8 +67,14 @@ export class GameDefinitionValidator {
         const candidate = new GameDefinitionMapper().map(definition);
         const sources = new Map();
         const effective = new Map();
-        for (const { participant, kind, path } of participants(definition.world)) {
+        for (const { participant, path } of participants(definition.world)) {
             sources.set(participant.id, path);
+            if (participant.initialLifecycle !== undefined && participant.initialLifecycle !== 'active'
+                && Object.hasOwn(participant, 'initialAssociations')
+                && participant.initialAssociations.length === 0) {
+                reportDefinition(collector, WORLD_CODES.INVALID_LIFECYCLE, path + '/initialAssociations',
+                    'Nonactive participant must omit initial associations.');
+            }
         }
         for (const collection of ['locations', 'actors', 'entities']) {
             for (const entry of candidate[collection]) {

@@ -26,7 +26,7 @@ export class GameDefinitionMapper {
             game: { ...game, formatVersion },
             world: {
                 properties: {
-                    ...world.initialProperties,
+                    ...gameProperties(world.initialProperties),
                     'asterweave.id': 'world',
                     'asterweave.name': 'World',
                     'asterweave.lifecycle': 'active',
@@ -54,7 +54,7 @@ export class GameDefinitionMapper {
  */
 function mapParticipant(record, kind) {
     const properties = {
-        ...record.initialProperties,
+        ...gameProperties(record.initialProperties),
         'asterweave.id': record.id,
         'asterweave.name': record.name,
         'asterweave.lifecycle': record.initialLifecycle ?? 'active',
@@ -75,4 +75,15 @@ function mapParticipant(record, kind) {
     return kind === 'location'
         ? { id: record.id, properties, exits: record.exits }
         : { id: record.id, properties };
+}
+
+/**
+ * Keeps reserved keys out of the structural candidate. Authored ownership
+ * findings are reported separately from the original, unmodified input.
+ * @param {object|undefined} properties - Authored map.
+ * @returns {object} Candidate game properties.
+ */
+function gameProperties(properties) {
+    return Object.fromEntries(Object.entries(properties ?? {})
+        .filter(([key]) => !key.startsWith('asterweave.')));
 }

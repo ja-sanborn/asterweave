@@ -175,7 +175,7 @@ This is a complete Foundation definition suitable for validation and initializat
 }
 ```
 
-The reusable [Lantern House fixture](../../tests/fixtures/games/minimal-foundation.json) has three locations, one actor and two entities. Entrance and Hallway have reciprocal east/west exits; Hallway has a one-way east exit to Library. A lantern starts in Entrance, and a notebook is carried by the actor. The [containment fixture](../../tests/fixtures/games/containment-foundation.json) adds nested locations, actors in vehicles, physical limits, spatial associations and inactive/destroyed entities. Both fixtures support the planned FND-05 validation, FND-07 containment/capacity and FND-09 integration checks.
+The reusable [Lantern House fixture](../../tests/fixtures/games/minimal-foundation.json) has three locations, one actor and two entities. Entrance and Hallway have reciprocal east/west exits; Hallway has a one-way east exit to Library. A lantern starts in Entrance, and a notebook is carried by the actor. The [containment fixture](../../tests/fixtures/games/containment-foundation.json) adds nested locations, actors in vehicles, physical limits, spatial associations and inactive/destroyed entities. Both fixtures are exercised by FND-05 validation and initialization tests; FND-07 containment/capacity and FND-09 gameplay integration remain future work.
 
 ## Action compatibility and future sections
 
@@ -201,6 +201,6 @@ Future conceptual root sections (names tentative, not accepted fields in 3.2.0):
 
 Future schema revisions define supported fields and compatibility explicitly. Do not add empty placeholders or arbitrary extension bags now. [Issue #16](https://github.com/ja-sanborn/asterweave/issues/16) defines standard overrides; [#17](https://github.com/ja-sanborn/asterweave/issues/17) defines declarative actions. Preserve existing action namespaces, trusted handler separation and independent success/failure costs under [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md). JSON must never select arbitrary executable code or replace trusted handlers. [Issue #18](https://github.com/ja-sanborn/asterweave/issues/18) owns optional time configuration under [ADR 0008](../decisions/0008-game-time-and-calendar-separation.md); committed turns remain authoritative.
 
-No parser, narrative, rules, events, calendar, Creator, host or runtime validation is implemented by this specification. The future author guide ([FND-11](https://github.com/ja-sanborn/asterweave/issues/20)) will document verified usage after integrated Foundation testing.
+FND-05 implements runtime definition validation and initialization; parser, narrative, rules, events, calendar, Creator and host capabilities remain future work. The future author guide ([FND-11](https://github.com/ja-sanborn/asterweave/issues/20)) will document verified usage after integrated Foundation testing.
 
 The [state fixture](../../tests/fixtures/games/state-foundation.json) illustrates initial properties and relationships; its synthetic [save](../../tests/fixtures/saves/state-foundation.json) is a contract example, not executable save functionality.

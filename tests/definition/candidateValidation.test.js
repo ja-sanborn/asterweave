@@ -206,3 +206,26 @@ test('permits reverse and self directed relationships but rejects duplicate orde
     input.world.initialRelationships.push(structuredClone(first));
     rejects(input, 'INVALID_VALUE', '/world/initialRelationships/3');
 });
+
+test('rejects explicitly empty authored associations on nonactive participants', () => {
+    const input = fixture();
+    participant(input, 'visitor').initialAssociations = [];
+    rejects(input, 'INVALID_LIFECYCLE', '/world/entities/8/initialAssociations');
+});
+
+test('reserved authored properties cannot contaminate effective structural validation', () => {
+    const input = fixture();
+    participant(input, 'key').initialProperties = { 'asterweave.weightCapacity': 'invalid' };
+    participant(input, 'visitor').initialProperties = { 'asterweave.containment': null };
+    const result = validate(input);
+    assert.equal(result.candidate, undefined);
+    assert.deepEqual(result.diagnostics.map((entry) => entry.code), ['INVALID_VALUE', 'INVALID_VALUE']);
+});
+
+test('independent rooted capacity violations survive an unrelated containment cycle', () => {
+    const input = fixture();
+    participant(input, 'house').initialContainment.parentId = 'bedroom';
+    participant(input, 'driver').physical.weightCapacity = 1;
+    rejects(input, 'CONTAINMENT_CYCLE');
+    rejects(input, 'CAPACITY_EXCEEDED', '/world/actors/1/physical/weightCapacity');
+});

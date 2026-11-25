@@ -21,10 +21,9 @@ import { WORLD_CODES as C } from './worldDiagnostics.js';
  * @returns {void}
  */
 export function validateCapacity(participants, hierarchy, report) {
-    // Invalid placement makes cumulative comparisons unreliable.
-    if (hierarchy.invalid.size > 0) {
-        return;
-    }
+    // Traverse valid rooted branches even when a separate branch is invalid.
+    // Missing or invalid edges make affected aggregates incomplete.
+    const incomplete = hierarchy.invalid.size > 0;
     const totals = new Map();
     const pending = [];
     for (const id of hierarchy.children.get('world') ?? []) {
@@ -54,7 +53,7 @@ export function validateCapacity(participants, hierarchy, report) {
         totals.get(id).contentsSize = size;
     }
     for (const [id, { properties }] of participants) {
-        if (properties['asterweave.lifecycle'] !== 'active') {
+        if (properties['asterweave.lifecycle'] !== 'active' || !totals.has(id)) {
             continue;
         }
         const children = hierarchy.children.get(id) ?? [];
@@ -74,7 +73,8 @@ export function validateCapacity(participants, hierarchy, report) {
             ['weightCapacity', total.contentsWeight],
         ]) {
             const maximum = properties['asterweave.' + limit];
-            if (maximum !== undefined) {
+            if (maximum !== undefined && (!incomplete || load.overflow || load.sum > maximum
+                || (maximum === 0 && children.length > 0))) {
                 checkLimit(id, limit, maximum, load, children.length > 0, report);
             }
         }
