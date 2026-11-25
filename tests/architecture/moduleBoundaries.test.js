@@ -93,6 +93,7 @@ test('runtime static module graph is acyclic and respects domain dependency dire
     const allowed = {
         'Asterweave.js': ['core', 'definition', 'results', 'state'],
         core: ['definition', 'state', 'results', 'shared', 'diagnostics'],
+        actions: ['actions', 'shared', 'diagnostics', 'world'],
         definition: ['definition', 'state', 'world', 'shared', 'diagnostics'],
         state: ['state', 'world', 'shared', 'diagnostics'],
         world: ['world', 'shared'],
