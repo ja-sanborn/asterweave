@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-The platform-independent runtime and modular architecture in ADRs [0001](0001-platform-independent-runtime.md) and [0016](0016-modular-architecture-and-design-patterns.md) need an explicit consumer boundary. The initial runtime implementation requires a defined public boundary. Engine releases, authored content, canonical definitions, saves and distribution packages have distinct compatibility concerns.
+The platform-independent runtime and modular architecture in ADRs [0001](0001-platform-independent-runtime.md) and [0016](0016-modular-architecture-and-design-patterns.md) need an explicit consumer boundary for the initial runtime implementation. Engine releases, authored content, canonical definitions, saves and distribution packages have distinct compatibility concerns.
 
 ## Decision
 
