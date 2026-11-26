@@ -45,4 +45,6 @@ Use focused branches and pull requests targeting main. Link the related issue in
 
 Contributions to covered project files are made under MPL 2.0. Preserve applicable copyright and license notices. New covered source files should include the MPL Exhibit A notice and an SPDX-License-Identifier: MPL-2.0 identifier. Only contribute material you have the right to license.
 
+Distribution must preserve applicable MPL-2.0 obligations for covered Asterweave software and modifications, including required notices, creator attribution and applicable source availability information. Independently authored games, assets and separate code may use their own licenses subject to applicable rights and obligations. Tools assist with compliance; distributors remain responsible. Compilation, minification, obfuscation and mandatory game package encryption do not eliminate obligations or justify obstructing notices or required source availability. Review reference-game licensing individually. See [ADR 0058](docs/decisions/0058-compilation-and-distribution.md).
+
 Follow the [Code of Conduct](CODE_OF_CONDUCT.md) and report vulnerabilities privately according to [SECURITY.md](SECURITY.md).

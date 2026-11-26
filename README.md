@@ -33,7 +33,7 @@ Interaction modules such as the Text Parser and Visual Novel sit above the engin
 
 - Foundation: a functional headless JSON-authored game through an authored conclusion; reusable navigation, observation, speech, inventory, mechanical and contextual actions; configurable engine actions and declarative behavior; rules, events, deterministic randomness and authorized non-player execution.
 - Portable saves: versioned state capture and atomic restoration, independent of storage.
-- Standalone distribution: compact engine bundle and versioned protected/unprotected game packages, independently of Creator; selected modules and required dependencies only.
+- Standalone distribution: compact engine bundle and versioned encrypted game content packages, independently of Creator; selected modules and required dependencies only. Build Tools always encrypt compiled game content packages; direct unencrypted canonical JSON remains independently supported. Complete playable distributions follow interaction and presentation integration.
 - Additional gameplay and interaction: Date Time, Text Parser and Visual Novel; a text-only offline browser interface is a subsequent playable target.
 - Authoring: modular canonical JSON, future declarative language and bidirectional semantic translation; Creator integrates these workflows.
 - Samples: Lantern House and a native Zork I recreation, subject to compatibility and rights review. Additional presentation targets and multiplayer remain future work.

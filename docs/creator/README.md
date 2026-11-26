@@ -1,8 +1,8 @@
 # Creator
 
-Creator is planned as an optional offline JavaScript web application:  structured visual and language authoring, UI/UX design, translation to canonical JSON, validation, diagnostics, editing, playtesting and export. It is not required in player distributions. Direct JSON authoring remains supported.
+Creator is planned as an optional offline JavaScript web application owning structured visual editing, workspace management, authoring UX, UI/UX design, playtesting orchestration and export UX. Direct canonical JSON, future declarative language and Creator are independent authoring workflows targeting common contracts. Creator-specific workspace metadata remains separate from canonical definitions and finished distributions. Creator is not required in player distributions.
 
-Creator consumes documented validation and public interfaces where available; canonical JSON, not Creator's authoring representation, is the runtime contract. Reuse engine validation where applicable, present useful diagnostic codes and paths, and reuse independently usable Tools for translation, assembly, compilation and packaging outside gameplay execution. Do not introduce executable code through untrusted definitions.
+Creator consumes supported Engine and Tools interfaces rather than duplicating validation rules or independently simulating gameplay. Engine remains authoritative for gameplay validation and execution; Tools own reusable translation, assembly, coordinated validation, compilation and distribution operations outside gameplay execution. Present useful diagnostic codes and paths. Canonical JSON, not Creator's workspace representation, is the runtime contract. Do not introduce executable code through untrusted definitions.
 
 Read the [documentation index](../README.md), [canonical definitions](../engine/contracts/GAME_DEFINITIONS.md), [public API](../engine/contracts/PUBLIC_API.md), [error handling](../engine/contracts/ERROR_HANDLING.md), [security model](../engine/contracts/SECURITY_MODEL.md) and [packaging decision](../decisions/0058-compilation-and-distribution.md).
 
