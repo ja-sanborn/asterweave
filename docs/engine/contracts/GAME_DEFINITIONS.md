@@ -2,7 +2,7 @@
 
 Status: Accepted contract.
 
-This contract specifies the current supported definition format 3.2.0 under [ADR 0054](../../decisions/0054-canonical-definitions-and-authoring.md), with the state, world and physical requirements in [ADR 0055](../../decisions/0055-state-and-transactions.md), [ADR 0059](../../decisions/0059-world-containment-and-transitions.md) and [ADR 0060](../../decisions/0060-physical-properties-and-capacity.md). The approved modular JSON direction requires subsequent schema and loading design; the current runtime consumes the existing canonical document independently of Creator and distribution packaging.
+This contract specifies the current supported definition format 4.0.0 under [ADR 0054](../../decisions/0054-canonical-definitions-and-authoring.md), with the state, world and physical requirements in [ADR 0055](../../decisions/0055-state-and-transactions.md), [ADR 0059](../../decisions/0059-world-containment-and-transitions.md) and [ADR 0060](../../decisions/0060-physical-properties-and-capacity.md). The approved modular JSON direction requires subsequent schema and loading design; the current runtime consumes the existing canonical document independently of Creator and distribution packaging.
 
 ## Authoring and distribution boundary
 
@@ -18,18 +18,17 @@ A definition is one UTF-8 JSON object. JSON member order is not semantic; array 
 
 | Field | Required | Type and constraints |
 | --- | --- | --- |
-| formatVersion | Yes | String, exactly `3.2.0` for Foundation |
+| formatVersion | Yes | String, exactly `4.0.0` for Foundation |
 | game | Yes | Game identity object |
 | world | Yes | Initial world object |
 
-Format and content versions use three nonnegative decimal integer components separated by dots, with no leading zero except zero itself, no prefix, suffix or whitespace (grammar: `(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)`, matched against the entire string). Format major revisions represent breaking interpretation changes; minor revisions represent compatible additions for newer readers; patch revisions represent compatible corrections. This does not promise forward compatibility: Foundation recognizes exactly 3.2.0. Version 2.0.0 replaced the pre-runtime 1.0.0 initialLocationId and initialPlacement fields with unified containment. Version 3.0.0 adds required game.namespace and optional initial properties and relationships. Version 3.1.0 expands the standard navigation vocabulary without changing the exit record shape or existing direction semantics (see [ADR 0059](../../decisions/0059-world-containment-and-transitions.md)). Version 3.2.0 expands physical measurement ranges to safe integers without changing existing capacity semantics (see [ADR 0060](../../decisions/0060-physical-properties-and-capacity.md)). No 1.0.0, 2.0.0, 3.0.0 or 3.1.0 reader or migration is required for Foundation. Future readers must explicitly identify supported versions and reject unsupported versions clearly; migration is not required in Foundation. Content versions are author-managed release identifiers; authors should increment them when changing released definitions. Neither version is the engine package version. See the [save data contract](SAVE_DATA.md) for save compatibility and migration policy.
+Format and content versions use three nonnegative decimal integer components separated by dots, with no leading zero except zero itself, no prefix, suffix or whitespace (grammar: `(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)`, matched against the entire string). Format major revisions represent breaking interpretation changes; minor revisions represent compatible additions for newer readers; patch revisions represent compatible corrections. This does not promise forward compatibility: Foundation recognizes exactly 4.0.0. Version 2.0.0 replaced the pre-runtime 1.0.0 initialLocationId and initialPlacement fields with unified containment. Version 3.0.0 adds required game.namespace and optional initial properties and relationships. Version 3.1.0 expands the standard navigation vocabulary without changing the exit record shape or existing direction semantics (see [ADR 0059](../../decisions/0059-world-containment-and-transitions.md)). Version 3.2.0 expands physical measurement ranges to safe integers without changing existing capacity semantics (see [ADR 0060](../../decisions/0060-physical-properties-and-capacity.md)). Version 4.0.0 removes game.namespace, arbitrary initialProperties and initialRelationships, and adopts domain-controlled engine.* property keys. Earlier versions are rejected; no aliases, legacy reader or migration are provided. Future readers must explicitly identify supported versions and reject unsupported versions clearly; migration is not required in Foundation. Content versions are author-managed release identifiers; authors should increment them when changing released definitions. Neither version is the engine package version. See the [save data contract](SAVE_DATA.md) for save compatibility and migration policy.
 
 ## Game identity
 
 | Field | Required | Type and constraints |
 | --- | --- | --- |
 | id | Yes | Stable reverse-domain-style identifier, at least two dot-separated segments |
-| namespace | Yes | Stable machine-readable namespace, not engine; see [properties](PROPERTIES.md) |
 | version | Yes | Content version string using the version grammar above |
 | title | Yes | Nonblank Unicode string |
 
@@ -44,8 +43,6 @@ Locations, actors and entities share one game-local ID namespace: each ID is uni
 | locations | Yes | Array of location objects, at least one |
 | actors | Yes | Array of actor objects, at least one |
 | entities | Yes | Array of entity objects, may be empty |
-| initialProperties | No | Qualified property map; see [properties](PROPERTIES.md) |
-| initialRelationships | No | Dense array of initial directed relationship records |
 
 Arrays are dense; no null entries, holes or extra properties. Definitions identify individual initial instances, not reusable templates. Multiple actor definitions are allowed; Foundation does not imply multiplayer, actor authentication, NPC behavior or a default player. The caller supplies actor identity explicitly.
 
@@ -64,19 +61,18 @@ All three categories use the following closed common field set, plus exits for l
 | initialLifecycle | No | active (default), inactive or destroyed |
 | initialAssociations | No; active only | Dense array of closed objects with required targetId and relationship |
 | physical | No | Closed object as defined in [physical properties](PHYSICAL_PROPERTIES.md) |
-| initialProperties | No | Qualified property map; see [properties](PROPERTIES.md) |
 
 See [world containment](WORLD_CONTAINMENT.md) for exact relationship vocabulary, hierarchy, reference, lifecycle and association invariants; see [physical properties](PHYSICAL_PROPERTIES.md) for defaults, field types and capacity semantics. Active participants have exactly one initialContainment; inactive and destroyed participants omit it and initialAssociations. World is automatically created, not an authored record. At least one active location and one active actor are required at initialization. This viability requirement is not an ongoing runtime invariant; subsequent state may legitimately have no active actors or locations, subject to all other domain invariants. Multiple actors are allowed without assuming a default player. Actor, location and entity IDs use the same reference space. No independent inventory, contents or current location field is permitted.
 
-### Initial relationship properties
+### Supported property configuration
 
-Each initialRelationships entry is a closed object with required from, to and initialProperties. Endpoints follow [runtime state](RUNTIME_STATE.md), reference authored participants or World (not runtime players), and have distinct ordered-pair identity across entries. initialProperties is a nonempty qualified map. No implicit reciprocal relationship or physical containment. Omitted collection means empty. The current format/implementation supports core and game namespaces only; planned registered extension namespaces require their own Foundation contracts. Initial property maps may contain any JSON value including null; the map itself cannot be null. Reserved engine keys are not allowed in these maps.
+Game data configures only supported structural fields and domain semantics. Removed game.namespace, initialProperties and initialRelationships fields are rejected, including empty values. No relationship property configuration is currently supported. See [properties](PROPERTIES.md).
 
 ### Locations and exits
 
-Locations additionally require exits, a dense array of closed objects with required direction (one of the twelve standard identifiers below) and destinationId (existing authored location ID, never world). Directions are unique per source. Exits are directed, self-loops and disconnected navigation graphs are permitted, and no reverse exit is implied. An exit may reference an inactive authored location, but movement to it is unavailable until active. Containment does not create exits. Foundation movement requires an immediate active location parent via in, updates containment to the destination and preserves descendants; generic enter/exit and authorized relocation are planned Foundation work; specialized vehicle policies remain game or extension concerns.
+Locations additionally require exits, a dense array of closed objects with required direction (one of the twelve standard identifiers below) and destinationId (existing authored location ID, never world). Directions are unique per source. Exits are directed, self-loops and disconnected navigation graphs are permitted, and no reverse exit is implied. An exit may reference an inactive authored location, but movement to it is unavailable until active. Containment does not create exits. Foundation movement requires an immediate active location parent via in, updates containment to the destination and preserves descendants; generic enter/exit and authorized relocation are planned Foundation work; specialized vehicle policies remain game configuration or first-party gameplay-module concerns.
 
-The standard navigation identifiers are north, south, east, west, northeast, northwest, southeast, southwest, up, down, in and out. Match exactly and case-sensitively. Parser abbreviations and aliases are not canonical identifiers. Definition validation and future movement share a domain-owned immutable standard vocabulary. Directions are semantic exit identifiers, not coordinates or containment relationships. No automatic inverse exit or geometric interpretation is implied. Custom identifiers require a future explicit registration and ownership contract; reject them in 3.2.0. Conditional availability, hidden exits, door-controlled traversal and state-dependent destinations remain future navigation capabilities; the current exit record retains a fixed destination.
+The standard navigation identifiers are north, south, east, west, northeast, northwest, southeast, southwest, up, down, in and out. Match exactly and case-sensitively. Parser abbreviations and aliases are not canonical identifiers. Definition validation and future movement share a domain-owned immutable standard vocabulary. Directions are semantic exit identifiers, not coordinates or containment relationships. No automatic inverse exit or geometric interpretation is implied. Custom identifiers require a future reviewed domain contract; reject them in 4.0.0. Conditional availability, hidden exits, door-controlled traversal and state-dependent destinations remain future navigation capabilities; the current exit record retains a fixed destination.
 
 ## Definition and runtime boundary
 
@@ -94,7 +90,7 @@ Suppress checks whose prerequisites are invalid and continue independent safe ch
 
 Follow the common [error-handling contract](ERROR_HANDLING.md). Preserve the definition-specific diagnostic structure and code vocabulary below; aggregate independent findings safely and suppress dependent cascades. Unexpected internal failures are not authored-data diagnostics merely because they arise during validation.
 
-Use native ECMAScript validation with no external schema library or platform APIs. Validate the complete definition before initializing state. Reject malformed or unsupported input without exposing partially initialized state. Validate object/array shapes and allowed fields, version and scalar grammar, global identity uniqueness, references, containment cycles and ancestry, lifecycle, associations, physical field ranges and all applicable capacity invariants, game namespace, qualified initial property maps and directed relationship references. Identity collection precedes reference resolution so forward references are allowed.
+Use native ECMAScript validation with no external schema library or platform APIs. Validate the complete definition before initializing state. Reject malformed or unsupported input without exposing partially initialized state. Validate object/array shapes and allowed fields, version and scalar grammar, global identity uniqueness, references, containment cycles and ancestry, lifecycle, associations, physical field ranges and all applicable capacity invariants. Identity collection precedes reference resolution so forward references are allowed.
 
 Only JSON-compatible data is accepted: null, booleans, strings, finite numbers, dense arrays and plain data objects, subject to the narrower field rules above. For parsed JavaScript input reject functions, undefined, symbols, BigInt, nonfinite numbers, cycles, accessors, non-data objects and extra array properties; use own data properties rather than inherited values. Treat keys and IDs as data, not prototype mutation paths; use safe lookup structures such as Map or null-prototype records. No eval, code loading, host objects, network access or filesystem references. JSON text parsing is outside the object-validation contract: native JSON.parse discards repeated member names, so a validator receiving parsed data cannot detect those original repetitions. Authors must not write duplicate member names; this limitation does not relax duplicate world IDs or directions, which are explicit array data.
 
@@ -147,10 +143,9 @@ This is a complete Foundation definition suitable for validation and initializat
 
 ```json
 {
-  "formatVersion": "3.2.0",
+  "formatVersion": "4.0.0",
   "game": {
     "id": "org.example.smallWorld",
-    "namespace": "smallWorld",
     "version": "0.1.0",
     "title": "Small World"
   },
@@ -187,7 +182,7 @@ The fixture supports the existing [action/result contract](ACTIONS_AND_RESULTS.m
 
 The actor ID resolves to an active actor, and the direction selects an authored exit from that actor's immediate active location parent. The destination is not caller-selected. Foundation move costs 1/0; unavailable exits are rejected with EXIT_UNAVAILABLE and zero committed turns. The action registry owns validated action metadata, including success and failure costs. The accepted dispatcher design selects the applicable cost and owns execution, atomic commitment and turn progression; the canonical game definition does not supply these costs. See [action definitions](ACTION_DEFINITIONS.md), [standard catalog](STANDARD_ACTIONS.md), and [ADR 0053](../../decisions/0053-action-architecture.md).
 
-Future conceptual root sections (names tentative, not accepted fields in 3.2.0):
+Future conceptual root sections (names tentative, not accepted fields in 4.0.0):
 
 | Section | Intended responsibility |
 | --- | --- |
@@ -196,10 +191,10 @@ Future conceptual root sections (names tentative, not accepted fields in 3.2.0):
 | rules | Safe declarative conditions and effects |
 | events | Turn-based event definitions |
 | actions | Registered action overrides and declarative action definitions |
-| extensions | Optional capability requirements and configuration |
+| modules | Selected capability requirements and configuration |
 | time | Optional fictional clock/calendar configuration |
 
-Planned Foundation schema revisions for action configuration, declarative behavior, rules, events and selected module requirements define supported fields and compatibility explicitly. Do not add empty placeholders or arbitrary extension bags now. Standard action overrides and declarative behavior require explicit schema contracts. Preserve authoritative unqualified engine action identifiers, trusted handler separation and independent success/failure costs under [ADR 0053](../../decisions/0053-action-architecture.md). JSON must never select arbitrary executable code or replace trusted handlers. Optional time configuration follows [ADR 0062](../../decisions/0062-game-time-and-calendar.md); committed turns remain authoritative.
+Planned Foundation schema revisions for action configuration, declarative behavior, rules, events and selected module requirements define supported fields and compatibility explicitly. Do not add empty placeholders or arbitrary configuration bags now. Standard action overrides and declarative behavior require explicit schema contracts. Preserve authoritative unqualified engine action identifiers, trusted handler separation and independent success/failure costs under [ADR 0053](../../decisions/0053-action-architecture.md). JSON must never select arbitrary executable code or replace trusted handlers. Optional time configuration follows [ADR 0062](../../decisions/0062-game-time-and-calendar.md); committed turns remain authoritative.
 
 The versioned author guide will document verified usage after integrated Foundation testing.
 
