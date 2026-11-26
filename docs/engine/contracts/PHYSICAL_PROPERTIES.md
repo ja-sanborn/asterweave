@@ -12,7 +12,7 @@ Physical characteristics are abstract gameplay points, not dimensions, kilograms
 | 4 | Large (human-scale furniture/person) | Heavy (ordinarily movable, not carried) |
 | 5 | X-Large (vehicle, building) | X-Heavy (ordinarily immovable) |
 
-These descriptions guide authors, not hardcoded action restrictions. Mobility, strength, access, dimensions and genre-specific mechanics are later game rules/extensions; physical scores do not themselves authorize an action.
+These descriptions guide authors, not hardcoded action restrictions. Mobility, strength, access, dimensions and genre-specific mechanics are later declarative game rules and first-party gameplay modules; physical scores do not themselves authorize an action.
 
 ## Physical object
 
