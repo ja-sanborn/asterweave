@@ -66,11 +66,11 @@ These versions do not advance in lockstep. A bug fix need not change a data form
 
 ## Release compatibility
 
-Use [Semantic Versioning 2.0.0](https://semver.org/) for engine releases: after 1.0.0, MAJOR for incompatible public API changes, MINOR for backward-compatible functionality and deprecations, PATCH for backward-compatible fixes. The current private package at 0.0.0 is initial development, not a production release. During 0.x, public interfaces may evolve; changes must still be intentional, reviewed and documented, and accepted contracts must not be silently rewritten. Stable public API compatibility begins at 1.0.0.
+Use [Semantic Versioning 2.0.0](https://semver.org/) for engine releases: after 1.0.0, MAJOR for incompatible public API changes, MINOR for backward-compatible functionality and deprecations, PATCH for backward-compatible fixes. The current private package at 0.0.0 is initial development, not a production release. During 0.x, public interfaces may evolve; changes must still be intentional, reviewed and documented, and accepted contracts must not be silently rewritten. There is no obligation to retain superseded pre-release APIs, schemas, aliases, migration mechanisms or implementation behavior. Explicitly supported formats and current contracts remain enforceable; incompatible inputs are rejected. Stable public API compatibility begins at 1.0.0.
 
 Removing public interfaces, changing required fields or documented defaults, changing result structures incompatibly, or reinterpreting stable error codes can break consumers. Adding optional capabilities is compatible only if existing documented behavior remains intact. Private module reorganization alone is not a public API break. Corrections matching the documented contract are generally compatible; review observable effects and document relevant changes.
 
-Prefer documented deprecation before incompatible changes to stable interfaces where practical. Use JSDoc @deprecated and identify replacements. Record compatibility changes in appropriate release documentation and update affected contracts, tests and author guidance. No new release, version bump, distribution format or publication workflow is authorized by this contract.
+Prefer documented deprecation before incompatible changes to stable interfaces where practical; this is not a requirement to preserve superseded pre-release interfaces. Use JSDoc @deprecated and identify replacements. Record compatibility changes in appropriate release documentation and update affected contracts, tests and author guidance. No new release, version bump, distribution format or publication workflow is authorized by this contract.
 
 ## Verification
 

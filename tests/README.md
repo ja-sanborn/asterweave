@@ -11,7 +11,7 @@ npm test
 
 Run an individual test with `node --test tests/infrastructure/tooling.test.js`.
 Use `node:test` and `node:assert/strict` in `*.test.js` files. Keep fixtures
-separate from test cases, organize component tests under engine and future component directories as introduced, and
+separate from test cases, organize tests under the five mirrored component directories (README-only until applicable tests exist), and
 test hosts separately. A failing assertion must result in a nonzero exit
 status. The infrastructure smoke test verifies ES module imports and native assertions,
 not engine behavior. The test suite also includes domain, contract, integration and architecture tests.
@@ -54,7 +54,7 @@ The [action tests](engine/actions/ActionRegistry.test.js) verify registration, a
 
 ## Definition of done
 
-For each implementation story, satisfy acceptance criteria; pass relevant domain, contract and integration tests; cover applicable negative, boundary, security, atomicity, determinism and isolation cases; add regression tests where practical; review architecture and dependencies; follow coding standards and JSDoc; update contracts and documentation; preserve licenses; report actual verification results and limitations. A passing functional test alone is not completion. Do not close issues or merge without the required authorization.
+For each implementation story, satisfy acceptance criteria; pass relevant domain, contract and integration tests; cover applicable negative, boundary, security, atomicity, determinism and isolation cases; add regression tests where practical; review architecture and dependencies; follow coding standards and JSDoc; update contracts and documentation; preserve licenses; report actual verification results and limitations. Remove obsolete tests and consolidate redundant tests where they provide no distinct verification; retain applicable contract, security, regression, isolation and atomicity coverage. Test count is not a minimum coverage target. A passing functional test alone is not completion. Do not close issues or merge without the required authorization.
 
 ## Foundation fixtures
 

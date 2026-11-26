@@ -58,7 +58,7 @@ A versioned game-author guide is planned. The [public API contract](docs/engine/
 
 ## Repository layout
 
-The approved source boundaries are `src/engine/`, `src/modules/`, `src/interaction/`, `src/tools/` and `src/creator/`. Tests and component documentation follow corresponding responsibilities; samples hold reference games and demonstrations. Introduce directories when actual functionality or documentation requires them.
+The approved source boundaries are `src/engine/`, `src/modules/`, `src/interaction/`, `src/tools/` and `src/creator/`. Tests and component documentation follow corresponding responsibilities; samples hold reference games and demonstrations. Maintain the agreed component directories with meaningful README files even before implementation; introduce further subdirectories only when justified. Directory presence does not imply implemented functionality.
 
 The current runtime resides under `src/engine/`, with engine-specific tests under `tests/engine/`, shared fixtures and repository-wide checks under `tests/`, and samples under `samples/`. Engine technical documentation resides under `docs/engine/`. The target layout does not imply that planned components are implemented.
 

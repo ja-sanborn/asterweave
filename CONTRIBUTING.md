@@ -8,7 +8,7 @@ Read the [documentation index](docs/README.md), [architecture](docs/ARCHITECTURE
 
 ## Development principles
 
-Follow the [public API contract](docs/engine/contracts/PUBLIC_API.md), [security model](docs/engine/contracts/SECURITY_MODEL.md) and [testing strategy](tests/README.md). Review changes to documented interfaces for compatibility, including before 1.0.0. Satisfy the testing strategy's definition of done for implementation stories; preserve trust boundaries and report actual verification results.
+Follow the [public API contract](docs/engine/contracts/PUBLIC_API.md), [security model](docs/engine/contracts/SECURITY_MODEL.md) and [testing strategy](tests/README.md). Review and document changes to supported interfaces, including before 1.0.0; obsolete pre-release compatibility mechanisms need not be retained. Preserve current contracts and meaningful verification while removing obsolete code and redundant tests. Satisfy the testing strategy's definition of done for implementation stories; preserve trust boundaries and report actual verification results.
 
 Follow the [error-handling contract](docs/engine/contracts/ERROR_HANDLING.md) and [ADR 0065](docs/decisions/0065-error-handling.md) alongside the coding standards. Include applicable negative-path tests and preserve documented failure semantics.
 
