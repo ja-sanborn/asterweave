@@ -60,7 +60,7 @@ A versioned game-author guide is planned. The [public API contract](docs/contrac
 
 The approved source boundaries are `src/engine/`, `src/modules/`, `src/interaction/`, `src/tools/` and `src/creator/`. Tests and component documentation follow corresponding responsibilities; samples hold reference games and demonstrations. Introduce directories when actual functionality or documentation requires them.
 
-The existing runtime still resides directly under `src/`; current tests, documentation and example fixtures retain their existing paths until relocated. The target layout does not imply that the planned components are implemented.
+The current runtime resides under `src/engine/`, with engine-specific tests under `tests/engine/`, shared fixtures and repository-wide checks under `tests/`, and samples under `samples/`. Technical contracts retain their existing paths. The target layout does not imply that planned components are implemented.
 
 ## Development quick start
 

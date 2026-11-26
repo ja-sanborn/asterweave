@@ -8,7 +8,7 @@ Start here for the current technical design and development standards. See the [
 | --- | --- | --- |
 | Engine developer | [Architecture](ARCHITECTURE.md), [coding standards](CODE_STYLE.md) | [Contracts](contracts/README.md), [decisions](decisions/README.md), [testing](../tests/README.md), relevant issue |
 | AI contributor | [AGENTS.md](../AGENTS.md), this index | Same standards, contracts, decisions, tests and issue as human contributors |
-| Game author | [Canonical definitions](contracts/GAME_DEFINITIONS.md), [examples](../examples/README.md) | World/property contracts and planned author guide; no playable runtime yet |
+| Game author | [Canonical definitions](contracts/GAME_DEFINITIONS.md), [samples](../samples/README.md) | World/property contracts and planned author guide; no playable runtime yet |
 | Interaction or presentation developer | [Architecture](ARCHITECTURE.md), [Public API](contracts/PUBLIC_API.md) | [Security model](contracts/SECURITY_MODEL.md), [error handling](contracts/ERROR_HANDLING.md), actions and persistence contracts |
 | First-party gameplay module developer | [Architecture](ARCHITECTURE.md), [module composition](decisions/0052-module-composition.md) | Action, state, domain, security and testing contracts |
 | Tools or Creator developer | [Architecture](ARCHITECTURE.md), [canonical authoring](decisions/0054-canonical-definitions-and-authoring.md), [distribution](decisions/0058-compilation-and-distribution.md) | Relevant canonical data, public interface, security and verification contracts |
@@ -38,6 +38,6 @@ Canonical game-definition format: 3.2.0. Save format: 1.0.0 (implementation plan
 
 ## Repository navigation
 
-[Current runtime](../src/README.md), [examples](../examples/README.md), [tests and fixtures](../tests/README.md). See [contributing](../CONTRIBUTING.md) before changing the repository. The approved target is component-oriented documentation under engine, modules, interaction, creator and tools, with guides as needed. Existing contracts and implementation design retain their paths until relocation.
+[Current runtime](../src/engine/README.md), [samples](../samples/README.md), [tests and fixtures](../tests/README.md). See [contributing](../CONTRIBUTING.md) before changing the repository. The approved target is component-oriented documentation under engine, modules, interaction, creator and tools, with guides as needed. Engine source and tests now use their engine subdirectories; existing contracts and implementation design retain their paths until relocation. See [Creator](creator/README.md) for its planned responsibilities.
 
 The [active ADR index](decisions/README.md) is the sole architectural decision catalog. Archived records are non-authoritative and not required reading. The active ADRs establish the approved direction. Existing technical contracts document supported behavior and previously accepted technical design; obsolete public executable extension plans are not current requirements. Detailed contract, code and roadmap reconciliation must be separately reviewed; surface conflicts rather than silently changing behavior. Do not infer implementation from an accepted decision.

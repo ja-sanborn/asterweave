@@ -2,7 +2,7 @@
   "name": "asterweave",
   "version": "0.0.0",
   "private": true,
-  "description": "Platform-independent interactive fiction engine",
+  "description": "Interactive fiction development environment",
   "type": "module",
   "license": "MPL-2.0",
   "author": "JA Sanborn",

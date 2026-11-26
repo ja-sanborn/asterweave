@@ -14,7 +14,7 @@ Asterweave comprises three principal products: Engine, Tools and Creator. Engine
 | Tools (`src/tools/`) | Canonical translation, assembly, coordinated validation, selective composition, compilation and distribution. |
 | Creator (`src/creator/`) | Optional visual and language authoring, UI/UX design, playtesting and export using Engine and Tools. |
 
-Presentation is a game-specific responsibility, not a mandatory additional product. It may submit canonical actions directly or use one or more selected interaction modules. Choice and narrative interaction coordinate input and presentation; authoritative gameplay-relevant dialogue, conditions, effects and progression remain engine-owned when introduced. Purely presentational state remains outside authoritative gameplay state.
+Presentation is a game-specific responsibility, not a mandatory additional product. Presentation adapters own safe rendering, platform permissions, optional telemetry and logging, storage and delivery authorization; they consume semantic results and supported interfaces, not private engine state. Test platform adapters separately. It may submit canonical actions directly or use one or more selected interaction modules. Choice and narrative interaction coordinate input and presentation; authoritative gameplay-relevant dialogue, conditions, effects and progression remain engine-owned when introduced. Purely presentational state remains outside authoritative gameplay state.
 
 ```text
 Authoring: direct JSON / declarative language / Creator
@@ -38,7 +38,7 @@ Foundation is a development milestone, not a synonym for mandatory infrastructur
 
 ### Repository organization
 
-The target source boundaries above have corresponding test and documentation responsibilities; shared fixtures, infrastructure and architecture verification remain separate. Central documentation stays under docs, with active decisions, historical archive and guides as justified. Samples contain demonstrations and complete reference games, distinct from test fixtures. Create directories only for actual content. The current runtime still resides directly under src; source, tests and contracts will be relocated separately. This architectural target does not assert that any planned module exists.
+The target source boundaries above have corresponding test and documentation responsibilities; shared fixtures, infrastructure and architecture verification remain separate. Central documentation stays under docs, with active decisions, historical archive and guides as justified. Samples contain demonstrations and complete reference games, distinct from test fixtures. Create directories only for actual content. The current runtime resides under src/engine, with engine tests under tests/engine and shared fixtures and repository-wide checks under tests. Technical contracts retain their existing paths until documentation restructuring. This architectural target does not assert that any planned module exists.
 
 ## Modular implementation
 

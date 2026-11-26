@@ -17,7 +17,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /** @type {string} Runtime source root. */
-const ROOT = fileURLToPath(new URL('../../src/', import.meta.url));
+const ROOT = fileURLToPath(new URL('../../src/engine/', import.meta.url));
 
 /**
  * Enumerates JavaScript files without inspecting external directories.

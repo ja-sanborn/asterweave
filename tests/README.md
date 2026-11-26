@@ -11,7 +11,7 @@ npm test
 
 Run an individual test with `node --test tests/infrastructure/tooling.test.js`.
 Use `node:test` and `node:assert/strict` in `*.test.js` files. Keep fixtures
-separate from test cases, mirror runtime modules as they are introduced, and
+separate from test cases, organize component tests under engine and future component directories as introduced, and
 test hosts separately. A failing assertion must result in a nonzero exit
 status. The infrastructure smoke test verifies ES module imports and native assertions,
 not engine behavior. The test suite also includes domain, contract, integration and architecture tests.
@@ -46,11 +46,11 @@ Name tests by expected behavior; use Arrange, Act, Assert where helpful. Keep ca
 
 ## Architectural and security verification
 
-Native source-convention checks are implemented in [moduleBoundaries.test.js](architecture/moduleBoundaries.test.js) for relative static imports, dependency direction, cycles and prohibited dynamic imports, plus [public facade tests](public/Asterweave.test.js). These checks are not a general ECMAScript parser or security sandbox. Continue reviewing platform independence and domain behavior as the runtime grows. Verify that core does not depend on hosts, validators are reusable, runtimes share no mutable state and snapshots expose no writable references. Automated checks complement review; do not claim a check exists until implemented.
+Native source-convention checks are implemented in [moduleBoundaries.test.js](architecture/moduleBoundaries.test.js) for relative static imports, dependency direction, cycles and prohibited dynamic imports, plus [public facade tests](engine/public/Asterweave.test.js). These checks are not a general ECMAScript parser or security sandbox. Continue reviewing platform independence and domain behavior as the runtime grows. Verify that core does not depend on hosts, validators are reusable, runtimes share no mutable state and snapshots expose no writable references. Automated checks complement review; do not claim a check exists until implemented.
 
 Test malformed definitions/actions/saves as applicable, unsafe property keys, cycles, invalid references, overflow, authorization, safe diagnostic translation, independent diagnostic aggregation, atomic failure and deterministic behavior. Test resource handling for relevant workloads and host-specific protections separately. Use controllable time and randomness when those capabilities are introduced. Future save tests verify round trips and failed-restore atomicity rather than assuming the synthetic fixture is a working save.
 
-The [action tests](actions/ActionRegistry.test.js) verify registration, authority, immutable resolution and finalization; [security tests](actions/actionRegistrySecurity.test.js) verify reentrancy and isolation. [Definition validation](actions/validateActionDefinition.test.js), [argument validation](actions/validateActionArguments.test.js), [identity](actions/actionIdentifiers.test.js) and [standard metadata](actions/standardDefinitions.test.js) tests cover the internal action contracts. [Initialization tests](core/GameInitializer.test.js) verify private registry ownership and absence of production registrations. Test-only registry handlers establish registration behavior, not production navigation. Dispatch integration tests separately exercise authorized internal world operations.
+The [action tests](engine/actions/ActionRegistry.test.js) verify registration, authority, immutable resolution and finalization; [security tests](engine/actions/actionRegistrySecurity.test.js) verify reentrancy and isolation. [Definition validation](engine/actions/validateActionDefinition.test.js), [argument validation](engine/actions/validateActionArguments.test.js), [identity](engine/actions/actionIdentifiers.test.js) and [standard metadata](engine/actions/standardDefinitions.test.js) tests cover the internal action contracts. [Initialization tests](engine/core/GameInitializer.test.js) verify private registry ownership and absence of production registrations. Test-only registry handlers establish registration behavior, not production navigation. Dispatch integration tests separately exercise authorized internal world operations.
 
 ## Definition of done
 
@@ -104,7 +104,7 @@ Follow the [accepted detailed runtime design](../docs/RUNTIME_IMPLEMENTATION.md)
 
 ## World operation verification
 
-[World queries](world/WorldQueries.test.js), [physical loads](world/physicalLoads.test.js), [change proposals](world/WorldChangePlan.test.js) and [dispatch integration](core/worldOperations.test.js) cover deterministic derived views, checked loads, transfer and association cleanup, baseline normalization, physical mutation, lifecycle/control coordination, separate grants, malformed writes, expired capabilities, rollback, independent runtimes and reset. Deep recursive destruction testing exercises operation planning without claiming full dispatch at the same depth. Test unknown and overflow flags together and repeated rejection without retained overrides. These tests use trusted test-only handlers, not production navigation or inventory handlers.
+[World queries](engine/world/WorldQueries.test.js), [physical loads](engine/world/physicalLoads.test.js), [change proposals](engine/world/WorldChangePlan.test.js) and [dispatch integration](engine/core/worldOperations.test.js) cover deterministic derived views, checked loads, transfer and association cleanup, baseline normalization, physical mutation, lifecycle/control coordination, separate grants, malformed writes, expired capabilities, rollback, independent runtimes and reset. Deep recursive destruction testing exercises operation planning without claiming full dispatch at the same depth. Test unknown and overflow flags together and repeated rejection without retained overrides. These tests use trusted test-only handlers, not production navigation or inventory handlers.
 
 ## Planned Foundation capability verification
 
@@ -112,4 +112,4 @@ As the remaining Foundation capabilities are designed and implemented, add appli
 
 ## Current test coverage
 
-The native suites under shared, diagnostics, results, definition, world and state exercise internal domain behavior. [Public API tests](public/Asterweave.test.js) and [initialization integration tests](integration/initialization.test.js) exercise the supported entry point, result translation and effective snapshots. [Architecture checks](architecture/moduleBoundaries.test.js) verify the static module graph under the repository's source conventions. Consult CI and pull request records for execution results for specific commits. Tests establish internal transaction, reset and world-operation behavior, not production gameplay or save/restore support.
+The native suites under engine/shared, engine/diagnostics, engine/results, engine/definition, engine/world and engine/state exercise internal domain behavior. [Public API tests](engine/public/Asterweave.test.js) and [initialization integration tests](engine/integration/initialization.test.js) exercise the supported entry point, result translation and effective snapshots. [Architecture checks](architecture/moduleBoundaries.test.js) verify the static module graph under the repository's source conventions. Consult CI and pull request records for execution results for specific commits. Tests establish internal transaction, reset and world-operation behavior, not production gameplay or save/restore support.
