@@ -20,9 +20,9 @@ import { indexParticipants } from './indexParticipants.js';
 /**
  * Checks structurally valid effective physical records.
  * @param {object} state - Effective records.
- * @returns {object} Derived hierarchy indexes.
  * @param {Function} report - Domain finding callback.
- * @param {boolean} initial - Whether initialization viability is required.
+ * @param {boolean} [initial=false] - Whether initialization viability is required.
+ * @returns {object} Derived hierarchy indexes.
  */
 export function validateWorldState(state, report, initial = false) {
     return validateWorldParticipants(indexParticipants(state), report, initial);

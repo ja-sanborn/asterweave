@@ -114,3 +114,30 @@ test('propagates reflective failures to the operation boundary', () => {
     });
     assert.throws(() => inspectJsonData(source), (error) => error === failure);
 });
+
+test('bounds shared-subtree amplification without limiting ordinary tree size', () => {
+    let graph = { value: 1 };
+    for (let depth = 0; depth < 40; depth++) {
+        graph = { left: graph, right: graph };
+    }
+    const first = inspectJsonData(graph);
+    assert.equal(first.value, undefined);
+    assert.equal(first.issues.length, 1);
+    assert.match(first.issues[0].message, /Shared data expansion exceeds inspection allowance/);
+    assert.deepEqual(inspectJsonData(graph).issues, first.issues);
+
+    const ordinary = Array.from({ length: 70000 }, (_, index) => ({ index }));
+    const result = inspectJsonData(ordinary);
+    assert.deepEqual(result.issues, []);
+    assert.deepEqual(result.value, ordinary);
+    assert.notEqual(result.value[0], ordinary[0]);
+});
+
+test('charges repeated scalar children before scheduling a large shared subtree', () => {
+    const shared = Array(65536).fill(0);
+    const result = inspectJsonData({ first: shared, second: shared });
+    assert.equal(result.value, undefined);
+    assert.deepEqual(result.issues, [{
+        path: '/second', message: 'Shared data expansion exceeds inspection allowance.',
+    }]);
+});

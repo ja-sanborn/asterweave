@@ -12,6 +12,10 @@ Packaging/export and the host/package loader are outside the runtime core. The l
 
 See [ADR 0058](../../decisions/0058-compilation-and-distribution.md). Package format, protection algorithms, key management and implementation are planned Foundation design work; packaging does not change the canonical schema or fixture.
 
+## Modular definition direction
+
+The current engine accepts complete parsed gameplay data directly. Future multi-file organization and resolution belong to Tools, not the engine; no mandatory file layout is defined. Each domain owns closed configuration fields placed according to their semantic subject and scope, and each component owns its canonical validation rules. Tools coordinate applicable validators and cross-component checks without replacing independent runtime validation. Existing identity contracts remain authoritative; future domains establish identities only when justified, with explicit validated cross-component references rather than duplicated gameplay data. Required capabilities are derived where reliable, with justified explicit declarations; Tools resolve dependencies and consumers reject unsupported required configuration. One common canonical definition format version governs applicable component contracts, independently of engine, content, save and distribution versions. Concrete schemas, reference syntax, requirement metadata and assembly mechanisms remain planned.
+
 ## Document and versioning
 
 A definition is one UTF-8 JSON object. JSON member order is not semantic; array order is preserved. Use standard JSON (double-quoted keys and strings, no comments or trailing commas). Duplicate member names are prohibited at every level. All objects have closed field sets for the declared format; reject unknown fields and missing required fields. Optional fields are omitted, not null. No implicit coercion, trimming or defaulting of required fields.
@@ -91,6 +95,8 @@ Suppress checks whose prerequisites are invalid and continue independent safe ch
 Follow the common [error-handling contract](ERROR_HANDLING.md). Preserve the definition-specific diagnostic structure and code vocabulary below; aggregate independent findings safely and suppress dependent cascades. Unexpected internal failures are not authored-data diagnostics merely because they arise during validation.
 
 Use native ECMAScript validation with no external schema library or platform APIs. Validate the complete definition before initializing state. Reject malformed or unsupported input without exposing partially initialized state. Validate object/array shapes and allowed fields, version and scalar grammar, global identity uniqueness, references, containment cycles and ancestry, lifecycle, associations, physical field ranges and all applicable capacity invariants. Identity collection precedes reference resolution so forward references are allowed.
+
+Parsed JavaScript object graphs may contain shared acyclic references; independent copying is supported subject to the operational shared-expansion allowance described in the [security model](SECURITY_MODEL.md). Exceeding that allowance stops inspection with INVALID_DATA and no accepted definition. Ordinary JSON trees are not subject to this shared-expansion allowance.
 
 Only JSON-compatible data is accepted: null, booleans, strings, finite numbers, dense arrays and plain data objects, subject to the narrower field rules above. For parsed JavaScript input reject functions, undefined, symbols, BigInt, nonfinite numbers, cycles, accessors, non-data objects and extra array properties; use own data properties rather than inherited values. Treat keys and IDs as data, not prototype mutation paths; use safe lookup structures such as Map or null-prototype records. No eval, code loading, host objects, network access or filesystem references. JSON text parsing is outside the object-validation contract: native JSON.parse discards repeated member names, so a validator receiving parsed data cannot detect those original repetitions. Authors must not write duplicate member names; this limitation does not relax duplicate world IDs or directions, which are explicit array data.
 
@@ -182,17 +188,14 @@ The fixture supports the existing [action/result contract](ACTIONS_AND_RESULTS.m
 
 The actor ID resolves to an active actor, and the direction selects an authored exit from that actor's immediate active location parent. The destination is not caller-selected. Foundation move costs 1/0; unavailable exits are rejected with EXIT_UNAVAILABLE and zero committed turns. The action registry owns validated action metadata, including success and failure costs. The accepted dispatcher design selects the applicable cost and owns execution, atomic commitment and turn progression; the canonical game definition does not supply these costs. See [action definitions](ACTION_DEFINITIONS.md), [standard catalog](STANDARD_ACTIONS.md), and [ADR 0053](../../decisions/0053-action-architecture.md).
 
-Future conceptual root sections (names tentative, not accepted fields in 4.0.0):
+Future logical responsibilities (not field names or physical file boundaries):
 
-| Section | Intended responsibility |
+| Responsibility | Owning domain or component |
 | --- | --- |
-| vocabulary | Parser aliases, adjectives and contextual vocabulary |
-| narrative | Choices, dialogue and sequences |
-| rules | Safe declarative conditions and effects |
-| events | Turn-based event definitions |
-| actions | Registered action overrides and declarative action definitions |
-| modules | Selected capability requirements and configuration |
-| time | Optional fictional clock/calendar configuration |
+| Gameplay configuration, conditions, effects, events and authoritative narrative progression | Engine and applicable gameplay domains |
+| Vocabulary, aliases and interaction coordination | Applicable interaction modules |
+| Layout, assets and styling | Presentation |
+| Assembly, cross-component validation and capability selection | Tools |
 
 Planned Foundation schema revisions for action configuration, declarative behavior, rules, events and selected module requirements define supported fields and compatibility explicitly. Do not add empty placeholders or arbitrary configuration bags now. Standard action overrides and declarative behavior require explicit schema contracts. Preserve authoritative unqualified engine action identifiers, trusted handler separation and independent success/failure costs under [ADR 0053](../../decisions/0053-action-architecture.md). JSON must never select arbitrary executable code or replace trusted handlers. Optional time configuration follows [ADR 0062](../../decisions/0062-game-time-and-calendar.md); committed turns remain authoritative.
 

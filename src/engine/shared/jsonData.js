@@ -12,10 +12,14 @@
 
 import { appendPointer } from '../diagnostics/jsonPointer.js';
 
+/** @type {number} Operational allowance for additional shared-subtree value visits. */
+const SHARED_EXPANSION_ALLOWANCE = 65536;
+
 /**
  * Inspects and detaches JSON-compatible data without calling ordinary getters.
  * Object keys are visited in code-unit order and arrays in index order.
- * Shared acyclic references are copied independently; cycles are rejected.
+ * Shared acyclic references are copied independently within a bounded expansion allowance.
+ * Cycles and disproportionate shared-subtree expansion are rejected.
  * Reflective failures propagate for operation-boundary translation.
  * @param {unknown} input - Untrusted parsed data.
  * @returns {{value: *, issues: Array<{path: string, message: string}>}}
@@ -25,6 +29,8 @@ export function inspectJsonData(input) {
     const issues = [];
     const root = { value: undefined };
     const ancestors = new Set();
+    const seen = new WeakSet();
+    let remainingExpansion = SHARED_EXPANSION_ALLOWANCE;
     const pending = [{ input, target: root, key: 'value', path: '' }];
 
     while (pending.length > 0) {
@@ -47,6 +53,12 @@ export function inspectJsonData(input) {
             issues.push({ path: task.path, message: 'Cyclic data is not permitted.' });
             continue;
         }
+        const repeated = task.repeated === true || seen.has(value);
+        if (repeated && !task.repeated && --remainingExpansion < 0) {
+            issues.push({ path: task.path, message: 'Shared data expansion exceeds inspection allowance.' });
+            break;
+        }
+        seen.add(value);
         const array = Array.isArray(value);
         const prototype = Object.getPrototypeOf(value);
         if ((array && prototype !== Array.prototype)
@@ -78,6 +90,14 @@ export function inspectJsonData(input) {
         } else {
             orderedKeys = keys.sort();
         }
+        // Charge additional visits before allocating or scheduling a repeated subtree.
+        if (repeated) {
+            remainingExpansion -= orderedKeys.length;
+            if (remainingExpansion < 0) {
+                issues.push({ path: task.path, message: 'Shared data expansion exceeds inspection allowance.' });
+                break;
+            }
+        }
         const copy = array ? [] : {};
         defineValue(task.target, task.key, copy);
         ancestors.add(value);
@@ -92,6 +112,7 @@ export function inspectJsonData(input) {
                 target: copy,
                 key,
                 path,
+                repeated,
             });
         }
     }

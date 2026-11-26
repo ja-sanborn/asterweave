@@ -12,13 +12,13 @@
 
 import { validateEffectiveStructure } from '../state/validateEffectiveStructure.js';
 import { GameDefinitionMapper } from './GameDefinitionMapper.js';
-import { participants } from './validateIdentity.js';
 import { WORLD_CODES } from '../world/worldDiagnostics.js';
 import { validateWorldState } from '../world/validateWorldState.js';
 import { inspectJsonData } from '../shared/jsonData.js';
 import { DiagnosticCollector } from '../diagnostics/DiagnosticCollector.js';
 import { validateStructure } from './validateStructure.js';
-import { validateIdentity } from './validateIdentity.js';
+import { participants, validateIdentity } from './validateIdentity.js';
+import { MEASUREMENT_LIMITS } from '../world/physicalMeasurements.js';
 import { validateReferences } from './validateReferences.js';
 import { DEFINITION_CODES as C, reportDefinition } from './definitionDiagnostics.js';
 
@@ -98,15 +98,22 @@ export class GameDefinitionValidator {
  * @returns {string} Authored pointer.
  */
 function domainPointer(sources, id, property, index) {
-    if (id === undefined) {
+    if (id === undefined && ['location', 'actor'].includes(property) && index === undefined) {
         return '/world/' + property + 's';
     }
     const root = sources.get(id);
-    if (property === 'containment') {
+    if (root === undefined) {
+        throw new Error('Missing authored diagnostic source.');
+    }
+    if (property === 'containment' && index === undefined) {
         return root + '/initialContainment';
     }
-    if (property === 'associations') {
+    if (property === 'associations' && (index === undefined
+        || (Number.isSafeInteger(index) && index >= 0))) {
         return root + '/initialAssociations' + (index === undefined ? '' : '/' + index);
     }
-    return root + '/physical/' + property;
+    if (MEASUREMENT_LIMITS.includes(property) && index === undefined) {
+        return root + '/physical/' + property;
+    }
+    throw new Error('Unsupported authored diagnostic property.');
 }

@@ -32,7 +32,9 @@ function mapValid(properties, reserved) {
 
 /**
  * Checks complete candidate shapes before traversing domain edges.
- * @param {object} input - Effective records.
+ * The caller retains ownership of a stable effective view for subsequent invariant checks.
+ * External input must be detached at its owning boundary before use.
+ * @param {object} input - Engine-owned effective records.
  * @returns {boolean} Whether structural prerequisites are satisfied.
  */
 export function validateEffectiveStructure(input) {

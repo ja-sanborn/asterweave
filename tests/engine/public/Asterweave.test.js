@@ -197,3 +197,20 @@ test('public facade blocks compromised reads and dispatch until validated reset 
     assert.equal(earlier.error.code, 'UNKNOWN_ACTION_TYPE');
     assert.equal(before.world.properties['engine.turn'], 0);
 });
+
+test('shared data amplification rejects safely at both public definition boundaries', () => {
+    let graph = { value: 1 };
+    for (let depth = 0; depth < 40; depth++) {
+        graph = { left: graph, right: graph };
+    }
+    const definition = fixture();
+    definition.extra = graph;
+    const validation = Asterweave.validateGame(definition);
+    const initialization = Asterweave.initializeGame(definition);
+    assert.ok(validation.isRejected);
+    assert.ok(initialization.isRejected);
+    assert.equal(initialization.game, undefined);
+    assert.deepEqual(initialization.diagnostics, validation.diagnostics);
+    assert.equal(validation.diagnostics[0].code, 'INVALID_DATA');
+    assert.match(validation.diagnostics[0].message, /Shared data expansion/);
+});

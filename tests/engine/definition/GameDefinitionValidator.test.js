@@ -185,3 +185,25 @@ test('preserves deterministic diagnostics across equivalent object member orderi
     assert.deepEqual(validate(input).diagnostics, validate(equivalent).diagnostics);
     assert.deepEqual(validate(input).diagnostics.map((item) => item.path), ['/game/a', '/game/z']);
 });
+
+test('rejects unsupported future component configuration without interpreting it', () => {
+    const input = fixture();
+    input.game.requiredCapabilities = [];
+    input.world.entities[0].mechanical = {};
+    input.world.dateTime = {};
+    input.gameplay = {};
+    input.interaction = {};
+    input.presentation = {};
+    input.modules = {};
+    const result = validate(input);
+    assert.equal(result.definition, undefined);
+    assert.deepEqual(result.diagnostics.map(({ code, path }) => ({ code, path })), [
+        { code: 'UNKNOWN_FIELD', path: '/game/requiredCapabilities' },
+        { code: 'UNKNOWN_FIELD', path: '/world/entities/0/mechanical' },
+        { code: 'UNKNOWN_FIELD', path: '/world/dateTime' },
+        { code: 'UNKNOWN_FIELD', path: '/gameplay' },
+        { code: 'UNKNOWN_FIELD', path: '/interaction' },
+        { code: 'UNKNOWN_FIELD', path: '/modules' },
+        { code: 'UNKNOWN_FIELD', path: '/presentation' },
+    ]);
+});

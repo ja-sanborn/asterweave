@@ -18,7 +18,8 @@ import { areJsonValuesEqual } from '../shared/jsonEquality.js';
 
 /**
  * Verifies complete effective state, independent of authored JSON.
- * @param {object} state - Effective candidate.
+ * Requires an engine-owned, stable effective view; not an external data boundary.
+ * @param {object} state - Engine-owned effective candidate.
  * @param {boolean} [initial] - Apply initialization viability.
  * @returns {boolean} Validity.
  */
