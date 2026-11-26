@@ -14,6 +14,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as api from '../../../src/engine/Asterweave.js';
+import { ActionRegistry } from '../../../src/engine/actions/ActionRegistry.js';
 
 const { Asterweave } = api;
 
@@ -26,6 +27,9 @@ function fixture() {
 
 test('public module exposes only the named facade and requires controlled construction', () => {
     assert.deepEqual(Object.keys(api), ['Asterweave']);
+    assert.deepEqual(Reflect.ownKeys(Asterweave).sort(), [
+        'initializeGame', 'length', 'name', 'prototype', 'validateGame',
+    ]);
     assert.throws(() => new Asterweave(), TypeError);
     assert.throws(() => new Asterweave(Symbol(), {}), TypeError);
     const result = Asterweave.initializeGame(fixture());
@@ -146,4 +150,50 @@ test('public dispatch enforces explicit actor control and retains empty producti
     assert.deepEqual(game.reset().toJSON(), { status: 'completed' });
     assert.deepEqual(game.getStateSnapshot(), before);
     assert.ok(Object.isFrozen(game));
+});
+
+test('public facade blocks compromised reads and dispatch until validated reset recovers', (t) => {
+    const definition = fixture();
+    const game = Asterweave.initializeGame(definition, {
+        player: { id: 'playerOne', controlledActors: ['player'] },
+    }).game;
+    const before = game.getStateSnapshot();
+    const action = { type: 'move', actorId: 'player', args: { direction: 'east' } };
+    const earlier = game.dispatchAction(action);
+
+    // Inject a retained-registry verification failure using a native test mock.
+    // No production access to private state or testing hook is required.
+    const fault = t.mock.method(ActionRegistry.prototype, 'verifyIntegrity', () => {
+        throw new Error('private registry failure');
+    });
+    try {
+        assert.deepEqual(game.reset().toJSON(), {
+            status: 'error', error: { code: 'RESET_FAILED' },
+        });
+        for (const read of [() => game.turn, () => game.getStateSnapshot()]) {
+            assert.throws(read, { name: 'Error', message: 'Runtime state is unavailable.' });
+        }
+        assert.equal(game.gameId, definition.game.id);
+        assert.equal(game.gameVersion, definition.game.version);
+        let inspected = false;
+        const input = new Proxy({}, {
+            getPrototypeOf() { inspected = true; throw new Error('unexpected inspection'); },
+        });
+        assert.deepEqual(game.dispatchAction(input).toJSON(), {
+            status: 'error', error: { code: 'EXECUTION_FAILED' },
+            turnsAdvanced: 0, outputs: [],
+        });
+        assert.equal(inspected, false);
+        assert.equal(game.reset().error.code, 'RESET_FAILED');
+        assert.throws(() => game.getStateSnapshot(), { message: 'Runtime state is unavailable.' });
+    } finally {
+        fault.mock.restore();
+    }
+
+    assert.ok(game.reset().isCompleted);
+    assert.equal(game.turn, 0);
+    assert.deepEqual(game.getStateSnapshot(), before);
+    assert.equal(game.dispatchAction(action).error.code, 'UNKNOWN_ACTION_TYPE');
+    assert.equal(earlier.error.code, 'UNKNOWN_ACTION_TYPE');
+    assert.equal(before.world.properties['engine.turn'], 0);
 });
