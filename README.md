@@ -2,38 +2,43 @@
 
 *Stories woven. Worlds imagined.*
 
-Asterweave is an open-source, platform-independent interactive fiction engine designed to empower storytellers through exploration, imagination, and meaningful choices. It is a sibling project to Asterwake, focused on narrative and world interaction rather than graphical game rendering.
+Asterweave is an open-source interactive fiction development environment, created for storytellers who want to build worlds, meaningful choices and narrative experiences. It is an independent sibling project to Asterwake, focused on narrative and world interaction rather than graphical game rendering.
 
-Inspired by classic parser adventures such as Zork, branching fiction, gamebooks, and visual novels, Asterweave aims to combine free-form exploration with authored choices in a single reusable engine.
+Inspired by classic parser adventures such as Zork, branching fiction, gamebooks and visual novels, Asterweave brings together a platform-independent Engine, independently usable Tools and an optional Creator application.
 
 ## Project status
 
-Asterweave is in Foundation development. Development and native test infrastructure are established. The architecture, canonical game-definition format 3.2.0, state/save design and project-wide standards are documented. The runtime supports native definition validation, isolated initialization, read-only effective-state inspection and internal action registration and argument validation. Synchronous action processing, transactional state and administrative reset infrastructure are implemented; production gameplay handlers remain planned and no playable release exists. The current private package is version 0.0.0.
+Asterweave is in Foundation development. Development and native test infrastructure are established. The architecture, canonical game-definition format 3.2.0, state/save design and project-wide standards are documented. The runtime supports native definition validation, isolated initialization, read-only effective-state inspection and internal action registration and argument validation. Internal containment transfers, directed associations, physical mutations and explicit lifecycle transitions are implemented. Synchronous action processing, transactional state and administrative reset infrastructure are implemented; production gameplay handlers remain planned and no playable release exists. The current private package is version 0.0.0.
 
 ## Design goals
 
-- Standard JavaScript with no third-party runtime dependencies in the core.
-- Offline-first gameplay, with an independently usable engine distribution before a standalone browser host.
-- No DOM, graphics, network, filesystem, or storage dependencies in the core.
-- Data-driven, genre-independent worlds and narratives using a versioned JSON game format.
-- Deterministic command parsing and choice-driven interaction without AI services.
-- Optional modules and host adapters; distribute only what a game requires.
-- Accessible authoring tools that do not require programming knowledge.
+- Standard ECMAScript and ES modules; zero third-party runtime or development npm dependencies under current decisions.
+- Offline-first gameplay; no DOM, graphics, network, filesystem or storage dependencies in the gameplay engine.
+- Declarative, genre-independent game content using versioned canonical JSON.
+- Deterministic interaction without AI services.
+- First-party reusable gameplay and interaction capabilities, selected before distribution; no public executable extension framework.
+- Independent direct JSON authoring, future declarative authoring language and visual authoring workflows.
+
+## Product architecture
+
+| Component | Responsibility |
+| --- | --- |
+| Engine | Mandatory gameplay infrastructure and selected first-party gameplay modules; owns state, authorized actions and consequences. Independently usable. |
+| Tools | Translation, assembly, coordinated validation, selective composition, compilation and distribution. Independently usable. |
+| Creator | Optional authoring application using Engine and Tools for structured editing, UI/UX design, playtesting and export. |
+
+Interaction modules such as the Text Parser and Visual Novel sit above the engine and submit canonical actions through its documented interface. Game-specific presentation handles input, rendering and platform integration. Games define content and specialized policies declaratively; reusable executable behavior belongs to the engine. Finished games exclude Creator, development tools and unneeded executable capabilities.
 
 ## Planned capabilities
 
-- Foundation: generic world and lifecycle operations, reusable standard actions, configurable and custom actions, declarative rules, events, deterministic randomness and supported extension contracts.
-- Portable saves: versioned state capture and atomic restoration; storage adapters remain host responsibilities.
-- Standalone distribution: a compact JavaScript engine bundle and versioned game packages with optional encryption, independent of Creator and presentation.
-- Optional extensions: Date Time, Text Parsing and Visual Novel; games may include any combination or none.
-- Creator: an offline JavaScript web application for authoring, validation, playtesting and export; not required in player distributions.
-- Reference games: Lantern House and a native Zork I recreation, subject to compatibility and rights review. Additional hosts and multiplayer remain future work.
+- Foundation: a functional headless JSON-authored game through an authored conclusion; reusable navigation, observation, speech, inventory, mechanical and contextual actions; configurable and declarative custom actions; rules, events, deterministic randomness and authorized non-player execution.
+- Portable saves: versioned state capture and atomic restoration, independent of storage.
+- Standalone distribution: compact engine bundle and versioned protected/unprotected game packages, independently of Creator; selected modules and required dependencies only.
+- Additional gameplay and interaction: Date Time, Text Parser and Visual Novel; a text-only offline browser interface is a subsequent playable target.
+- Authoring: modular canonical JSON, future declarative language and bidirectional semantic translation; Creator integrates these workflows.
+- Samples: Lantern House and a native Zork I recreation, subject to compatibility and rights review. Additional presentation targets and multiplayer remain future work.
 
-## Architecture
-
-In the intended architecture, the command parser, choice engine and narrative systems submit actions to a shared, platform-independent core that validates requests, applies domain rules, commits state atomically and returns semantic results. Hosts handle input, output, logging, storage and platform security. The planned Creator toolkit will compile authoring content to canonical JSON and will not be required in finished games.
-
-Foundation targets a functional, extensible headless engine, verified through direct public API gameplay and standalone distribution. A text-only offline browser interface is a subsequent playable target. Games own their content and specific rules; optional extensions provide reusable specialized mechanics and interaction. See the [roadmap](docs/ROADMAP.md).
+The current supported canonical format is 3.2.0. Modular definition loading, compilation, authoring tools and interaction modules are planned rather than implemented. See the [architecture](docs/ARCHITECTURE.md), [active ADRs](docs/decisions/README.md) and [roadmap](docs/ROADMAP.md).
 
 ## Documentation
 
@@ -43,7 +48,7 @@ Start with the [technical documentation index](docs/README.md).
 | --- | --- |
 | [Architecture](docs/ARCHITECTURE.md) | System design and boundaries |
 | [Engine contracts](docs/contracts/README.md) | Required behavior and data formats |
-| [Architecture decisions](docs/decisions/README.md) | Accepted decisions and historical context |
+| [Architecture decisions](docs/decisions/README.md) | Current architectural decisions and rationale |
 | [Coding standards](docs/CODE_STYLE.md) | JavaScript conventions |
 | [Testing strategy](tests/README.md) | Verification and definition of done |
 | [Roadmap](docs/ROADMAP.md) | Development priorities |
@@ -53,15 +58,9 @@ A versioned game-author guide is planned. The [public API contract](docs/contrac
 
 ## Repository layout
 
-| Directory | Purpose |
-| --- | --- |
-| `src/` | Runtime modules and shared contracts |
-| `hosts/` | Browser and future host adapters |
-| `creator/` | Optional authoring and compilation tools |
-| `extensions/` | Optional gameplay and presentation capabilities |
-| `examples/` | Example game definitions |
-| `tests/` | Automated engine and integration tests |
-| `docs/` | Architecture and project documentation |
+The approved source boundaries are `src/engine/`, `src/modules/`, `src/interaction/`, `src/tools/` and `src/creator/`. Tests and component documentation follow corresponding responsibilities; samples hold reference games and demonstrations. Introduce directories when actual functionality or documentation requires them.
+
+The existing runtime still resides directly under `src/`; current tests, documentation and example fixtures retain their existing paths until relocated. The target layout does not imply that the planned components are implemented.
 
 ## Development quick start
 
@@ -84,6 +83,6 @@ See the [technical security model](docs/contracts/SECURITY_MODEL.md) for trust b
 
 ## License and attribution
 
-Asterweave is licensed under the [Mozilla Public License 2.0](LICENSE). Independently authored games and extensions may use their own licenses, subject to the MPL obligations for covered source files.
+Asterweave is licensed under the [Mozilla Public License 2.0](LICENSE). Independently authored games and independently licensed works may use their own licenses, subject to the MPL obligations for covered source files.
 
 Originally created by [JA Sanborn](https://github.com/ja-sanborn). See [NOTICE](NOTICE) and [AUTHORS.md](AUTHORS.md) for attribution.
