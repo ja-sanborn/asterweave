@@ -10,6 +10,8 @@
  * @module state/resolveActionReferences
  */
 
+import { WORLD_ID } from '../world/worldRelationships.js';
+
 /**
  * Verifies previously validated reference strings against runtime identities.
  * @param {object} state - Runtime identity collaborator.
@@ -25,7 +27,7 @@ export function resolveActionReferences(state, definition, args) {
         }
         const id = args[key];
         if (referenceKind === 'world') {
-            if (id !== 'world') {
+            if (id !== WORLD_ID) {
                 return false;
             }
         } else if (referenceKind === 'player') {
