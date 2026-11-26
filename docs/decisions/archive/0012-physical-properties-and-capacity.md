@@ -15,10 +15,10 @@ Use optional physical characteristics on all authored world categories: isContai
 Real-world units or geometry; no core capacities; a single capacity limit that cannot distinguish individual fit from cumulative load.
 
 ## Consequences
-The [physical contract](../contracts/PHYSICAL_PROPERTIES.md) is normative. Initial properties are authored in canonical format 2.0.0; mutable state follows the runtime state contract. Validate initial capacity and enforce structural capacity during transfers; verify integrated behavior. Player-facing actions and advanced physical mechanics remain future work. No runtime or dependency is introduced.
+The [physical contract](../../engine/contracts/PHYSICAL_PROPERTIES.md) is normative. Initial properties are authored in canonical format 2.0.0; mutable state follows the runtime state contract. Validate initial capacity and enforce structural capacity during transfers; verify integrated behavior. Player-facing actions and advanced physical mechanics remain future work. No runtime or dependency is introduced.
 
 ## Subsequent decisions
 
-The reference to format 2.0.0 above is historical. [ADR 0013](0013-namespaced-properties-and-runtime-state.md) establishes format 3.0.0 and maps initial physical fields into reserved engine properties without superseding the capacity invariants. See [canonical definitions](../contracts/GAME_DEFINITIONS.md) and [properties](../contracts/PROPERTIES.md).
+The reference to format 2.0.0 above is historical. [ADR 0013](0013-namespaced-properties-and-runtime-state.md) establishes format 3.0.0 and maps initial physical fields into reserved engine properties without superseding the capacity invariants. See [canonical definitions](../../engine/contracts/GAME_DEFINITIONS.md) and [properties](../../engine/contracts/PROPERTIES.md).
 
 [ADR 0022](0022-flexible-physical-measurement-ranges.md) supersedes only the fixed 1–5 intrinsic and 0–5 individual limit restrictions. Format 3.2.0 accepts positive safe-integer intrinsic measurements and nonnegative safe-integer limits; the remaining capacity invariants are unchanged. The original decision above is retained.

@@ -23,7 +23,7 @@ Separate initialization viability, shared effective structural prerequisites and
 
 ### Detailed implementation
 
-Use the accepted [runtime implementation design](../RUNTIME_IMPLEMENTATION.md) for the focused PropertyOverrideStore, EffectiveStateReader, StateTransaction, ActionExecutionContext, ActionDispatcher and specialized result responsibilities. Use independent candidate collections, explicit presence entries, a four-state private transaction lifecycle and prepared RuntimeState publication. Retain a separate engine-established executable authority association, immediate context expiration and invocation-local violation tracking through outcome inspection. Preserve existing dependency direction and normative contracts; these details do not introduce public interfaces.
+Use the accepted [runtime implementation design](../../engine/RUNTIME_IMPLEMENTATION.md) for the focused PropertyOverrideStore, EffectiveStateReader, StateTransaction, ActionExecutionContext, ActionDispatcher and specialized result responsibilities. Use independent candidate collections, explicit presence entries, a four-state private transaction lifecycle and prepared RuntimeState publication. Retain a separate engine-established executable authority association, immediate context expiration and invocation-local violation tracking through outcome inspection. Preserve existing dependency direction and normative contracts; these details do not introduce public interfaces.
 
 ## Alternatives
 
@@ -33,7 +33,7 @@ Live mutation with inverse journals risks incomplete rollback. Full baseline clo
 
 Clear authority boundaries and consistent outcomes enable future command, choice, narrative and NPC actions. Candidate copying and complete validation have costs; optimize only with evidence. Internal contracts remain independent of serialized formats. Test isolation, reentrancy, failure paths, capability expiration, deterministic ordering and safe arithmetic with trusted test handlers.
 
-Elaborates ADRs [0006](0006-atomic-action-execution-and-turn-progression.md), [0013](0013-namespaced-properties-and-runtime-state.md), [0014](0014-player-identity-and-state-scopes.md), [0015](0015-state-isolation-and-persistence.md), [0016](0016-modular-architecture-and-design-patterns.md), [0019](0019-security-and-trust-boundaries.md) and [0023](0023-action-registry-ownership-and-lifecycle.md). Normative details: [runtime state](../contracts/RUNTIME_STATE.md), [properties](../contracts/PROPERTIES.md), [actions and results](../contracts/ACTIONS_AND_RESULTS.md), [action definitions](../contracts/ACTION_DEFINITIONS.md), [public API](../contracts/PUBLIC_API.md).
+Elaborates ADRs [0006](0006-atomic-action-execution-and-turn-progression.md), [0013](0013-namespaced-properties-and-runtime-state.md), [0014](0014-player-identity-and-state-scopes.md), [0015](0015-state-isolation-and-persistence.md), [0016](0016-modular-architecture-and-design-patterns.md), [0019](0019-security-and-trust-boundaries.md) and [0023](0023-action-registry-ownership-and-lifecycle.md). Normative details: [runtime state](../../engine/contracts/RUNTIME_STATE.md), [properties](../../engine/contracts/PROPERTIES.md), [actions and results](../../engine/contracts/ACTIONS_AND_RESULTS.md), [action definitions](../../engine/contracts/ACTION_DEFINITIONS.md), [public API](../../engine/contracts/PUBLIC_API.md).
 
 ## Subsequent scope clarification
 

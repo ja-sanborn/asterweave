@@ -19,4 +19,4 @@ Rules and state transitions have one authoritative path. Exact action and result
 
 ## Subsequent decisions
 
-[ADR 0006](0006-atomic-action-execution-and-turn-progression.md), [ADR 0007](0007-extensible-and-configurable-action-definitions.md) and [ADR 0008](0008-game-time-and-calendar-separation.md) elaborate this principle. See the current [action and result contracts](../contracts/ACTIONS_AND_RESULTS.md), [action definitions](../contracts/ACTION_DEFINITIONS.md) and [error handling](../contracts/ERROR_HANDLING.md). The original consequences above describe the historical design stage.
+[ADR 0006](0006-atomic-action-execution-and-turn-progression.md), [ADR 0007](0007-extensible-and-configurable-action-definitions.md) and [ADR 0008](0008-game-time-and-calendar-separation.md) elaborate this principle. See the current [action and result contracts](../../engine/contracts/ACTIONS_AND_RESULTS.md), [action definitions](../../engine/contracts/ACTION_DEFINITIONS.md) and [error handling](../../engine/contracts/ERROR_HANDLING.md). The original consequences above describe the historical design stage.

@@ -32,4 +32,4 @@ This record supersedes the milestone restrictions of ADRs [0006](0006-atomic-act
 
 No public signature, schema field, format version, cryptographic mechanism, random algorithm or tooling dependency is selected by this record. Current canonical format 3.2.0, save format 1.0.0 and engine package 0.0.0 remain unchanged. The existing zero third-party development dependency policy remains in force until explicitly revised. Planned capabilities are not implemented or verified merely because their scope is accepted.
 
-See the [roadmap](../ROADMAP.md), [architecture](../ARCHITECTURE.md), [public API](../contracts/PUBLIC_API.md) and [standard actions](../contracts/STANDARD_ACTIONS.md).
+See the [roadmap](../../ROADMAP.md), [architecture](../../ARCHITECTURE.md), [public API](../../engine/contracts/PUBLIC_API.md) and [standard actions](../../engine/contracts/STANDARD_ACTIONS.md).

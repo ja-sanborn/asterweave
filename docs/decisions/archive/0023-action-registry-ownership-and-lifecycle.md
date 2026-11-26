@@ -25,7 +25,7 @@ Global registries risk cross-runtime leakage. State-owned registries mix executa
 
 ## Consequences
 
-Trusted setup requires explicit ownership and complete validated definitions. Independent runtimes can use different registrations without shared mutable state. Registration contracts and diagnostic details are maintained in [action definitions](../contracts/ACTION_DEFINITIONS.md). This accepted design does not by itself establish implemented capabilities. It elaborates ADR 0007 and narrows its registry ownership alternatives to independent runtime ownership.
+Trusted setup requires explicit ownership and complete validated definitions. Independent runtimes can use different registrations without shared mutable state. Registration contracts and diagnostic details are maintained in [action definitions](../../engine/contracts/ACTION_DEFINITIONS.md). This accepted design does not by itself establish implemented capabilities. It elaborates ADR 0007 and narrows its registry ownership alternatives to independent runtime ownership.
 
 Subsequent decision: [ADR 0024](0024-runtime-transactions-and-action-execution.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.
 

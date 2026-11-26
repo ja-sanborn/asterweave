@@ -45,6 +45,6 @@ A monolithic core; modules coupled to the canonical JSON layout or mutable runti
 
 ## Consequences
 
-Module boundaries and dependencies must be reviewable and domain logic must be independently testable with native tooling. Reuse effective-state invariants across initialization, transactions and future restoration. Keep implementation details behind the public facade and maintain explicit JSDoc contracts. See [architecture](../ARCHITECTURE.md) and [coding standards](../CODE_STYLE.md).
+Module boundaries and dependencies must be reviewable and domain logic must be independently testable with native tooling. Reuse effective-state invariants across initialization, transactions and future restoration. Keep implementation details behind the public facade and maintain explicit JSDoc contracts. See [architecture](../../ARCHITECTURE.md) and [coding standards](../../CODE_STYLE.md).
 
 This decision elaborates ADRs 0001–0004 and 0011–0015 without changing the canonical definition or save formats, state ownership or existing feature scope. Concrete interfaces and source files require approved implementation designs. No runtime implementation is introduced by this record.

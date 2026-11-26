@@ -15,4 +15,4 @@ Use standard ECMAScript with no third-party core runtime dependencies. Keep plat
 Browser-specific engine or Node-specific runtime.
 
 ## Consequences
-Headless testing and multiple hosts are possible; adapters and distribution packaging require separate work. See [architecture](../ARCHITECTURE.md).
+Headless testing and multiple hosts are possible; adapters and distribution packaging require separate work. See [architecture](../../ARCHITECTURE.md).

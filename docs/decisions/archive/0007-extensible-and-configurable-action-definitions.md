@@ -19,7 +19,7 @@ Hardcoded closed action enumeration; separate execution paths for extensions; ca
 
 ## Consequences
 
-Registry infrastructure precedes dispatcher integration. Configurable and declarative actions follow later. See [definitions](../contracts/ACTION_DEFINITIONS.md) and [catalog](../contracts/STANDARD_ACTIONS.md). This decision does not implement handlers or finalize the game JSON schema.
+Registry infrastructure precedes dispatcher integration. Configurable and declarative actions follow later. See [definitions](../../engine/contracts/ACTION_DEFINITIONS.md) and [catalog](../../engine/contracts/STANDARD_ACTIONS.md). This decision does not implement handlers or finalize the game JSON schema.
 
 ## Subsequent scope clarification
 
