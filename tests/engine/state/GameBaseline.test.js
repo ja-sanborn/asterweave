@@ -35,11 +35,11 @@ test('baseline owns detached immutable normalized state', () => {
     assert.ok(Object.isFrozen(baseline.world.properties));
     assert.ok(Object.isFrozen(baseline.locations));
     assert.ok(Object.isFrozen(baseline.locations[0].exits[0]));
-    assert.ok(Object.isFrozen(baseline.relationships[0].from));
+    assert.ok(Object.isFrozen(baseline.relationships));
     const lantern = baseline.participant('brassLantern');
-    assert.ok(Object.isFrozen(lantern.properties['stateFoundation.details'].colors));
+    assert.ok(Object.isFrozen(lantern.properties['engine.containment']));
     assert.throws(() => {
-        lantern.properties['stateFoundation.details'].colors.push('silver');
+        lantern.properties['engine.containment'].parentId = 'missing';
     }, TypeError);
     assert.equal(baseline.participant('missing'), undefined);
 });
@@ -51,7 +51,7 @@ test('independent baselines do not share owned records', () => {
     assert.deepEqual(left.entities, right.entities);
     assert.notEqual(left.entities, right.entities);
     assert.notEqual(left.participant('apple'), right.participant('apple'));
-    assert.notEqual(left.relationships[0].properties, right.relationships[0].properties);
+    assert.notEqual(left.relationships, right.relationships);
 });
 
 test('baseline excludes runtime player records', () => {

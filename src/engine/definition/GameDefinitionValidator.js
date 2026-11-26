@@ -13,10 +13,8 @@
 import { validateEffectiveStructure } from '../state/validateEffectiveStructure.js';
 import { GameDefinitionMapper } from './GameDefinitionMapper.js';
 import { participants } from './validateIdentity.js';
-import { appendPointer } from '../diagnostics/jsonPointer.js';
 import { WORLD_CODES } from '../world/worldDiagnostics.js';
 import { validateWorldState } from '../world/validateWorldState.js';
-import { validateGameProperties, validateRelationshipPairs } from '../state/validateProperties.js';
 import { inspectJsonData } from '../shared/jsonData.js';
 import { DiagnosticCollector } from '../diagnostics/DiagnosticCollector.js';
 import { validateStructure } from './validateStructure.js';
@@ -79,20 +77,6 @@ export class GameDefinitionValidator {
         };
         validateWorldState(candidate, report, true);
 
-        // Check authored ownership before accepting normalized maps; reserved keys
-        // must not be concealed by the engine defaults in the mapped candidate.
-        const namespace = definition.game.namespace;
-        checkMap(definition.world.initialProperties, namespace, '/world/initialProperties', collector);
-        for (const { participant, path } of participants(definition.world)) {
-            checkMap(participant.initialProperties, namespace, path + '/initialProperties', collector);
-        }
-        validateRelationshipPairs(candidate.relationships, (code, index, message) => {
-            reportDefinition(collector, code, '/world/initialRelationships/' + index, message);
-        });
-        for (const [index, entry] of candidate.relationships.entries()) {
-            checkMap(entry.properties, namespace,
-                '/world/initialRelationships/' + index + '/initialProperties', collector);
-        }
         // Authored findings retain their existing precedence. A structurally invalid
         // mapped candidate with no authored findings is an internal mapping defect.
         if (collector.size === 0 && !validateEffectiveStructure(candidate)) {
@@ -125,19 +109,4 @@ function domainPointer(sources, id, property, index) {
         return root + '/initialAssociations' + (index === undefined ? '' : '/' + index);
     }
     return root + '/physical/' + property;
-}
-
-/**
- * Checks game-owned keys and translates findings to authored property pointers.
- * @param {object|undefined} properties - Optional authored map.
- * @param {string} namespace - Game namespace.
- * @param {string} path - Authored map pointer.
- * @param {DiagnosticCollector} collector - Operation collector.
- */
-function checkMap(properties, namespace, path, collector) {
-    if (properties !== undefined) {
-        validateGameProperties(properties, namespace, (code, key, message) => {
-            reportDefinition(collector, code, appendPointer(path, key), message);
-        });
-    }
 }

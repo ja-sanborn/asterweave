@@ -63,7 +63,7 @@ test('rejects unsafe data before authored shape interpretation', () => {
 });
 
 test('rejects old formats without interpreting incompatible shape', () => {
-    for (const formatVersion of ['1.0.0', '2.0.0', '3.0.0', '3.1.0', '4.0.0']) {
+    for (const formatVersion of ['1.0.0', '2.0.0', '3.0.0', '3.1.0', '3.2.0', '4.1.0']) {
         const result = validate({ formatVersion });
         assert.equal(result.definition, undefined);
         assert.deepEqual(result.diagnostics.map((item) => item.code), ['UNSUPPORTED_FORMAT_VERSION']);
@@ -72,13 +72,13 @@ test('rejects old formats without interpreting incompatible shape', () => {
 
 test('reports independent required, invalid and unknown fields in schema order', () => {
     const input = fixture();
-    delete input.game.namespace;
+    delete input.game.id;
     input.game.title = ' ';
     input.game.extra = true;
     input.world.entities = null;
     const result = validate(input);
     assert.deepEqual(result.diagnostics.map(({ code, path }) => ({ code, path })), [
-        { code: 'REQUIRED_FIELD', path: '/game/namespace' },
+        { code: 'REQUIRED_FIELD', path: '/game/id' },
         { code: 'INVALID_VALUE', path: '/game/title' },
         { code: 'UNKNOWN_FIELD', path: '/game/extra' },
         { code: 'INVALID_TYPE', path: '/world/entities' },
@@ -126,27 +126,31 @@ test('validates physical safe integer ranges without imposing five-point limits'
     }
 });
 
-test('rejects invalid endpoint shape and empty relationship properties', () => {
+test('rejects removed authored relationship and property fields', () => {
     const input = fixture();
-    input.world.initialRelationships = [{
-        from: { scope: 'world', id: 'world' },
-        to: { scope: 'player', id: 'player' },
-        initialProperties: {},
-    }];
-    assert.deepEqual(validate(input).diagnostics.map((item) => item.path), [
-        '/world/initialRelationships/0/from/id',
-        '/world/initialRelationships/0/to/scope',
-        '/world/initialRelationships/0/initialProperties',
+    input.world.initialRelationships = [];
+    input.world.initialProperties = {};
+    input.world.locations[0].initialProperties = {};
+    input.world.actors[0].initialProperties = {};
+    input.world.entities[0].initialProperties = {};
+    assert.deepEqual(validate(input).diagnostics.map(({ code, path }) => ({ code, path })), [
+        { code: 'UNKNOWN_FIELD', path: '/world/locations/0/initialProperties' },
+        { code: 'UNKNOWN_FIELD', path: '/world/actors/0/initialProperties' },
+        { code: 'UNKNOWN_FIELD', path: '/world/entities/0/initialProperties' },
+        { code: 'UNKNOWN_FIELD', path: '/world/initialProperties' },
+        { code: 'UNKNOWN_FIELD', path: '/world/initialRelationships' },
     ]);
 });
 
-test('rejects reserved namespace and reserved participant identity', () => {
+test('rejects removed game namespace and independently rejects reserved participant identity', () => {
     const input = fixture();
     input.game.namespace = 'engine';
-    input.world.entities[0].id = 'world';
-    assert.deepEqual(validate(input).diagnostics.map((item) => item.path), [
-        '/game/namespace', '/world/entities/0/id',
+    assert.deepEqual(validate(input).diagnostics.map(({ code, path }) => ({ code, path })), [
+        { code: 'UNKNOWN_FIELD', path: '/game/namespace' },
     ]);
+    delete input.game.namespace;
+    input.world.entities[0].id = 'world';
+    assert.deepEqual(validate(input).diagnostics.map((item) => item.path), ['/world/entities/0/id']);
 });
 
 test('detects shared IDs and suppresses ambiguous reference resolution', () => {
@@ -166,14 +170,8 @@ test('rejects wrong-kind and unknown references in all authored record categorie
     input.world.locations[0].exits[0].destinationId = 'world';
     input.world.actors[0].initialContainment.parentId = 'missing';
     input.world.entities[0].initialAssociations = [{ targetId: 'missing', relationship: 'near' }];
-    input.world.initialRelationships = [{
-        from: { scope: 'actor', id: 'entrance' },
-        to: { scope: 'entity', id: 'missing' },
-        initialProperties: { 'lanternHouse.trust': 1 },
-    }];
     assert.deepEqual(validate(input).diagnostics.map((item) => item.code), [
         'INVALID_REFERENCE_KIND', 'UNKNOWN_REFERENCE', 'UNKNOWN_REFERENCE',
-        'INVALID_REFERENCE_KIND', 'UNKNOWN_REFERENCE',
     ]);
 });
 

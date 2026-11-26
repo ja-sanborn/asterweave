@@ -2,21 +2,13 @@
   "saveFormatVersion": "1.0.0",
   "gameId": "org.example.stateFoundation",
   "gameVersion": "0.1.0",
-  "gameFormatVersion": "3.2.0",
+  "gameFormatVersion": "4.0.0",
   "state": {
     "overrides": [
       {
         "scope": "world",
         "values": {
-          "engine.turn": 42,
-          "stateFoundation.powerRestored": true
-        }
-      },
-      {
-        "scope": "location",
-        "id": "cellar",
-        "values": {
-          "stateFoundation.isDark": false
+          "engine.turn": 42
         }
       },
       {
@@ -33,29 +25,11 @@
         "scope": "entity",
         "id": "brassLantern",
         "values": {
-          "stateFoundation.details": {
-            "colors": [
-              "brass",
-              "gold"
-            ],
-            "working": true
-          },
-          "stateFoundation.fuel": 85,
-          "stateFoundation.isLit": true,
-          "stateFoundation.note": "refilled",
-          "stateFoundation.target": null
+          "engine.weight": 85
         },
         "removed": [
-          "stateFoundation.label"
+          "engine.size"
         ]
-      },
-      {
-        "scope": "entity",
-        "id": "safe",
-        "values": {
-          "stateFoundation.locked": false,
-          "stateFoundation.open": true
-        }
       },
       {
         "scope": "actor",
@@ -66,26 +40,13 @@
             "relationship": "in"
           }
         }
-      },
-      {
-        "scope": "relationship",
-        "from": {
-          "scope": "actor",
-          "id": "guide"
-        },
-        "to": {
-          "scope": "actor",
-          "id": "adventurer"
-        },
-        "values": {
-          "stateFoundation.trust": 3
-        }
       }
     ],
     "players": [
       {
         "id": "playerOne",
         "properties": {
+          "engine.id": "playerOne",
           "engine.controlledActors": [
             "adventurer"
           ],

@@ -14,7 +14,6 @@ import { WORLD_OPERATIONS } from '../world/worldOperations.js';
 import { immutableCopy } from '../shared/immutableData.js';
 import { isRecord } from '../shared/recordShape.js';
 import { isSynchronousAssociation } from './executableAssociations.js';
-import { isIdentifier } from '../shared/identifiers.js';
 import { isStandardActionType } from './actionIdentifiers.js';
 import { validateActionDefinition } from './validateActionDefinition.js';
 import {
@@ -30,12 +29,10 @@ const CONSTRUCTION = Symbol('ActionRegistry construction');
  * @returns {boolean} Validity.
  */
 function validGrants(grants) {
-    return !(!isRecord(grants) || Object.keys(grants).length !== 2
-                || !Array.isArray(grants.namespaces) || !Array.isArray(grants.operations)
-                || grants.namespaces.some((name) => !isIdentifier(name) || name === 'engine')
+    return !(!isRecord(grants) || Object.keys(grants).length !== 1
+                || !Array.isArray(grants.operations)
                 || grants.operations.some((name) => !['grantControl', 'revokeControl',
                     'selectActor', 'clearSelection', ...WORLD_OPERATIONS].includes(name))
-                || new Set(grants.namespaces).size !== grants.namespaces.length
                 || new Set(grants.operations).size !== grants.operations.length);
 }
 
@@ -217,7 +214,7 @@ export class ActionRegistry {
      * Establishes immutable mutation grants separately from registration authority.
      * @param {symbol} authority - Independent engine setup grant capability.
      * @param {string} type - Already registered action type.
-     * @param {object} input - Closed namespace and operation grants.
+     * @param {object} input - Closed operation grants.
      * @throws {TypeError} For invalid authority, lifecycle or grants.
      */
     establishMutationGrants(authority, type, input) {
@@ -243,7 +240,7 @@ export class ActionRegistry {
      * @returns {object} Immutable grants, defaulting to no mutation authority.
      */
     mutationGrants(type) {
-        return this.#grants.get(type) ?? immutableCopy({ namespaces: [], operations: [] });
+        return this.#grants.get(type) ?? immutableCopy({ operations: [] });
     }
     /**
      * Verifies bounded retained registry structure without invoking handlers.
@@ -268,7 +265,7 @@ export class ActionRegistry {
         }
         for (const [type, grants] of this.#grants) {
             if (!this.#registrations.has(type) || !validGrants(grants) || !Object.isFrozen(grants)
-                || !Object.isFrozen(grants.namespaces) || !Object.isFrozen(grants.operations)) {
+                || !Object.isFrozen(grants.operations)) {
                 return false;
             }
         }

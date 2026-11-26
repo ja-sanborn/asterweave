@@ -1,10 +1,9 @@
 {
-  "formatVersion": "3.2.0",
+  "formatVersion": "4.0.0",
   "game": {
     "id": "org.example.containment",
     "version": "0.1.0",
-    "title": "The Hidden Safe",
-    "namespace": "containment"
+    "title": "The Hidden Safe"
   },
   "world": {
     "locations": [

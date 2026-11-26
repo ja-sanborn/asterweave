@@ -23,7 +23,7 @@ import { ActionDispatcher } from '../../../src/engine/core/ActionDispatcher.js';
  * Creates independent trusted dispatch collaborators with explicit grants.
  * @param {Function} handler - Test handler.
  * @param {string[]} operations - Granted operations.
- * @param {object} [settings] - Optional test player and namespace grants.
+ * @param {object} [settings] - Optional test player configuration.
  * @returns {object} Test collaborators.
  */
 function setup(handler, operations = ['relocate', 'establishAssociation', 'removeAssociation'], settings = {}) {
@@ -36,7 +36,7 @@ function setup(handler, operations = ['relocate', 'establishAssociation', 'remov
     const { registry, registrationAuthority, grantAuthority } = ActionRegistry.create();
     assert.equal(registry.register(registrationAuthority, { type: 'interact', enabled: true,
         turnCostSuccess: 0, turnCostFail: 1, arguments: {} }, handler).status, 'completed');
-    registry.establishMutationGrants(grantAuthority, 'interact', { namespaces: settings.namespaces ?? [], operations });
+    registry.establishMutationGrants(grantAuthority, 'interact', { operations });
     registry.finalize();
     const dispatcher = new ActionDispatcher(state, registry, Symbol('trusted'));
     const action = { actorId: 'player', type: 'interact', args: {} };
@@ -260,8 +260,6 @@ test('physical mutation authority is independent and malformed values invalidate
             context.setPhysicalProperty('rug', 'sizeCapacity', Number.MAX_SAFE_INTEGER + 1)],
         [['modifyPhysicalProperties'], (context) => context.removePhysicalProperty('rug', 'isContainer')],
         [['modifyPhysicalProperties'], (context) => context.setPhysicalProperty('rug', 'lifecycle', 'inactive')],
-        [['modifyPhysicalProperties'], (context) =>
-            context.setProperty({ scope: 'entity', id: 'rug' }, 'engine.weight', 1)],
     ]) {
         const { state, run } = setup((action, context) => {
             assert.throws(() => operation(context), TypeError);
@@ -364,21 +362,17 @@ test('explicit recursive destruction preserves identities and cleans control and
     assert.equal(state.world.resolve('driver').getProperty('engine.weight'), 4);
 });
 
-test('lifecycle cleanup removes physical associations but preserves nonphysical relationships', () => {
-    const address = { scope: 'relationship',
-        from: { scope: 'entity', id: 'hiddenKey' }, to: { scope: 'entity', id: 'rug' } };
+test('lifecycle cleanup removes physical associations and retains empty nonphysical relationships', () => {
     const { state, run } = setup((action, context) => {
-        context.setProperty(address, 'containment.memory', true);
         assert.equal(context.establishAssociation('rug', 'hiddenKey', 'near').changed, true);
         assert.equal(context.deactivate('rug').changed, true);
         assert.equal(context.activate('rug', 'bedroom', 'in').changed, true);
-        assert.deepEqual(context.getProperty(address, 'containment.memory'), { present: true, value: true });
         return completed();
-    }, ['deactivate', 'activate', 'establishAssociation'], { namespaces: ['containment'] });
+    }, ['deactivate', 'activate', 'establishAssociation']);
     assert.equal(run().status, 'completed');
     assert.deepEqual(state.readWorldProperties('rug')['engine.associations'], []);
     assert.deepEqual(state.readWorldProperties('hiddenKey')['engine.associations'], []);
-    assert.equal(state.readEffectiveState().relationships[0].properties['containment.memory'], true);
+    assert.deepEqual(state.readEffectiveState().relationships, []);
 });
 
 test('reactivation restores neither control nor selection and allows baseline normalization', () => {

@@ -11,4 +11,4 @@
  */
 
 /** @type {string} Exact supported canonical definition format. */
-export const DEFINITION_FORMAT = '3.2.0';
+export const DEFINITION_FORMAT = '4.0.0';

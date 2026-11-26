@@ -23,8 +23,7 @@ test('effective reads distinguish null, removal and isolated candidate values', 
         locations: [], actors: [{ id: 'hero', properties: {} }], entities: [],
         players: [], relationships: [],
     });
-    const player = new Player({ id: 'hero', controlledActors: ['hero'],
-        initialProperties: { 'game.note': null } });
+    const player = new Player({ id: 'hero', controlledActors: ['hero'] });
     const store = new PropertyOverrideStore();
     const committed = new EffectiveStateReader(baseline, store, player);
     const candidateStore = store.clone();
@@ -37,7 +36,7 @@ test('effective reads distinguish null, removal and isolated candidate values', 
     candidateStore.set(pair, 'game.note', null, candidate.getInitialProperty(pair, 'game.note'));
     assert.deepEqual(committed.getProperty(world, 'game.value'), { present: true, value: 1 });
     assert.deepEqual(candidate.getProperty(world, 'game.value'), { present: false });
-    assert.deepEqual(candidate.getProperty(playerAddress, 'game.note'), { present: true, value: null });
+    assert.deepEqual(candidate.getProperty(pair, 'game.note'), { present: true, value: null });
     assert.deepEqual(candidate.getProperties(world), {});
     assert.deepEqual(committed.listRelationships(), []);
     assert.deepEqual(candidate.listRelationships(), [

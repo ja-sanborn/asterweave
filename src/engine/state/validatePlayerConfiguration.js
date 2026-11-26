@@ -13,11 +13,10 @@
 import { isRecord, missingFields, unknownFields } from '../shared/recordShape.js';
 import { WORLD_ID } from '../world/worldRelationships.js';
 import { inspectJsonData } from '../shared/jsonData.js';
-import { isIdentifier, isQualifiedKey } from '../shared/identifiers.js';
+import { isIdentifier } from '../shared/identifiers.js';
 import { appendPointer } from '../diagnostics/jsonPointer.js';
 import { DiagnosticCollector } from '../diagnostics/DiagnosticCollector.js';
 import { isControllableActor, isSelectionValid } from './validateControlMembership.js';
-import { validateGameProperties } from './validateProperties.js';
 
 /** @type {Readonly<object>} Initialization configuration diagnostic codes. */
 const C = Object.freeze({
@@ -82,13 +81,13 @@ function checkRecord(value, path, allowed, required, report) {
 }
 
 /**
- * Checks player identity, control, selection and authored property ownership.
+ * Checks player identity, control, and selection.
  * @param {*} player - Candidate configuration.
  * @param {object|undefined} candidate - Valid effective definition, if available.
  * @param {Function} report - Finding reporter.
  */
 function checkPlayer(player, candidate, report) {
-    const fields = ['id', 'controlledActors', 'selectedActor', 'initialProperties'];
+    const fields = ['id', 'controlledActors', 'selectedActor'];
     if (!checkRecord(player, '/player', fields, ['id', 'controlledActors'], report)) {
         return;
     }
@@ -103,24 +102,6 @@ function checkPlayer(player, candidate, report) {
         && checkIdentifier(player.selectedActor, '/player/selectedActor', report)
         && controlled !== undefined && !isSelectionValid(controlled, player.selectedActor)) {
         report(C.INVALID_VALUE, '/player/selectedActor', 'Selected actor must be controlled.');
-    }
-    if (Object.hasOwn(player, 'initialProperties')) {
-        const properties = player.initialProperties;
-        if (!isRecord(properties)) {
-            report(C.INVALID_TYPE, '/player/initialProperties', 'Expected a property map.');
-        } else if (candidate !== undefined) {
-            validateGameProperties(properties, candidate.game.namespace, (code, key, message) => {
-                report(code, appendPointer('/player/initialProperties', key), message);
-            });
-        } else {
-            // Grammar and the reserved namespace can be checked without a valid definition.
-            for (const key of Object.keys(properties).sort()) {
-                if (!isQualifiedKey(key) || key.startsWith('engine.')) {
-                    report(C.INVALID_VALUE, appendPointer('/player/initialProperties', key),
-                        'Invalid or reserved property key.');
-                }
-            }
-        }
     }
 }
 

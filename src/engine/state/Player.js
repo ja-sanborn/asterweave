@@ -12,7 +12,7 @@
 
 import { isControllableActor } from './validateControlMembership.js';
 import { immutableCopy } from '../shared/immutableData.js';
-import { isQualifiedKey, isIdentifier } from '../shared/identifiers.js';
+import { isIdentifier } from '../shared/identifiers.js';
 
 /** Nonphysical player, owning complete current player properties. */
 export class Player {
@@ -29,7 +29,6 @@ export class Player {
             throw new TypeError('Invalid player construction.');
         }
         const properties = {
-            ...configuration.initialProperties,
             'engine.id': configuration.id,
             'engine.controlledActors': configuration.controlledActors,
         };
@@ -146,54 +145,6 @@ export class Player {
             const properties = { ...this.#record.properties };
             delete properties['engine.selectedActor'];
             this.#replace(properties);
-        }
-    }
-
-    /**
-     * Checks that a key is an ordinary property; caller establishes namespace authority.
-     * @param {string} key - Qualified key.
-     * @throws {TypeError} For protected or invalid keys.
-     */
-    #requireOrdinary(key) {
-        if (!isQualifiedKey(key) || key.startsWith('engine.')) {
-            throw new TypeError('Invalid ordinary player property.');
-        }
-    }
-
-    /**
-     * Sets an ordinary property.
-     * @param {string} key - Qualified key.
-     * @param {*} value - JSON value.
-     */
-    setProperty(key, value) {
-        this.#requireOrdinary(key);
-        this.#replace({ ...this.#record.properties, [key]: value });
-    }
-
-    /**
-     * Removes an ordinary property.
-     * @param {string} key - Qualified key.
-     */
-    removeProperty(key) {
-        this.#requireOrdinary(key);
-        if (!Object.hasOwn(this.#record.properties, key)) {
-            return;
-        }
-        const properties = { ...this.#record.properties };
-        delete properties[key];
-        this.#replace(properties);
-    }
-
-    /**
-     * Restores the original property value or absence.
-     * @param {string} key - Qualified key.
-     * @param {object} initial - Original presence entry.
-     */
-    resetProperty(key, initial) {
-        if (initial.present) {
-            this.setProperty(key, initial.value);
-        } else {
-            this.removeProperty(key);
         }
     }
 

@@ -35,10 +35,13 @@ test('effective candidate validation rejects malformed protected values and doma
         (s) => { s.entities[0].properties['engine.containment'] = { parentId: 'missing', relationship: 'in' }; },
         (s) => { s.players[0].properties['engine.controlledActors'] = ['guide', 'guide']; },
         (s) => { s.players[0].properties['engine.selectedActor'] = 'guide'; },
-        (s) => { s.relationships[0].from.id = 'missing'; },
-        (s) => { s.relationships.push(s.relationships[0]); },
+        (s) => { s.relationships.push({ from: { scope: 'world' }, to: { scope: 'actor', id: 'guide' }, properties: { 'game.trust': 1 } }); },
+        (s) => { s.entities[0].properties['engine.turn'] = 1; },
         (s) => { s.locations[0].exits[0].destinationId = 'guide'; },
         (s) => { s.entities[0].properties['foreign.value'] = 1; },
+        (s) => { s.world.properties['engine.unknown'] = 1; },
+        (s) => { s.entities[0].properties['asterweave.name'] = 'Legacy'; },
+        (s) => { s.game.namespace = 'game'; },
     ]) {
         const state = candidate();
         mutate(state);

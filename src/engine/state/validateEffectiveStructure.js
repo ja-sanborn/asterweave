@@ -17,20 +17,16 @@ import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
 import { WORLD_ID } from '../world/worldRelationships.js';
 import { WORLD_PROPERTY_NAMES, isWorldPropertyValue } from '../world/worldPropertyShape.js';
 import { isStandardDirection } from '../world/navigationDirections.js';
-import { isGamePropertyKey } from './validateProperties.js';
-import { validatePropertyAddress } from './propertyAddress.js';
 
 /**
- * Checks a property map's qualified keys and namespace ownership.
+ * Checks a property map's supported domain property keys.
  * @param {*} properties - Inspected map.
- * @param {string} namespace - Game namespace.
  * @param {Array<string>} reserved - Allowed engine property keys without prefix.
  * @returns {boolean} Validity.
  */
-function mapValid(properties, namespace, reserved) {
+function mapValid(properties, reserved) {
     return isRecord(properties) && Object.keys(properties).every((key) =>
-        isGamePropertyKey(key, namespace)
-            || reserved.some((name) => key === 'engine.' + name));
+        reserved.some((name) => key === 'engine.' + name));
 }
 
 /**
@@ -42,17 +38,15 @@ export function validateEffectiveStructure(input) {
     const { value: state, issues } = inspectJsonData(input);
     if (issues.length || !isRecord(state) || !isRecord(state.game)
         || Object.keys(state).length !== 7
-        || Object.keys(state.game).length !== 5
+        || Object.keys(state.game).length !== 4
         || !isGameId(state.game.id) || !isVersion(state.game.version)
         || !isVersion(state.game.formatVersion) || typeof state.game.title !== 'string'
         || state.game.title.trim().length === 0
-        || !isIdentifier(state.game.namespace) || state.game.namespace === 'engine'
         || !isRecord(state.world) || Object.keys(state.world).length !== 1) {
         return false;
     }
-    const namespace = state.game.namespace;
     const world = state.world.properties;
-    if (!mapValid(world, namespace, ['id', 'name', 'lifecycle', 'turn'])
+    if (!mapValid(world, ['id', 'name', 'lifecycle', 'turn'])
         || world['engine.id'] !== WORLD_ID || world['engine.name'] !== 'World'
         || world['engine.lifecycle'] !== 'active'
         || !Number.isSafeInteger(world['engine.turn']) || world['engine.turn'] < 0) {
@@ -70,7 +64,7 @@ export function validateEffectiveStructure(input) {
             }
             ids.add(record.id);
             const p = record.properties;
-            if (!mapValid(p, namespace, ['id', 'name', 'description', ...WORLD_PROPERTY_NAMES])
+            if (!mapValid(p, ['id', 'name', 'description', ...WORLD_PROPERTY_NAMES])
                 || p['engine.id'] !== record.id || typeof p['engine.name'] !== 'string'
                 || p['engine.name'].trim().length === 0
                 || !WORLD_PROPERTY_NAMES.every((name) =>
@@ -94,7 +88,7 @@ export function validateEffectiveStructure(input) {
     }
     for (const player of state.players) {
         if (!isRecord(player) || Object.keys(player).length !== 2 || !isIdentifier(player.id)
-            || !mapValid(player.properties, namespace, ['id', 'controlledActors', 'selectedActor'])
+            || !mapValid(player.properties, ['id', 'controlledActors', 'selectedActor'])
             || player.properties['engine.id'] !== player.id
             || !Array.isArray(player.properties['engine.controlledActors'])
             || !player.properties['engine.controlledActors'].every(isIdentifier)
@@ -103,7 +97,5 @@ export function validateEffectiveStructure(input) {
             return false;
         }
     }
-    return state.relationships.every((record) => isRecord(record) && Object.keys(record).length === 3
-        && validatePropertyAddress({ scope: 'relationship', from: record.from, to: record.to }) !== undefined
-        && mapValid(record.properties, namespace, []) && Object.keys(record.properties).length > 0);
+    return state.relationships.length === 0;
 }

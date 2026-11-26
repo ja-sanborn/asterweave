@@ -29,7 +29,6 @@ export class GameDefinitionMapper {
             game: { ...game, formatVersion },
             world: {
                 properties: {
-                    ...gameProperties(world.initialProperties),
                     'engine.id': WORLD_ID,
                     'engine.name': 'World',
                     'engine.lifecycle': 'active',
@@ -40,11 +39,7 @@ export class GameDefinitionMapper {
                 collection, world[collection].map((record) => mapParticipant(record, kind)),
             ])),
             players: [],
-            relationships: (world.initialRelationships ?? []).map((record) => ({
-                from: record.from,
-                to: record.to,
-                properties: record.initialProperties,
-            })),
+            relationships: [],
         };
     }
 }
@@ -57,7 +52,6 @@ export class GameDefinitionMapper {
  */
 function mapParticipant(record, kind) {
     const properties = {
-        ...gameProperties(record.initialProperties),
         'engine.id': record.id,
         'engine.name': record.name,
         'engine.lifecycle': record.initialLifecycle ?? 'active',
@@ -78,15 +72,4 @@ function mapParticipant(record, kind) {
     return kind === 'location'
         ? { id: record.id, properties, exits: record.exits }
         : { id: record.id, properties };
-}
-
-/**
- * Keeps reserved keys out of the structural candidate. Authored ownership
- * findings are reported separately from the original, unmodified input.
- * @param {object|undefined} properties - Authored map.
- * @returns {object} Candidate game properties.
- */
-function gameProperties(properties) {
-    return Object.fromEntries(Object.entries(properties ?? {})
-        .filter(([key]) => !key.startsWith('engine.')));
 }

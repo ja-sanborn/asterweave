@@ -39,7 +39,6 @@ test('accepts ordered active controls and explicit selection with separate playe
         id: 'guide',
         controlledActors: ['guide', 'adventurer'],
         selectedActor: 'adventurer',
-        initialProperties: { 'stateFoundation.value': null },
     } };
     const result = validatePlayerConfiguration(options, candidate());
     assert.deepEqual(result.diagnostics, []);
@@ -114,7 +113,7 @@ test('rejects selection outside the controlled list and preserves omission', () 
         '/player/selectedActor');
 });
 
-test('rejects reserved, foreign and malformed player property keys', () => {
+test('rejects removed player property configuration', () => {
     const result = validatePlayerConfiguration({
         player: { id: 'playerOne', controlledActors: [], initialProperties: {
             'engine.selectedActor': 'guide',
@@ -123,9 +122,7 @@ test('rejects reserved, foreign and malformed player property keys', () => {
         } },
     }, candidate());
     assert.deepEqual(result.diagnostics.map((item) => item.path), [
-        '/player/initialProperties/bad~0~1key',
-        '/player/initialProperties/engine.selectedActor',
-        '/player/initialProperties/foreign.value',
+        '/player/initialProperties',
     ]);
 });
 
@@ -137,7 +134,7 @@ test('checks independent options with invalid definition and suppresses unavaila
             } },
     }, undefined);
     assert.deepEqual(result.diagnostics.map((item) => item.path), [
-        '/player/selectedActor', '/player/initialProperties/engine.id',
+        '/player/initialProperties', '/player/selectedActor',
     ]);
     assert.ok(result.diagnostics.every((item) => item.source === 'options'));
 });

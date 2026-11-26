@@ -29,12 +29,12 @@ test('reset restores original state and preserves registry, snapshots and identi
     registry.register(registrationAuthority, { type: 'interact', enabled: true,
         turnCostSuccess: 1, turnCostFail: 0, arguments: {} }, (action, context) => {
         assert.equal(resetter.reset().error.code, 'RESET_UNAVAILABLE');
-        context.setProperty({ scope: 'entity', id: 'brassLantern' }, 'stateFoundation.fuel', 10);
+        assert.equal(context.setPhysicalProperty('brassLantern', 'weight', 10).status, 'completed');
         context.revokeControl('player', 'adventurer');
         return { status: 'completed', outcome: 'success' };
     });
     registry.establishMutationGrants(grantAuthority, 'interact',
-        { namespaces: ['stateFoundation'], operations: ['revokeControl'] });
+        { operations: ['revokeControl', 'modifyPhysicalProperties'] });
     registry.finalize();
     const dispatcher = new ActionDispatcher(state, registry);
     const original = state.readEffectiveState();
@@ -42,12 +42,12 @@ test('reset restores original state and preserves registry, snapshots and identi
     const result = dispatcher.dispatchPlayerAction({ actorId: 'adventurer', type: 'interact', args: {} });
     assert.equal(result.status, 'completed');
     const changed = state.readEffectiveState();
-    assert.equal(identity.getProperty('stateFoundation.fuel'), 10);
+    assert.equal(identity.getProperty('engine.weight'), 10);
     assert.equal(state.player.properties['engine.selectedActor'], undefined);
     assert.equal(resetter.reset().status, 'completed');
     assert.deepEqual(state.readEffectiveState(), original);
     assert.equal(state.world.resolve('brassLantern'), identity);
-    assert.equal(identity.getProperty('stateFoundation.fuel'), 100);
+    assert.equal(identity.getProperty('engine.weight'), 100);
     assert.equal(registry.size, 1);
     assert.equal(changed.world.properties['engine.turn'], 1);
 

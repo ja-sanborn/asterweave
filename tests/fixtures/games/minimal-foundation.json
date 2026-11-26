@@ -1,10 +1,9 @@
 {
-  "formatVersion": "3.2.0",
+  "formatVersion": "4.0.0",
   "game": {
     "id": "org.example.lanternHouse",
     "version": "0.1.0",
-    "title": "Lantern House",
-    "namespace": "lanternHouse"
+    "title": "Lantern House"
   },
   "world": {
     "locations": [

@@ -10,8 +10,6 @@
  * @module state/ActionExecutionContext
  */
 
-import { isQualifiedKey } from '../shared/identifiers.js';
-
 /** Exposes narrow, expiring access to one isolated action candidate. */
 export class ActionExecutionContext {
     /** @type {object|undefined} Active transaction, cleared at handler exit. */
@@ -41,20 +39,6 @@ export class ActionExecutionContext {
             throw new Error('Action context has expired.');
         }
         return this.#transaction;
-    }
-
-    /**
-     * Establishes granted property mutation authority.
-     * @param {string} key - Qualified property key.
-     * @returns {object} Authorized transaction.
-     */
-    #propertyAuthority(key) {
-        const transaction = this.#active();
-        if (!isQualifiedKey(key) || !this.#grants.namespaces.includes(key.split('.')[0])) {
-            transaction.invalidate();
-            throw new TypeError('Unauthorized property mutation.');
-        }
-        return transaction;
     }
 
     /**
@@ -95,27 +79,6 @@ export class ActionExecutionContext {
      * @returns {boolean} Presence.
      */
     hasProperty(address, key) { return this.#active().hasProperty(address, key); }
-
-    /**
-     * @param {object} address - Subject.
-     * @param {string} key - Key.
-     * @param {*} value - Value.
-     */
-    setProperty(address, key, value) {
-        this.#propertyAuthority(key).stagePropertySet(address, key, value);
-    }
-
-    /**
-     * @param {object} address - Subject.
-     * @param {string} key - Key.
-     */
-    removeProperty(address, key) { this.#propertyAuthority(key).stagePropertyRemoval(address, key); }
-
-    /**
-     * @param {object} address - Subject.
-     * @param {string} key - Key.
-     */
-    resetProperty(address, key) { this.#propertyAuthority(key).stagePropertyReset(address, key); }
 
     /**
      * @param {string} playerId - Player.

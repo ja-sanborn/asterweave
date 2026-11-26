@@ -50,7 +50,6 @@ test('initial runtime has zero turn, empty differences and no implicit player', 
 test('player is separate from physical participants and stores complete properties', () => {
     const state = initialize({ player: {
         id: 'guide', controlledActors: ['guide', 'adventurer'], selectedActor: 'guide',
-        initialProperties: { 'stateFoundation.note': null },
     } });
     assert.ok(Object.isFrozen(state.player));
     assert.equal(state.player.grantControl, undefined);
@@ -65,7 +64,6 @@ test('player is separate from physical participants and stores complete properti
         'engine.id': 'guide',
         'engine.controlledActors': ['guide', 'adventurer'],
         'engine.selectedActor': 'guide',
-        'stateFoundation.note': null,
     });
     assert.deepEqual(state.overrides, []);
     assert.equal(state.readEffectiveState().players[0], state.player);
@@ -78,13 +76,11 @@ test('selection remains absent even with one controlled actor', () => {
 });
 
 test('runtime isolates original configuration and current player state', () => {
-    const options = { player: { id: 'playerOne', controlledActors: ['guide'],
-        initialProperties: { 'stateFoundation.notes': ['one'] } } };
+    const options = { player: { id: 'playerOne', controlledActors: ['guide'] } };
     const state = initialize(options);
     options.player.controlledActors.push('adventurer');
-    options.player.initialProperties['stateFoundation.notes'].push('two');
     assert.deepEqual(state.player.properties['engine.controlledActors'], ['guide']);
-    assert.deepEqual(state.initialOptions.player.initialProperties['stateFoundation.notes'], ['one']);
+    assert.deepEqual(state.initialOptions.player.controlledActors, ['guide']);
     assert.ok(Object.isFrozen(state.player.properties));
     assert.ok(Object.isFrozen(state.initialOptions.player.controlledActors));
     assert.notEqual(state.initialOptions, state.initialOptions);
@@ -99,7 +95,7 @@ test('runtime reads baseline values through authoritative domain collaborators',
     assert.equal(actor.name, 'Guide');
     assert.equal(actor.getProperty('engine.containment').parentId, 'cellar');
     const properties = state.readWorldProperties('brassLantern');
-    assert.equal(properties['stateFoundation.fuel'], 100);
+    assert.equal(properties['engine.weight'], 100);
     assert.equal(state.readWorldProperties('missing'), undefined);
     assert.ok(Object.isFrozen(properties));
     assert.equal(state.world.resolve('entrance').getExit('east').destinationId, 'cellar');

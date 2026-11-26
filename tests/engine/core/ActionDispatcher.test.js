@@ -21,7 +21,7 @@ import { ActionDispatcher } from '../../../src/engine/core/ActionDispatcher.js';
 /**
  * Creates a trusted test-only runtime.
  * @param {Function} handler - Test handler.
- * @param {boolean} [grant] - Whether to grant ordinary mutation authority.
+ * @param {boolean} [grant] - Whether to grant physical mutation authority.
  * @param {object} [settings] - Trusted test metadata and player configuration.
  * @returns {object} Test collaborators.
  */
@@ -39,7 +39,7 @@ function setup(handler, grant = true, settings = {}) {
         turnCostSuccess: 1, turnCostFail: 2, arguments: {}, ...settings.metadata }, handler).status, 'completed');
     if (grant) {
         registry.establishMutationGrants(grantAuthority, 'interact',
-            { namespaces: ['stateFoundation'], operations: [] });
+            { operations: ['modifyPhysicalProperties'] });
     }
     registry.finalize();
     const authority = Symbol('test trusted authority');
@@ -50,7 +50,7 @@ function setup(handler, grant = true, settings = {}) {
 
 test('completed failure commits intentional state, registered cost and ordered outputs', () => {
     const { state, dispatcher, action } = setup((submitted, context) => {
-        context.setProperty({ scope: 'entity', id: 'brassLantern' }, 'stateFoundation.fuel', 70);
+        assert.equal(context.setPhysicalProperty('brassLantern', 'weight', 70).status, 'completed');
         context.emitOutput({ type: 'test.failure', audience: { scope: 'all' }, data: {} });
         return { status: 'completed', outcome: 'failure' };
     });
@@ -59,7 +59,7 @@ test('completed failure commits intentional state, registered cost and ordered o
     assert.equal(result.outcome, 'failure');
     assert.equal(result.turnsAdvanced, 2);
     assert.equal(state.turn, 2);
-    assert.equal(state.world.resolve('brassLantern').getProperty('stateFoundation.fuel'), 70);
+    assert.equal(state.world.resolve('brassLantern').getProperty('engine.weight'), 70);
     assert.equal(result.outputs.length, 1);
 });
 
@@ -67,7 +67,7 @@ test('rejection and caught unauthorized mutation preserve committed state', () =
     for (const grant of [true, false]) {
         const { state, dispatcher, action } = setup((submitted, context) => {
             try {
-                context.setProperty({ scope: 'entity', id: 'brassLantern' }, 'stateFoundation.fuel', 50);
+                assert.equal(context.setPhysicalProperty('brassLantern', 'weight', 50).status, 'completed');
             } catch (error) {
                 return { status: 'completed', outcome: 'success' };
             }
@@ -96,7 +96,7 @@ test('malformed outcomes and caught expired capability violations discard all st
         }),
     ]) {
         const { state, dispatcher, action } = setup((submitted, context) => {
-            context.setProperty({ scope: 'entity', id: 'brassLantern' }, 'stateFoundation.fuel', 50);
+            assert.equal(context.setPhysicalProperty('brassLantern', 'weight', 50).status, 'completed');
             context.emitOutput({ type: 'test.output', audience: { scope: 'all' }, data: {} });
             return outcome(context);
         });
@@ -206,20 +206,20 @@ test('declared runtime reference categories are checked before handler invocatio
 test('zero cost commits changes and checked maximum turn overflow rolls back', () => {
     const handler = (submitted, context) => {
         const address = { scope: 'entity', id: 'brassLantern' };
-        const fuel = context.getProperty(address, 'stateFoundation.fuel').value;
-        context.setProperty(address, 'stateFoundation.fuel', fuel - 1);
+        const weight = context.getProperty(address, 'engine.weight').value;
+        assert.equal(context.setPhysicalProperty('brassLantern', 'weight', weight - 1).status, 'completed');
         return { status: 'completed', outcome: 'success' };
     };
     for (const cost of [0, Number.MAX_SAFE_INTEGER]) {
         const { state, dispatcher, action } = setup(handler, true, { metadata: { turnCostSuccess: cost } });
         assert.equal(dispatcher.dispatchPlayerAction(action).turnsAdvanced, cost);
         assert.equal(state.turn, cost);
-        assert.equal(state.world.resolve('brassLantern').getProperty('stateFoundation.fuel'), 99);
+        assert.equal(state.world.resolve('brassLantern').getProperty('engine.weight'), 99);
         const before = state.readEffectiveState();
         const next = dispatcher.dispatchPlayerAction(action);
         if (cost === 0) {
             assert.equal(next.status, 'completed');
-            assert.equal(state.world.resolve('brassLantern').getProperty('stateFoundation.fuel'), 98);
+            assert.equal(state.world.resolve('brassLantern').getProperty('engine.weight'), 98);
         } else {
             assert.equal(next.error.code, 'EXECUTION_FAILED');
             assert.equal(next.turnsAdvanced, 0);
@@ -234,7 +234,7 @@ test('handler rejection preserves safe explicit details and malformed errors rol
         { code: 'ACTION_UNAVAILABLE', stack: 'private' },
     ]) {
         const { state, dispatcher, action } = setup((submitted, context) => {
-            context.setProperty({ scope: 'world' }, 'stateFoundation.powerRestored', true);
+            assert.equal(context.setPhysicalProperty('brassLantern', 'weight', 50).status, 'completed');
             return { status: 'rejected', error };
         });
         const before = state.readEffectiveState();

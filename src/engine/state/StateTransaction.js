@@ -14,7 +14,6 @@ import { planPhysicalProperty } from '../world/planPhysicalProperty.js';
 import { planLifecycleOperation } from '../world/planLifecycleOperation.js';
 import { planWorldOperation } from '../world/planWorldOperation.js';
 import { EffectiveStateReader } from './EffectiveStateReader.js';
-import { isGamePropertyKey } from './validateProperties.js';
 import { validateSemanticOutput, validateDetachedSemanticOutput } from './validateSemanticOutput.js';
 import { isIdentifier, isQualifiedKey } from '../shared/identifiers.js';
 import { addNonnegative } from '../shared/safeArithmetic.js';
@@ -32,8 +31,6 @@ export class StateTransaction {
     #outputs = [];
     /** @type {object} Original committed effective view. */
     #committed;
-    /** @type {string} Available game property namespace. */
-    #namespace;
 
     /**
      * Clones mutable candidate containers from verified committed state.
@@ -47,7 +44,6 @@ export class StateTransaction {
         const reader = new EffectiveStateReader(baseline, overrides, player, initialPlayer);
         this.#candidate = Object.freeze({ overrides, player, reader });
         this.#committed = committed.reader.readEffectiveState();
-        this.#namespace = baseline.game.namespace;
         Object.freeze(this);
     }
 
@@ -112,61 +108,6 @@ export class StateTransaction {
      * @returns {boolean} Presence.
      */
     hasProperty(address, key) { return this.getProperty(address, key).present; }
-
-    /**
-     * Stages an ordinary property change after subject and namespace checks.
-     * @param {string} operation - Set, remove or reset.
-     * @param {object} input - Subject address.
-     * @param {string} key - Qualified key.
-     * @param {*} [value] - JSON value for set.
-     */
-    #stage(operation, input, key, value) {
-        return this.#perform(() => {
-            if (!isGamePropertyKey(key, this.#namespace)) {
-                throw new TypeError('Invalid ordinary property mutation.');
-            }
-            const { reader, overrides, player } = this.#candidate;
-            const address = reader.requireAddress(input);
-            const initial = reader.getInitialPropertyForAddress(address, key);
-            if (address.scope === 'player') {
-                if (operation === 'set') {
-                    player.setProperty(key, value);
-                } else if (operation === 'remove') {
-                    player.removeProperty(key);
-                } else {
-                    player.resetProperty(key, initial);
-                }
-            } else if (operation === 'set') {
-                overrides.set(address, key, value, initial);
-            } else if (operation === 'remove') {
-                overrides.remove(address, key, initial);
-            } else {
-                overrides.reset(address, key);
-            }
-        });
-    }
-
-    /**
-     * Stages an ordinary value.
-     * @param {object} address - Subject.
-     * @param {string} key - Qualified key.
-     * @param {*} value - JSON value.
-     */
-    stagePropertySet(address, key, value) { this.#stage('set', address, key, value); }
-
-    /**
-     * Stages removal.
-     * @param {object} address - Subject.
-     * @param {string} key - Qualified key.
-     */
-    stagePropertyRemoval(address, key) { this.#stage('remove', address, key); }
-
-    /**
-     * Stages original value restoration.
-     * @param {object} address - Subject.
-     * @param {string} key - Qualified key.
-     */
-    stagePropertyReset(address, key) { this.#stage('reset', address, key); }
 
     /**
      * Plans and stages an authorized world operation using the latest candidate.

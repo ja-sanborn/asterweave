@@ -24,17 +24,17 @@ test('candidate reads and expired authority remain isolated', () => {
     const lease = state.acquireOperation();
     const transaction = state.beginTransaction(lease);
     const control = ActionExecutionContext.create(transaction,
-        Object.freeze({ namespaces: ['stateFoundation'], operations: [] }));
+        Object.freeze({ operations: ['modifyPhysicalProperties'] }));
     const address = { scope: 'entity', id: 'brassLantern' };
-    control.context.setProperty(address, 'stateFoundation.fuel', 75);
-    assert.equal(control.context.getProperty(address, 'stateFoundation.fuel').value, 75);
-    assert.equal(state.readWorldProperties('brassLantern')['stateFoundation.fuel'], 100);
+    assert.equal(control.context.setPhysicalProperty('brassLantern', 'weight', 75).status, 'completed');
+    assert.equal(control.context.getProperty(address, 'engine.weight').value, 75);
+    assert.equal(state.readWorldProperties('brassLantern')['engine.weight'], 100);
     control.expire();
-    assert.throws(() => control.context.getProperty(address, 'stateFoundation.fuel'));
+    assert.throws(() => control.context.getProperty(address, 'engine.weight'));
     assert.equal(control.violated(), true);
     control.release();
     state.releaseOperation(lease);
-    assert.equal(state.readWorldProperties('brassLantern')['stateFoundation.fuel'], 100);
+    assert.equal(state.readWorldProperties('brassLantern')['engine.weight'], 100);
 });
 
 test('publication requires current lease, owned transaction and current preparation token', () => {
@@ -69,7 +69,7 @@ test('invalidated candidate cannot prepare or publish even when exception is cau
     const state = new RuntimeState(new GameDefinitionValidator().validate(definition).candidate, {});
     const lease = state.acquireOperation();
     const transaction = state.beginTransaction(lease);
-    assert.throws(() => transaction.stagePropertySet({ scope: 'world' }, 'engine.turn', 5));
+    assert.throws(() => transaction.physicalPropertyOperation('set', 'brassLantern', 'turn', 5));
     assert.equal(transaction.isInvalidated, true);
     assert.throws(() => transaction.prepare());
     state.releaseOperation(lease);

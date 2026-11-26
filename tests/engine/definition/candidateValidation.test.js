@@ -179,32 +179,19 @@ test('rejects finite aggregate overflow without rounding', () => {
     assert.deepEqual(validate(input).diagnostics, []);
 });
 
-test('rejects reserved, foreign and malformed property keys without losing null values', () => {
-    const input = fixture('state-foundation');
-    input.world.initialProperties['stateFoundation.nullValue'] = null;
-    assert.equal(validate(input).candidate.world.properties['stateFoundation.nullValue'], null);
-    input.world.initialProperties['engine.turn'] = 90;
-    input.world.initialProperties['foreign.value'] = true;
-    input.world.initialProperties['bad~/key'] = false;
-    const result = validate(input);
-    assert.deepEqual(result.diagnostics.map((item) => item.path), [
-        '/world/initialProperties/bad~0~1key',
-        '/world/initialProperties/engine.turn',
-        '/world/initialProperties/foreign.value',
-    ]);
+test('rejects arbitrary authored properties without interpreting their values', () => {
+    for (const key of ['engine.turn', 'foreign.value', 'bad~/key', 'stateFoundation.nullValue']) {
+        const input = fixture('state-foundation');
+        input.world.initialProperties = { [key]: null };
+        rejects(input, 'UNKNOWN_FIELD', '/world/initialProperties');
+    }
 });
 
-test('permits reverse and self directed relationships but rejects duplicate ordered pairs', () => {
+test('rejects authored relationships and retains an empty effective relationship collection', () => {
     const input = fixture('state-foundation');
-    const [first] = input.world.initialRelationships;
-    input.world.initialRelationships.push({
-        from: first.to, to: first.from, initialProperties: { 'stateFoundation.trust': null },
-    }, {
-        from: first.from, to: first.from, initialProperties: { 'stateFoundation.trust': 0 },
-    });
-    assert.deepEqual(validate(input).diagnostics, []);
-    input.world.initialRelationships.push(structuredClone(first));
-    rejects(input, 'INVALID_VALUE', '/world/initialRelationships/3');
+    assert.deepEqual(validate(input).candidate.relationships, []);
+    input.world.initialRelationships = [];
+    rejects(input, 'UNKNOWN_FIELD', '/world/initialRelationships');
 });
 
 test('rejects explicitly empty authored associations on nonactive participants', () => {
@@ -219,7 +206,7 @@ test('reserved authored properties cannot contaminate effective structural valid
     participant(input, 'visitor').initialProperties = { 'engine.containment': null };
     const result = validate(input);
     assert.equal(result.candidate, undefined);
-    assert.deepEqual(result.diagnostics.map((entry) => entry.code), ['INVALID_VALUE', 'INVALID_VALUE']);
+    assert.deepEqual(result.diagnostics.map((entry) => entry.code), ['UNKNOWN_FIELD', 'UNKNOWN_FIELD']);
 });
 
 test('independent rooted capacity violations survive an unrelated containment cycle', () => {

@@ -187,20 +187,20 @@ test('association reflection failure releases the registry modification guard', 
 test('mutation grants are separate from registration authority and remain valid after finalization', () => {
     const { registry, registrationAuthority, grantAuthority } = ActionRegistry.create();
     registry.register(registrationAuthority, definition('interact'), handler);
-    assert.deepEqual(registry.mutationGrants('interact'), { namespaces: [], operations: [] });
-    const valid = { namespaces: ['zork'], operations: ['grantControl'] };
+    assert.deepEqual(registry.mutationGrants('interact'), { operations: [] });
+    const valid = { operations: ['grantControl'] };
     assert.throws(() => registry.establishMutationGrants(registrationAuthority, 'interact', valid), TypeError);
     for (const invalid of [
         { namespaces: ['engine'], operations: [] },
-        { namespaces: ['zork', 'zork'], operations: [] },
-        { namespaces: [], operations: ['advanceTurns'] },
-        { namespaces: [], operations: [], extra: true },
+        { operations: ['grantControl', 'grantControl'] },
+        { operations: ['advanceTurns'] },
+        { operations: [], extra: true },
     ]) {
         assert.throws(() => registry.establishMutationGrants(grantAuthority, 'interact', invalid), TypeError);
     }
     registry.establishMutationGrants(grantAuthority, 'interact', valid);
-    valid.namespaces.push('other');
-    assert.deepEqual(registry.mutationGrants('interact').namespaces, ['zork']);
+    valid.operations.push('revokeControl');
+    assert.deepEqual(registry.mutationGrants('interact').operations, ['grantControl']);
     registry.finalize();
     assert.equal(registry.verifyIntegrity(), true);
     assert.throws(() => registry.establishMutationGrants(grantAuthority, 'interact', valid), TypeError);

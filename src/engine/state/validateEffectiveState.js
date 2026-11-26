@@ -12,9 +12,7 @@
 
 import { validateEffectiveStructure } from './validateEffectiveStructure.js';
 import { validateWorldState } from '../world/validateWorldState.js';
-import { validateRelationshipPairs } from './validateProperties.js';
 import { validateControlMembership } from './validateControlMembership.js';
-import { resolveEndpoint } from './resolvePropertySubject.js';
 import { PARTICIPANT_CATEGORIES } from '../world/worldVocabulary.js';
 import { areJsonValuesEqual } from '../shared/jsonEquality.js';
 
@@ -31,12 +29,6 @@ export function validateEffectiveState(state, initial = false) {
     let valid = true;
     const reject = () => { valid = false; };
     validateWorldState(state, reject, initial);
-    validateRelationshipPairs(state.relationships, reject);
-    for (const { from, to } of state.relationships) {
-        if (!resolveEndpoint(state, from) || !resolveEndpoint(state, to)) {
-            valid = false;
-        }
-    }
     const locations = new Set(state.locations.map(({ id }) => id));
     for (const { exits } of state.locations) {
         const directions = new Set();

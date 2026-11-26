@@ -47,7 +47,7 @@ test('all current game fixtures initialize and expose metadata and exact snapsho
         assert.deepEqual(Object.keys(snapshot).sort(), [
             'actors', 'entities', 'game', 'locations', 'players', 'relationships', 'world',
         ]);
-        assert.deepEqual(snapshot.game, { ...definition.game, formatVersion: '3.2.0' });
+        assert.deepEqual(snapshot.game, { ...definition.game, formatVersion: '4.0.0' });
         assert.deepEqual(Object.keys(snapshot.world), ['properties']);
         assert.equal(snapshot.world.properties['engine.turn'], 0);
         assert.deepEqual(snapshot.players, []);
@@ -62,16 +62,14 @@ test('all current game fixtures initialize and expose metadata and exact snapsho
     }
 });
 
-test('snapshot preserves authored exits, explicit null and omitted values without derived duplicates', () => {
+test('snapshot preserves authored exits and omitted values without derived duplicates', () => {
     const definition = fixture();
-    definition.world.entities[0].initialProperties['stateFoundation.target'] = null;
     const snapshot = initialize(definition).getStateSnapshot();
     const lantern = snapshot.entities.find((record) => record.id === 'brassLantern');
-    assert.equal(lantern.properties['stateFoundation.target'], null);
     assert.equal(lantern.properties['engine.description'], undefined);
     assert.equal(Object.hasOwn(lantern.properties, 'engine.description'), false);
-    assert.equal(lantern.properties['stateFoundation.isLit'], false);
-    assert.equal(snapshot.world.properties['stateFoundation.powerRestored'], false);
+    assert.equal(lantern.properties['engine.isContainer'], false);
+    assert.equal(snapshot.world.properties['engine.turn'], 0);
     assert.deepEqual(snapshot.locations.find((entry) => entry.id === 'entrance').exits,
         definition.world.locations[0].exits);
     assert.equal(Object.hasOwn(snapshot, 'overrides'), false);
@@ -79,11 +77,10 @@ test('snapshot preserves authored exits, explicit null and omitted values withou
     assert.equal(Object.hasOwn(snapshot.actors[0], 'inventory'), false);
 });
 
-test('all six scopes are present with player controls and directed relationship values', () => {
+test('all six scopes are present with player controls and empty relationships', () => {
     const definition = fixture();
     const game = initialize(definition, { player: {
         id: 'playerOne', controlledActors: ['guide', 'adventurer'], selectedActor: 'guide',
-        initialProperties: { 'stateFoundation.value': null },
     } });
     const snapshot = game.getStateSnapshot();
     assert.deepEqual(snapshot.players, [{
@@ -91,35 +88,24 @@ test('all six scopes are present with player controls and directed relationship 
             'engine.id': 'playerOne',
             'engine.controlledActors': ['guide', 'adventurer'],
             'engine.selectedActor': 'guide',
-            'stateFoundation.value': null,
         },
     }]);
-    assert.deepEqual(snapshot.relationships, [{
-        from: { scope: 'actor', id: 'guide' },
-        to: { scope: 'actor', id: 'adventurer' },
-        properties: { 'stateFoundation.trust': 1 },
-    }]);
+    assert.deepEqual(snapshot.relationships, []);
     assert.equal(snapshot.entities.length, 3);
 });
 
-test('snapshot ordering is deterministic across participant and relationship input ordering', () => {
+test('snapshot ordering is deterministic across participant input ordering', () => {
     const definition = fixture();
-    definition.world.initialRelationships.push({
-        from: { scope: 'world' }, to: { scope: 'actor', id: 'guide' },
-        initialProperties: { 'stateFoundation.value': 0 },
-    }, {
-        from: { scope: 'actor', id: 'adventurer' }, to: { scope: 'world' },
-        initialProperties: { 'stateFoundation.value': false },
-    });
+
     const equivalent = structuredClone(definition);
-    for (const collection of ['locations', 'actors', 'entities', 'initialRelationships']) {
+    for (const collection of ['locations', 'actors', 'entities']) {
         equivalent.world[collection].reverse();
     }
     const first = initialize(definition).getStateSnapshot();
     const second = initialize(equivalent).getStateSnapshot();
     assert.deepEqual(first, second);
     assert.equal(JSON.stringify(first), JSON.stringify(second));
-    assert.deepEqual(first.relationships.map((entry) => entry.from.scope), ['actor', 'actor', 'world']);
+    assert.deepEqual(first.relationships, []);
     for (const collection of ['locations', 'actors', 'entities']) {
         const ids = first[collection].map((entry) => entry.id);
         assert.deepEqual(ids, [...ids].sort());
@@ -189,7 +175,6 @@ test('explicit and default authored values produce equivalent effective state', 
             entry.initialLifecycle = 'active';
             entry.initialAssociations = [];
             entry.physical = { isContainer: collection === 'locations' };
-            entry.initialProperties = {};
         }
     }
     assert.deepEqual(initialize(definition).getStateSnapshot(),

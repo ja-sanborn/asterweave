@@ -12,7 +12,6 @@
 
 import { isRecord, unknownFields } from '../shared/recordShape.js';
 import { INTRINSIC_MEASUREMENTS, MEASUREMENT_LIMITS } from '../world/physicalMeasurements.js';
-import { PARTICIPANT_KINDS } from '../world/worldVocabulary.js';
 import { appendPointer } from '../diagnostics/jsonPointer.js';
 import { isGameId, isIdentifier, isVersion } from '../shared/identifiers.js';
 import { isNonnegativeSafeInteger, isPositiveSafeInteger } from '../shared/safeArithmetic.js';
@@ -161,18 +160,6 @@ function array(value, path, report, validate, minimum = 0) {
 }
 
 /**
- * Checks property-map shape; ownership is a later invariant.
- * @param {*} value - Candidate.
- * @param {string} path - Pointer.
- * @param {Function} report - Reporter.
- */
-function propertyMap(value, path, report) {
-    if (!isRecord(value)) {
-        report(C.INVALID_TYPE, path, 'Expected a property map.');
-    }
-}
-
-/**
  * Checks game metadata.
  * @param {*} value - Candidate.
  * @param {string} path - Pointer.
@@ -181,7 +168,6 @@ function propertyMap(value, path, report) {
 function game(value, path, report) {
     record(value, path, [
         ['id', (entry, pointer, add) => stringValue(entry, pointer, add, isGameId)],
-        ['namespace', identifier],
         ['version', (entry, pointer, add) => stringValue(entry, pointer, add, isVersion)],
         ['title', nonblank],
     ], report);
@@ -198,8 +184,6 @@ function world(value, path, report) {
         ['locations', (entry, pointer, add) => array(entry, pointer, add, location, 1)],
         ['actors', (entry, pointer, add) => array(entry, pointer, add, participant, 1)],
         ['entities', (entry, pointer, add) => array(entry, pointer, add, participant)],
-        ['initialProperties', propertyMap, true],
-        ['initialRelationships', (entry, pointer, add) => array(entry, pointer, add, relationship), true],
     ], report);
 }
 
@@ -214,7 +198,6 @@ function participantFields() {
             (state) => LIFECYCLE_STATES.includes(state)), true],
         ['initialAssociations', (value, path, report) => array(value, path, report, association), true],
         ['physical', physical, true],
-        ['initialProperties', propertyMap, true],
     ];
 }
 
@@ -316,40 +299,5 @@ function physical(value, path, report) {
         ...MEASUREMENT_LIMITS.map((key) => [
             key, (entry, pointer, add) => measurement(entry, pointer, add, isNonnegativeSafeInteger), true,
         ]),
-    ], report);
-}
-
-/**
- * Checks a typed authored relationship endpoint.
- * @param {*} value - Candidate.
- * @param {string} path - Pointer.
- * @param {Function} report - Reporter.
- */
-function endpoint(value, path, report) {
-    const scope = isRecord(value) && Object.hasOwn(value, 'scope') ? value.scope : undefined;
-    const participantScope = PARTICIPANT_KINDS.includes(scope);
-    record(value, path, [
-        ['scope', (entry, pointer, add) => stringValue(entry, pointer, add,
-            (kind) => (kind === 'world' || PARTICIPANT_KINDS.includes(kind)))],
-        ...(scope === 'world' ? [] : [['id', identifier, !participantScope]]),
-    ], report);
-}
-
-/**
- * Checks a directed relationship property record.
- * @param {*} value - Candidate.
- * @param {string} path - Pointer.
- * @param {Function} report - Reporter.
- */
-function relationship(value, path, report) {
-    record(value, path, [
-        ['from', endpoint],
-        ['to', endpoint],
-        ['initialProperties', (entry, pointer, add) => {
-            propertyMap(entry, pointer, add);
-            if (isRecord(entry) && Object.keys(entry).length === 0) {
-                add(C.INVALID_VALUE, pointer, 'Relationship properties must not be empty.');
-            }
-        }],
     ], report);
 }

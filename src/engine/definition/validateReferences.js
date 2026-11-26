@@ -44,15 +44,6 @@ export function validateReferences(definition, index, collector) {
             }
         }
     }
-    for (const [position, relationship] of (definition.world.initialRelationships ?? []).entries()) {
-        for (const side of ['from', 'to']) {
-            const endpoint = relationship[side];
-            if (endpoint.scope !== 'world') {
-                checkReference(endpoint.id, endpoint.scope,
-                    '/world/initialRelationships/' + position + '/' + side + '/id', index, collector);
-            }
-        }
-    }
 }
 
 /**
