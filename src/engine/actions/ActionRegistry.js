@@ -29,11 +29,11 @@ const CONSTRUCTION = Symbol('ActionRegistry construction');
  * @returns {boolean} Validity.
  */
 function validGrants(grants) {
-    return !(!isRecord(grants) || Object.keys(grants).length !== 1
-                || !Array.isArray(grants.operations)
-                || grants.operations.some((name) => !['grantControl', 'revokeControl',
-                    'selectActor', 'clearSelection', ...WORLD_OPERATIONS].includes(name))
-                || new Set(grants.operations).size !== grants.operations.length);
+    return isRecord(grants) && Object.keys(grants).length === 1
+        && Array.isArray(grants.operations)
+        && grants.operations.every((name) => ['grantControl', 'revokeControl',
+            'selectActor', 'clearSelection', ...WORLD_OPERATIONS].includes(name))
+        && new Set(grants.operations).size === grants.operations.length;
 }
 
 /** Independent registry of trusted executable associations and immutable metadata. */
@@ -210,6 +210,7 @@ export class ActionRegistry {
                 'Action identifier is already registered.');
         }
     }
+
     /**
      * Establishes immutable mutation grants separately from registration authority.
      * @param {symbol} authority - Independent engine setup grant capability.
@@ -242,6 +243,7 @@ export class ActionRegistry {
     mutationGrants(type) {
         return this.#grants.get(type) ?? immutableCopy({ operations: [] });
     }
+
     /**
      * Verifies bounded retained registry structure without invoking handlers.
      * @returns {boolean} Whether trusted setup invariants remain established.

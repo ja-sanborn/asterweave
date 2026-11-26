@@ -36,8 +36,8 @@ export class Asterweave {
      * @param {symbol} token - Private construction capability.
      * @param {import('./state/RuntimeState.js').RuntimeState} state - Validated runtime.
      * @param {import('./actions/ActionRegistry.js').ActionRegistry} registry - Finalized registry.
-     * @param {object} dispatcher - Internal action dispatcher.
-     * @param {object} resetter - Internal runtime resetter.
+     * @param {import('./core/ActionDispatcher.js').ActionDispatcher} dispatcher - Internal action dispatcher.
+     * @param {import('./core/RuntimeResetter.js').RuntimeResetter} resetter - Internal runtime resetter.
      * @throws {TypeError} If constructed outside the supported factory or registry is not finalized.
      */
     constructor(token, state, registry, dispatcher, resetter) {
@@ -111,6 +111,7 @@ export class Asterweave {
     getStateSnapshot() {
         return createStateSnapshot(this.#state.readEffectiveState());
     }
+
     /**
      * Submits an explicit player-authorized action synchronously.
      * @param {unknown} action - Untrusted action envelope.
