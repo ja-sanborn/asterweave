@@ -2,7 +2,7 @@
 
 This directory is reserved for sample game definitions, focused demonstrations and complete playable adventures demonstrating supported runtime behavior. Samples should be genre-agnostic demonstrations where appropriate, use supported canonical formats and clearly identify required capabilities and engine compatibility.
 
-The current canonical definition format is 3.2.0. Existing [test fixtures](../tests/README.md#foundation-fixtures) are specification and verification data, not playable samples. A versioned author guide is planned.
+The current canonical definition format is 4.0.0. Existing [test fixtures](../tests/README.md#foundation-fixtures) are specification and verification data, not playable samples. A versioned author guide is planned.
 
 Read the [documentation index](../docs/README.md), [canonical definitions](../docs/engine/contracts/GAME_DEFINITIONS.md) and [roadmap](../docs/ROADMAP.md). Preserve applicable licenses and attribution; independently authored games may use separate licenses subject to MPL obligations for covered source. Do not commit private stories, local saves or generated distributions.
 

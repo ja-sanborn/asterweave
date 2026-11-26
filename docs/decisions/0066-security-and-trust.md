@@ -8,7 +8,7 @@ Asterweave processes externally supplied definitions, action requests, saves and
 
 ## Decision
 
-Use explicit trust boundaries and defense in depth. Treat external data as untrusted until validated against the appropriate contract. Engine-owned state is isolated, encapsulated and changed only through authorized validated operations. Validate actor control independently of actor identifiers. First-party code exclusively supplies executable action handlers; registration authority, actor control and mutation grants remain separate. Hosts establish trusted caller identity and enforce authentication, delivery authorization, transport, storage, filesystem and presentation security when applicable.
+Use explicit trust boundaries and defense in depth. Treat external data as untrusted until validated against the appropriate contract. Engine-owned state is isolated, encapsulated and changed only through authorized validated operations. Validate actor control independently of actor identifiers. First-party code exclusively supplies executable action handlers; registration authority, actor control and mutation grants remain separate. Mutation grants authorize explicit supported domain operations only and default to denial; no generic property mutation or namespace grants. Reject unknown, unavailable and wrong-scope properties. Hosts establish trusted caller identity and enforce authentication, delivery authorization, transport, storage, filesystem and presentation security when applicable.
 
 Executable gameplay behavior is provided only by trusted first-party engine code in the initial release. Canonical game data is declarative and must not select arbitrary executable code or grant authority. Future scripting requires separate review; do not promise sandboxing. Offline content protection is optional and is not DRM, tamper-proofing or secrecy from the device operator (ADR 0058). JavaScript encapsulation is not a hostile-code isolation boundary.
 
@@ -25,6 +25,6 @@ Preserve safe diagnostics, fail-closed integrity and host-owned logging under AD
 
 ## Consequences
 
-Validate at applicable boundaries, test malformed data and unauthorized operations, avoid unsafe presentation assumptions and review resource consumption. Hosts must impose deployment-specific protections. Authentication, sandboxing, quotas, cryptographic package protection and disposal APIs are not implemented or designed in detail by this record. Existing schemas and accepted contracts are preserved.
+Validate at applicable boundaries, test malformed data and unauthorized operations, avoid unsafe presentation assumptions and review resource consumption. Hosts must impose deployment-specific protections. Authentication, sandboxing, quotas, cryptographic package protection and disposal APIs are not implemented or designed in detail by this record. Apply the reviewed canonical format and accepted contracts; schema changes require explicit compatibility review.
 
 Subsequent decision: [ADR 0055](0055-state-and-transactions.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.

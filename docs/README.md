@@ -34,7 +34,7 @@ Read the current branch and relevant issue, follow active cross-references. Surf
 
 ## Current contract versions
 
-Canonical game-definition format: 3.2.0. Save format: 1.0.0 (implementation planned within Foundation). Engine package: private 0.0.0 development package; no production release. These versions are independent under the [public API contract](engine/contracts/PUBLIC_API.md). Verify supported versions against their normative contracts.
+Canonical game-definition format: 4.0.0. Save format: 1.0.0 (implementation planned within Foundation). Engine package: private 0.0.0 development package; no production release. These versions are independent under the [public API contract](engine/contracts/PUBLIC_API.md). Verify supported versions against their normative contracts.
 
 ## Repository navigation
 

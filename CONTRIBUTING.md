@@ -14,7 +14,7 @@ Follow the [error-handling contract](docs/engine/contracts/ERROR_HANDLING.md) an
 
 - Keep runtime code in standard JavaScript without third-party core runtime dependencies.
 - Isolate platform-specific APIs in hosts and adapters.
-- Keep graphics, authoring tools and platform-specific distribution tooling outside the runtime core. Keep optional mechanics in games or extensions, and use supported public integration contracts.
+- Keep graphics, authoring tools and platform-specific distribution tooling outside the runtime core. Keep specialized mechanics in declarative game configuration or selected first-party gameplay modules, and use supported public integration contracts.
 - Prefer deterministic behavior, explicit contracts and testable modules.
 - Include tests and update documentation when behavior changes.
 - Do not commit credentials, private game content or generated distributions.

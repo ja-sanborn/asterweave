@@ -8,7 +8,7 @@ Inspired by classic parser adventures such as Zork, branching fiction, gamebooks
 
 ## Project status
 
-Asterweave is in Foundation development. Development and native test infrastructure are established. The architecture, canonical game-definition format 3.2.0, state/save design and project-wide standards are documented. The runtime supports native definition validation, isolated initialization, read-only effective-state inspection and internal action registration and argument validation. Internal containment transfers, directed associations, physical mutations and explicit lifecycle transitions are implemented. Synchronous action processing, transactional state and administrative reset infrastructure are implemented; production gameplay handlers remain planned and no playable release exists. The current private package is version 0.0.0.
+Asterweave is in Foundation development. Development and native test infrastructure are established. The architecture, canonical game-definition format 4.0.0, state/save design and project-wide standards are documented. The runtime supports native definition validation, isolated initialization, read-only effective-state inspection and internal action registration and argument validation. Internal containment transfers, directed associations, physical mutations and explicit lifecycle transitions are implemented. Synchronous action processing, transactional state and administrative reset infrastructure are implemented; production gameplay handlers remain planned and no playable release exists. The current private package is version 0.0.0.
 
 ## Design goals
 
@@ -38,7 +38,7 @@ Interaction modules such as the Text Parser and Visual Novel sit above the engin
 - Authoring: modular canonical JSON, future declarative language and bidirectional semantic translation; Creator integrates these workflows.
 - Samples: Lantern House and a native Zork I recreation, subject to compatibility and rights review. Additional presentation targets and multiplayer remain future work.
 
-The current supported canonical format is 3.2.0. Modular definition loading, compilation, authoring tools and interaction modules are planned rather than implemented. See the [architecture](docs/ARCHITECTURE.md), [active ADRs](docs/decisions/README.md) and [roadmap](docs/ROADMAP.md).
+The current supported canonical format is 4.0.0. Modular definition loading, compilation, authoring tools and interaction modules are planned rather than implemented. See the [architecture](docs/ARCHITECTURE.md), [active ADRs](docs/decisions/README.md) and [roadmap](docs/ROADMAP.md).
 
 ## Documentation
 
