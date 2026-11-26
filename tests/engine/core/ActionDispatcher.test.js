@@ -243,3 +243,19 @@ test('handler rejection preserves safe explicit details and malformed errors rol
         assert.deepEqual(result.error, Object.hasOwn(error, 'details') ? error : { code: 'EXECUTION_FAILED' });
     }
 });
+
+test('handler context exposes domain operations but no generic property mutation', () => {
+    const { state, dispatcher, action } = setup((submitted, context) => {
+        for (const name of ['setProperty', 'removeProperty', 'resetProperty']) {
+            assert.equal(name in context, false);
+        }
+        const address = { scope: 'entity', id: 'brassLantern' };
+        assert.equal(context.hasProperty(address, 'engine.weight'), true);
+        assert.equal(context.getProperty(address, 'engine.weight').value, 100);
+        assert.equal(context.setPhysicalProperty('brassLantern', 'weight', 85).status, 'completed');
+        assert.equal(context.getProperty(address, 'engine.weight').value, 85);
+        return { status: 'completed', outcome: 'success' };
+    });
+    assert.equal(dispatcher.dispatchPlayerAction(action).status, 'completed');
+    assert.equal(state.world.resolve('brassLantern').getProperty('engine.weight'), 85);
+});
