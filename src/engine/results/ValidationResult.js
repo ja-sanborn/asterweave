@@ -74,7 +74,7 @@ export class ValidationResult extends OperationResult {
 
     /**
      * Serializes only the documented operation envelope.
-     * @returns {object} Detached JSON-compatible record.
+     * @returns {object} Detached mutable JSON-compatible record.
      */
     toJSON() {
         const record = { status: this.status, diagnostics: copyJsonData(this.#diagnostics) };

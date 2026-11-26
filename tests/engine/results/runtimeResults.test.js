@@ -69,3 +69,32 @@ test('action errors permit detached explicit details but reject undeclared field
     assert.throws(() => ActionResult.error({ error: { code: 'EXECUTION_FAILED', stack: 'private' } }), TypeError);
     assert.throws(() => ActionResult.rejected({ error: { code: 'ACTION_UNAVAILABLE', message: 'private' } }), TypeError);
 });
+
+test('action and reset serialization returns independent recursively frozen copies', () => {
+    const results = [
+        ActionResult.completed({ actorId: 'hero', outcome: 'success',
+            turnsAdvanced: 1, outputs: [{ type: 'test.output', audience: { scope: 'all' },
+                data: { values: [1] } }] }),
+        ActionResult.rejected({ error: { code: 'ACTION_UNAVAILABLE', details: { values: [1] } } }),
+        ActionResult.error({ error: { code: 'EXECUTION_FAILED' } }),
+        ResetResult.completed(),
+        ResetResult.rejected({ code: 'RESET_UNAVAILABLE' }),
+        ResetResult.error({ code: 'RESET_FAILED' }),
+    ];
+    for (const result of results) {
+        const first = result.toJSON();
+        const second = result.toJSON();
+        assert.deepEqual(first, second);
+        const pending = [[first, second]];
+        while (pending.length > 0) {
+            const [left, right] = pending.pop();
+            assert.notEqual(left, right);
+            assert.ok(Object.isFrozen(left));
+            for (const key of Object.keys(left)) {
+                if (left[key] !== null && typeof left[key] === 'object') {
+                    pending.push([left[key], right[key]]);
+                }
+            }
+        }
+    }
+});
