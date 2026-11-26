@@ -1,6 +1,6 @@
 # Physical characteristics and capacity
 
-Status: Accepted contract. See [ADR 0012](../decisions/0012-physical-properties-and-capacity.md), [ADR 0022](../decisions/0022-flexible-physical-measurement-ranges.md) and [containment](WORLD_CONTAINMENT.md).
+Status: Accepted contract. See [ADR 0060](../decisions/0060-physical-properties-and-capacity.md) and [containment](WORLD_CONTAINMENT.md).
 
 Physical characteristics are abstract gameplay points, not dimensions, kilograms or a physics simulation. Size and weight are independent author-defined positive safe-integer gameplay points. The following five-point classifications are optional authoring conventions, not engine limits. Games choose consistent independent size and weight scales.
 

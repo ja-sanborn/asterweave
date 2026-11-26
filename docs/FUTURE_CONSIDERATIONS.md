@@ -12,7 +12,7 @@ Reference repositories: [Zork I](https://github.com/historicalsource/zork1), [Zo
 
 ### Reference-game compatibility considerations
 
-The intended reference is a native Asterweave recreation, not a Z-machine emulator or core dependency. The accepted twelve-direction vocabulary and expanded safe-integer physical ranges are already recorded in ADRs 0021–0022; do not reopen them merely for the reference game. The following are compatibility considerations for applicable approved capabilities or future design questions, not current schema fields or authorization to expand implementation scope. Generic lifecycle operations, conditional access and traversal, rules/effects, events, authorized actor execution, randomness and extension contracts are planned Foundation work; specialized policies remain game or extension responsibilities.
+The intended reference is a native Asterweave recreation, not a Z-machine emulator or core dependency. The accepted twelve-direction vocabulary and expanded safe-integer physical ranges are already recorded in ADRs 0059–0022; do not reopen them merely for the reference game. The following are compatibility considerations for applicable approved capabilities or future design questions, not current schema fields or authorization to expand implementation scope. Generic lifecycle operations, conditional access and traversal, rules/effects, events, authorized actor execution, randomness and extension contracts are planned Foundation work; specialized policies remain game or extension responsibilities.
 
 | Area | Design consideration |
 | --- | --- |

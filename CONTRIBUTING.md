@@ -10,7 +10,7 @@ Read the [documentation index](docs/README.md), [architecture](docs/ARCHITECTURE
 
 Follow the [public API contract](docs/contracts/PUBLIC_API.md), [security model](docs/contracts/SECURITY_MODEL.md) and [testing strategy](tests/README.md). Review changes to documented interfaces for compatibility, including before 1.0.0. Satisfy the testing strategy's definition of done for implementation stories; preserve trust boundaries and report actual verification results.
 
-Follow the [error-handling contract](docs/contracts/ERROR_HANDLING.md) and [ADR 0017](docs/decisions/0017-error-handling-and-diagnostics.md) alongside the coding standards. Include applicable negative-path tests and preserve documented failure semantics.
+Follow the [error-handling contract](docs/contracts/ERROR_HANDLING.md) and [ADR 0065](docs/decisions/0065-error-handling.md) alongside the coding standards. Include applicable negative-path tests and preserve documented failure semantics.
 
 - Keep runtime code in standard JavaScript without third-party core runtime dependencies.
 - Isolate platform-specific APIs in hosts and adapters.
@@ -30,7 +30,7 @@ in `.nvmrc` and `package.json`. With nvm, run `nvm install` and `nvm use`.
 From the repository root, run `npm ci` and `npm test`. Commit the lockfile
 when changing the manifest. No third-party npm dependencies are currently required. Distribution tooling and Creator application dependencies must be reviewed separately; no exception to current Foundation tooling policy is implied.
 
-Follow [coding standards](docs/CODE_STYLE.md) for source organization, naming, formatting, license headers, JSDoc, validation and maintainability. Follow [ADR 0016](docs/decisions/0016-modular-architecture-and-design-patterns.md) for modular architecture and design patterns.
+Follow [coding standards](docs/CODE_STYLE.md) for source organization, naming, formatting, license headers, JSDoc, validation and maintainability. Follow [ADR 0064](docs/decisions/0064-modular-design-patterns.md) for modular architecture and design patterns.
 Use native `node:test` and `node:assert/strict`; see [test guidance](tests/README.md).
 CI runs on Linux for pull requests targeting main and pushes to main, feature/**, fix/**, refactor/** and docs/**. When local execution is unavailable, contributors may commit focused changes with their applicable tests to an authorized working branch and use CI as the test environment. Verify the exact commit SHA, successful test job and relevant logs before advancing to the next implementation increment. Correct failures first; report pending or unavailable results as unverified. Existing PR, merge and issue closure authorization requirements remain unchanged.
 Do not introduce additional tooling or dependencies without discussion.

@@ -2,7 +2,7 @@
 
 Status: Foundation registry, argument validation, synchronous dispatch and trusted handler execution infrastructure implemented. Production gameplay execution and game configuration are planned Foundation work beyond current runtime infrastructure.
 
-See [action/result envelopes](ACTIONS_AND_RESULTS.md), [standard catalog](STANDARD_ACTIONS.md) and [ADR 0007](../decisions/0007-extensible-and-configurable-action-definitions.md), elaborated by [ADR 0023](../decisions/0023-action-registry-ownership-and-lifecycle.md).
+See [action/result envelopes](ACTIONS_AND_RESULTS.md), [standard catalog](STANDARD_ACTIONS.md) and [ADR 0053](../decisions/0053-action-architecture.md).
 
 ## Classifications and identity
 

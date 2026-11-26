@@ -1,6 +1,9 @@
 # Roadmap
 
-Milestones are subject to refinement. Accepted design, implemented capability and verified behavior are distinct; only actual tests establish verification. See the [documentation index](README.md). [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues) are the authoritative actionable backlog and dependency order. [ADR 0026](decisions/0026-functional-foundation-and-optional-extension-boundaries.md) establishes the revised scope.
+> Reconciliation note: the [active ADR catalog](decisions/README.md) establishes the approved first-party modular direction. This document still describes aspects of the pre-reconciliation implementation and planned scope; obsolete public extension plans are not authoritative. Full content reconciliation is a separate FND-26 increment.
+
+
+Milestones are subject to refinement. Accepted design, implemented capability and verified behavior are distinct; only actual tests establish verification. See the [documentation index](README.md). [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues) are the authoritative actionable backlog and dependency order. [ADR 0051](decisions/0051-product-architecture.md) establishes the revised scope.
 
 ## 1. Foundation
 

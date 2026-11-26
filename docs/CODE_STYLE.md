@@ -1,6 +1,6 @@
 # Asterweave coding standards
 
-These standards apply to JavaScript source, tests and development tooling. They are the authoritative project coding conventions. See [architecture](ARCHITECTURE.md), [ADR 0016](decisions/0016-modular-architecture-and-design-patterns.md), [contributing](../CONTRIBUTING.md) and [agent instructions](../AGENTS.md). Normative engine contracts govern domain behavior.
+These standards apply to JavaScript source, tests and development tooling. They are the authoritative project coding conventions. See [architecture](ARCHITECTURE.md), [ADR 0064](decisions/0064-modular-design-patterns.md), [contributing](../CONTRIBUTING.md) and [agent instructions](../AGENTS.md). Normative engine contracts govern domain behavior.
 
 **MUST** and **MUST NOT** denote requirements; **SHOULD** and **SHOULD NOT** denote preferred practices (justify deviations in review); **MAY** denotes a permitted choice. Imperative rules in this document are mandatory unless explicitly qualified. Examples illustrate conventions, not implemented APIs.
 
@@ -132,7 +132,7 @@ Runtime execution is synchronous by default, especially Foundation domain valida
 
 ## 18. Error handling
 
-Follow the normative [error-handling contract](contracts/ERROR_HANDLING.md) and [ADR 0017](decisions/0017-error-handling-and-diagnostics.md). Preserve operation-specific failure contracts.
+Follow the normative [error-handling contract](contracts/ERROR_HANDLING.md) and [ADR 0065](decisions/0065-error-handling.md). Preserve operation-specific failure contracts.
 
 | Failure | Contract |
 | --- | --- |
@@ -165,7 +165,7 @@ try {
 }
 ```
 
-Result-returning public operations MUST follow [ADR 0020](decisions/0020-standardized-operation-result-architecture.md): engine-controlled specialized result classes, derived status predicates and read-only detached result-owned data. Serializable results MUST define toJSON according to their documented envelopes; unsupported result serialization MUST throw TypeError. Do not depend on enumerable class fields or serialize live game references.
+Result-returning public operations MUST follow [ADR 0067](decisions/0067-operation-results.md): engine-controlled specialized result classes, derived status predicates and read-only detached result-owned data. Serializable results MUST define toJSON according to their documented envelopes; unsupported result serialization MUST throw TypeError. Do not depend on enumerable class fields or serialize live game references.
 
 ## 19. File headers, documentation and comments
 
@@ -208,7 +208,7 @@ Use shared JSDoc typedefs and callbacks for structured contracts and collaborato
 
 ## 20. Architecture and design patterns
 
-Follow [ADR 0016](decisions/0016-modular-architecture-and-design-patterns.md): high cohesion, loose coupling, encapsulation and composition. Apply SOLID principles to standard ECMAScript without requiring class-based interfaces or frameworks:
+Follow [ADR 0064](decisions/0064-modular-design-patterns.md): high cohesion, loose coupling, encapsulation and composition. Apply SOLID principles to standard ECMAScript without requiring class-based interfaces or frameworks:
 
 - Single responsibility: keep each module or type cohesive, with a clear reason to change; orchestration sequences operations rather than implementing domain rules.
 - Open/closed: extend behavior through established narrow contracts where justified, without modifying unrelated modules; do not create speculative extension points.

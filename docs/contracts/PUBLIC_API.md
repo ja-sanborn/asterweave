@@ -1,6 +1,6 @@
 # Public API and compatibility
 
-Status: Accepted contract. See [ADR 0018](../decisions/0018-public-api-and-compatibility.md).
+Status: Accepted contract. See [ADR 0057](../decisions/0057-engine-interface-and-compatibility.md).
 
 ## Consumer boundary
 
@@ -47,7 +47,7 @@ When committed integrity cannot be established, dispatch returns an error with E
 
 ## Operation result interfaces
 
-Follow [ADR 0020](../decisions/0020-standardized-operation-result-architecture.md). Fallible public operations use operation-specific read-only result interfaces with common status semantics and inherited isCompleted, isRejected, isError, isSuccess and isFailure predicates (see [error handling](ERROR_HANDLING.md#standardized-operation-results)); ordinary getters and calculations return documented values. Concrete result classes and factories are internal. Supported serializable results implement toJSON and return detached JSON-compatible records; derived predicates are excluded and unavailable fields follow the operation envelope. ValidationResult supports serialization; InitializationResult explicitly throws TypeError from toJSON in every status. Serialization is not authorization and must never expose a live game reference. See the error-handling contract for result invariants.
+Follow [ADR 0067](../decisions/0067-operation-results.md). Fallible public operations use operation-specific read-only result interfaces with common status semantics and inherited isCompleted, isRejected, isError, isSuccess and isFailure predicates (see [error handling](ERROR_HANDLING.md#standardized-operation-results)); ordinary getters and calculations return documented values. Concrete result classes and factories are internal. Supported serializable results implement toJSON and return detached JSON-compatible records; derived predicates are excluded and unavailable fields follow the operation envelope. ValidationResult supports serialization; InitializationResult explicitly throws TypeError from toJSON in every status. Serialization is not authorization and must never expose a live game reference. See the error-handling contract for result invariants.
 
 Validation and initialization share a single diagnostics collection with required source, code, severity, path and message fields. Source is definition or options, identifying the argument to which the JSON Pointer is relative (empty string denotes that argument's root). Standalone validation produces only definition findings. Initialization orders definition findings before options findings and preserves deterministic ordering within each source. Action error envelopes remain unchanged.
 
@@ -62,7 +62,7 @@ Validation and initialization share a single diagnostics collection with require
 | Save format | Asterweave serialized state interpretation |
 | Distribution format | Planned Foundation packaging representation, independently versioned |
 
-These versions do not advance in lockstep. A bug fix need not change a data format. Engine compatibility never implies support for every definition, save or package version. Respect each existing contract's explicit supported versions and compatibility rules, including exact save compatibility; no automatic migration promise. See [game definitions](GAME_DEFINITIONS.md), [save data](SAVE_DATA.md) and [ADR 0010](../decisions/0010-game-packaging-and-content-protection.md).
+These versions do not advance in lockstep. A bug fix need not change a data format. Engine compatibility never implies support for every definition, save or package version. Respect each existing contract's explicit supported versions and compatibility rules, including exact save compatibility; no automatic migration promise. See [game definitions](GAME_DEFINITIONS.md), [save data](SAVE_DATA.md) and [ADR 0058](../decisions/0058-compilation-and-distribution.md).
 
 ## Release compatibility
 

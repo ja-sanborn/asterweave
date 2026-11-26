@@ -18,7 +18,7 @@ Start here for the current technical design and development standards. See the [
 | --- | --- |
 | [Architecture](ARCHITECTURE.md) | Current system overview and boundaries |
 | [Runtime implementation design](RUNTIME_IMPLEMENTATION.md) | Accepted internal runtime collaboration and responsibilities |
-| [Accepted ADRs](decisions/README.md) | Decisions and rationale; respect explicit supersession |
+| [Active ADRs](decisions/README.md) | Current architectural decisions and rationale; archive is historical only |
 | [Normative contracts](contracts/README.md) | Required domain and public behavior |
 | [Coding standards](CODE_STYLE.md) | JavaScript implementation conventions |
 | [Testing strategy](../tests/README.md) | Verification and definition of done |
@@ -29,7 +29,7 @@ Start here for the current technical design and development standards. See the [
 | [Future considerations](FUTURE_CONSIDERATIONS.md) | Nonbinding ideas, not implementation authorization |
 | Source and actual test results | Evidence of implemented and verified behavior, not automatic authority to change contracts |
 
-Read the current branch and relevant issue, follow cross-references and explicit supersession notes. Surface conflicts between documents, issues and code before proceeding; do not silently choose a different interpretation. Historical ADR text is retained for context. Update affected authoritative documents and indexes together when decisions change. Keep living documentation capability-oriented: use contracts and ADRs for technical requirements and rationale, and GitHub Issues and pull requests for individual work assignments, progress, and execution evidence. Avoid ticket-specific headings, branch status and historical CI reports in living documents.
+Read the current branch and relevant issue, follow active cross-references. Surface conflicts between documents, issues and code before proceeding; do not silently choose a different interpretation. Historical ADRs are outside the mandatory reading path. Update affected authoritative documents and indexes together when decisions change. Keep living documentation capability-oriented: use contracts and ADRs for technical requirements and rationale, and GitHub Issues and pull requests for individual work assignments, progress, and execution evidence. Avoid ticket-specific headings, branch status and historical CI reports in living documents.
 
 ## Current contract versions
 
@@ -38,3 +38,5 @@ Canonical game-definition format: 3.2.0. Save format: 1.0.0 (implementation plan
 ## Repository navigation
 
 [Runtime](../src/README.md), [hosts](../hosts/README.md), [Creator](../creator/README.md), [extensions](../extensions/README.md), [examples](../examples/README.md), [tests and fixtures](../tests/README.md). See [contributing](../CONTRIBUTING.md) before changing the repository.
+
+The [active ADR index](decisions/README.md) is the sole architectural decision catalog. Archived records are non-authoritative and not required reading. The active ADRs establish the approved direction; detailed contract, code and roadmap reconciliation is separate work. Do not infer implementation from an accepted decision.

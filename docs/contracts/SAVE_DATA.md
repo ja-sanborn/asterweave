@@ -1,6 +1,6 @@
 # Save data
 
-Status: Accepted design; serialization/restoration implementation is planned within Foundation. See [ADR 0015](../decisions/0015-state-isolation-and-persistence.md), [runtime state](RUNTIME_STATE.md) and [properties](PROPERTIES.md).
+Status: Accepted design; serialization/restoration implementation is planned within Foundation. See [ADR 0056](../decisions/0056-persistence.md), [runtime state](RUNTIME_STATE.md) and [properties](PROPERTIES.md).
 
 ## Envelope 1.0.0
 
@@ -32,6 +32,6 @@ Validate envelope and plain data, references/ownership, property mutations and r
 
 ## Storage and protection
 
-Serialization/restoration is platform-independent; no filesystem, browser, SQL, networking or storage APIs in core. Hosts/adapters create, overwrite, enumerate, delete and label saves independently. Unprotected JSON is supported; optional compression, encoding and encryption belong outside core. Validation is mandatory after decoding/decryption. Offline client protection is not anti-cheat or DRM; see [ADR 0010](../decisions/0010-game-packaging-and-content-protection.md) for related package boundary. Multiplayer requires separate authorization/server-authoritative persistence. No gameplay undo, rollback history or automatic elapsed-time progression; transaction rollback remains mandatory. Future visual novel back behavior is outside scope.
+Serialization/restoration is platform-independent; no filesystem, browser, SQL, networking or storage APIs in core. Hosts/adapters create, overwrite, enumerate, delete and label saves independently. Unprotected JSON is supported; optional compression, encoding and encryption belong outside core. Validation is mandatory after decoding/decryption. Offline client protection is not anti-cheat or DRM; see [ADR 0058](../decisions/0058-compilation-and-distribution.md) for related package boundary. Multiplayer requires separate authorization/server-authoritative persistence. No gameplay undo, rollback history or automatic elapsed-time progression; transaction rollback remains mandatory. Future visual novel back behavior is outside scope.
 
 Implementation tests must cover compatible round trips, invalid envelopes, unknown namespaces, corrupt references, capacity/control rejection, null/removal/reset, independent saves, deterministic continuation, isolation and failed-restore atomicity. This design and fixture are not a working serializer.
