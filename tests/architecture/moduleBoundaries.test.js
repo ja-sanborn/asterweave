@@ -65,6 +65,27 @@ test('architecture scanner distinguishes JSDoc type references from executable i
     assert.deepEqual(dependencies(documented + "import { Example } from './example.js';"), ['./example.js']);
 });
 
+test('architecture scanner recognizes supported static imports and re-exports', () => {
+    const source = [
+        "import './sideEffect.js';",
+        "import Default from './default.js';",
+        "import * as vocabulary from './vocabulary.js';",
+        'import {',
+        '    first, second as alias,',
+        "} from './named.js';",
+        "export { first as renamed } from './namedExport.js';",
+        "export * from './starExport.js';",
+        "export * as group from './namespaceExport.js';",
+        'export { alias };',
+        'export const value = 1;',
+        "import { last } from './last.js';",
+    ].join('\n');
+    assert.deepEqual(dependencies(source), [
+        './sideEffect.js', './default.js', './vocabulary.js', './named.js',
+        './namedExport.js', './starExport.js', './namespaceExport.js', './last.js',
+    ]);
+});
+
 /**
  * Determines a module's architectural domain.
  * @param {string} file - Absolute module path.
