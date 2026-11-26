@@ -198,4 +198,4 @@ Planned Foundation schema revisions for action configuration, declarative behavi
 
 The versioned author guide will document verified usage after integrated Foundation testing.
 
-The [state fixture](../../../tests/fixtures/games/state-foundation.json) illustrates initial properties and relationships; its synthetic [save](../../../tests/fixtures/saves/state-foundation.json) is a contract example, not executable save functionality.
+The [state fixture](../../../tests/fixtures/games/state-foundation.json) illustrates structural configuration of supported engine properties; its synthetic [save](../../../tests/fixtures/saves/state-foundation.json) is a contract example, not executable save functionality.

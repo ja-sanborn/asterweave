@@ -17,9 +17,7 @@ Each runtime has one authoritative current state: immutable, isolated authored b
 
 Override records are closed objects with scope and scope-specific identity (id for location/entity/actor, from/to for relationship, none for world), optional values map and optional removed array; at least one must be nonempty. For Foundation, player records store complete current properties separately, not player override records, because they have no authored baseline. Relationship endpoints are closed {scope,id} references for location/entity/actor/player, or {scope:"world"} for World. No relationship properties are currently supported; the collection must be empty. Future domain-defined relationships require existing correctly scoped endpoints and explicit lifecycle rules. Direction matters; reverse is independent. Self relationships are allowed as nonphysical data. One record per ordered pair; namespaced keys distinguish multiple kinds of relationship. Empty relationship state has no independent identity. Containment is not a relationship-scope record.
 
-```json
-{"scope":"relationship","from":{"scope":"actor","id":"guide"},"to":{"scope":"actor","id":"adventurer"},"values":{"stateFoundation.trust":3}}
-```
+No relationship override records are valid in the current format. The typed address structure is retained internally for future reviewed domain-defined relationship properties.
 
 ## Initial candidate state
 

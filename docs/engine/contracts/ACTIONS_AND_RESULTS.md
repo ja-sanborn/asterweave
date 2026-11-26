@@ -2,7 +2,7 @@
 
 Status: Runtime action execution infrastructure; production gameplay handlers are planned Foundation work.
 
-This specification elaborates [ADR 0053](../../decisions/0053-action-architecture.md) and [ADR 0053](../../decisions/0053-action-architecture.md). Commands, choices, narrative and direct callers submit the same platform-independent data. Only the dispatcher authorizes and commits world transitions.
+This specification elaborates [ADR 0053](../../decisions/0053-action-architecture.md). Commands, choices, narrative and direct callers submit the same platform-independent data. Only the dispatcher authorizes and commits world transitions.
 
 ## Action envelope
 
