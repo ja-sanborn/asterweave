@@ -12,7 +12,7 @@ Use [GitHub Private Vulnerability Reporting](https://github.com/ja-sanborn/aster
 
 ## Security Scope
 
-The technical [security model](docs/contracts/SECURITY_MODEL.md) and [ADR 0066](docs/decisions/0066-security-and-trust.md) define engine and host trust boundaries, data safety and resource ownership. This policy governs vulnerability reporting and supported-version policy.
+The technical [security model](docs/engine/contracts/SECURITY_MODEL.md) and [ADR 0066](docs/decisions/0066-security-and-trust.md) define engine and host trust boundaries, data safety and resource ownership. This policy governs vulnerability reporting and supported-version policy.
 
 Relevant concerns include unsafe handling of game definitions and save files, unintended execution of untrusted content, state validation failures with security impact, and security issues in hosts, authoring tools and extensions maintained by this project.
 

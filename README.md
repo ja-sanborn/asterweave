@@ -47,20 +47,20 @@ Start with the [technical documentation index](docs/README.md).
 | Resource | Purpose |
 | --- | --- |
 | [Architecture](docs/ARCHITECTURE.md) | System design and boundaries |
-| [Engine contracts](docs/contracts/README.md) | Required behavior and data formats |
+| [Engine contracts](docs/engine/contracts/README.md) | Required behavior and data formats |
 | [Architecture decisions](docs/decisions/README.md) | Current architectural decisions and rationale |
 | [Coding standards](docs/CODE_STYLE.md) | JavaScript conventions |
 | [Testing strategy](tests/README.md) | Verification and definition of done |
 | [Roadmap](docs/ROADMAP.md) | Development priorities |
 | [Future considerations](docs/FUTURE_CONSIDERATIONS.md) | Nonbinding ideas |
 
-A versioned game-author guide is planned. The [public API contract](docs/contracts/PUBLIC_API.md) identifies supported interfaces and their behavior. See the [roadmap](docs/ROADMAP.md) for planned capabilities.
+A versioned game-author guide is planned. The [public API contract](docs/engine/contracts/PUBLIC_API.md) identifies supported interfaces and their behavior. See the [roadmap](docs/ROADMAP.md) for planned capabilities.
 
 ## Repository layout
 
 The approved source boundaries are `src/engine/`, `src/modules/`, `src/interaction/`, `src/tools/` and `src/creator/`. Tests and component documentation follow corresponding responsibilities; samples hold reference games and demonstrations. Introduce directories when actual functionality or documentation requires them.
 
-The current runtime resides under `src/engine/`, with engine-specific tests under `tests/engine/`, shared fixtures and repository-wide checks under `tests/`, and samples under `samples/`. Technical contracts retain their existing paths. The target layout does not imply that planned components are implemented.
+The current runtime resides under `src/engine/`, with engine-specific tests under `tests/engine/`, shared fixtures and repository-wide checks under `tests/`, and samples under `samples/`. Engine technical documentation resides under `docs/engine/`. The target layout does not imply that planned components are implemented.
 
 ## Development quick start
 
@@ -79,7 +79,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and the [coding standards](docs/CODE_STYL
 
 ## Security
 
-See the [technical security model](docs/contracts/SECURITY_MODEL.md) for trust boundaries and [SECURITY.md](SECURITY.md) for private vulnerability reporting. Do not disclose vulnerabilities in public issues.
+See the [technical security model](docs/engine/contracts/SECURITY_MODEL.md) for trust boundaries and [SECURITY.md](SECURITY.md) for private vulnerability reporting. Do not disclose vulnerabilities in public issues.
 
 ## License and attribution
 

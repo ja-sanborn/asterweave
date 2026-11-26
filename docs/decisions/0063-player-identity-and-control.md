@@ -12,6 +12,6 @@ One authoritative current state per runtime without persistent game-instance ide
 Conflate player and actor, persist playthrough IDs, mandatory discovery tracking or duplicated control indexes.
 
 ## Consequences
-See [runtime state](../contracts/RUNTIME_STATE.md). Multiplayer authentication and networking remain deferred; no new implementation.
+See [runtime state](../engine/contracts/RUNTIME_STATE.md). Multiplayer authentication and networking remain deferred; no new implementation.
 
 Subsequent decision: [ADR 0055](0055-state-and-transactions.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.

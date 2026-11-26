@@ -1,6 +1,6 @@
 # Engine contracts
 
-These documents specify accepted behavior. Implementation status is tracked separately from normative design. Consult the [documentation index](../README.md), [architecture](../ARCHITECTURE.md) and [ADR catalog](../decisions/README.md). Implementation scope and verification are tracked by [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues).
+These documents specify accepted behavior. Implementation status is tracked separately from normative design. Consult the [documentation index](../../README.md), [architecture](../../ARCHITECTURE.md) and [ADR catalog](../../decisions/README.md). Implementation scope and verification are tracked by [GitHub Issues](https://github.com/ja-sanborn/asterweave/issues).
 
 | Contract | Responsibility | Related ADRs |
 | --- | --- | --- |
@@ -17,6 +17,6 @@ These documents specify accepted behavior. Implementation status is tracked sepa
 | [PUBLIC_API](PUBLIC_API.md) | Public interfaces and compatibility | 0057, 0067 |
 | [SECURITY_MODEL](SECURITY_MODEL.md) | Trust boundaries, security and resource ownership | 0066 |
 
-Canonical definitions use format 3.2.0; saves use format 1.0.0 and remain pending Foundation implementation work. Read related contracts together: action dispatch uses world/state invariants, definition validation seeds the baseline, and future restoration reuses effective-state validation. Cross-cutting error handling, public API and security apply throughout. Do not infer a supported API, registered action or implemented feature from an illustrative example. Surface conflicts rather than silently overriding accepted decisions. See [ADR 0051](../decisions/0051-product-architecture.md) for planned scope; first-party module integration, rules, events, randomness and distribution interfaces require their own reviewed contracts before implementation.
+Canonical definitions use format 3.2.0; saves use format 1.0.0 and remain pending Foundation implementation work. Read related contracts together: action dispatch uses world/state invariants, definition validation seeds the baseline, and future restoration reuses effective-state validation. Cross-cutting error handling, public API and security apply throughout. Do not infer a supported API, registered action or implemented feature from an illustrative example. Surface conflicts rather than silently overriding accepted decisions. See [ADR 0051](../../decisions/0051-product-architecture.md) for planned scope; first-party module integration, rules, events, randomness and distribution interfaces require their own reviewed contracts before implementation.
 
 The active ADRs define the revised architecture; these contracts describe the currently supported behavior and remaining previously accepted technical design until detailed reconciliation. Obsolete public extension plans are not current requirements. Do not infer new implementation or silently change supported contracts.

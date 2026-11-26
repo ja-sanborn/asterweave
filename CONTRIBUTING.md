@@ -4,13 +4,13 @@ Discuss substantial changes through GitHub issues before implementation.
 
 ## Getting started
 
-Read the [documentation index](docs/README.md), [architecture](docs/ARCHITECTURE.md), [coding standards](docs/CODE_STYLE.md) and [testing strategy](tests/README.md). Inspect the current branch and relevant issue, dependencies and acceptance criteria; read applicable [contracts](docs/contracts/README.md) and [ADRs](docs/decisions/README.md). Respect explicit supersession and raise discrepancies before changing behavior. AI contributors must also read [AGENTS.md](AGENTS.md); both use the same technical authorities.
+Read the [documentation index](docs/README.md), [architecture](docs/ARCHITECTURE.md), [coding standards](docs/CODE_STYLE.md) and [testing strategy](tests/README.md). Inspect the current branch and relevant issue, dependencies and acceptance criteria; read applicable [contracts](docs/engine/contracts/README.md) and [ADRs](docs/decisions/README.md). Respect explicit supersession and raise discrepancies before changing behavior. AI contributors must also read [AGENTS.md](AGENTS.md); both use the same technical authorities.
 
 ## Development principles
 
-Follow the [public API contract](docs/contracts/PUBLIC_API.md), [security model](docs/contracts/SECURITY_MODEL.md) and [testing strategy](tests/README.md). Review changes to documented interfaces for compatibility, including before 1.0.0. Satisfy the testing strategy's definition of done for implementation stories; preserve trust boundaries and report actual verification results.
+Follow the [public API contract](docs/engine/contracts/PUBLIC_API.md), [security model](docs/engine/contracts/SECURITY_MODEL.md) and [testing strategy](tests/README.md). Review changes to documented interfaces for compatibility, including before 1.0.0. Satisfy the testing strategy's definition of done for implementation stories; preserve trust boundaries and report actual verification results.
 
-Follow the [error-handling contract](docs/contracts/ERROR_HANDLING.md) and [ADR 0065](docs/decisions/0065-error-handling.md) alongside the coding standards. Include applicable negative-path tests and preserve documented failure semantics.
+Follow the [error-handling contract](docs/engine/contracts/ERROR_HANDLING.md) and [ADR 0065](docs/decisions/0065-error-handling.md) alongside the coding standards. Include applicable negative-path tests and preserve documented failure semantics.
 
 - Keep runtime code in standard JavaScript without third-party core runtime dependencies.
 - Isolate platform-specific APIs in hosts and adapters.

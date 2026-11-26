@@ -1,6 +1,6 @@
 # Physical characteristics and capacity
 
-Status: Accepted contract. See [ADR 0060](../decisions/0060-physical-properties-and-capacity.md) and [containment](WORLD_CONTAINMENT.md).
+Status: Accepted contract. See [ADR 0060](../../decisions/0060-physical-properties-and-capacity.md) and [containment](WORLD_CONTAINMENT.md).
 
 Physical characteristics are abstract gameplay points, not dimensions, kilograms or a physics simulation. Size and weight are independent author-defined positive safe-integer gameplay points. The following five-point classifications are optional authoring conventions, not engine limits. Games choose consistent independent size and weight scales.
 
@@ -50,6 +50,6 @@ Derived load descriptors distinguish unknown inputs and overflow independently; 
 
 ## Scope
 
-Initial values live in the canonical definition; current values follow normalized runtime overrides. Internal containment transfers, physical mutations and lifecycle transitions use shared invariants. Player-facing actions, physics, detailed geometry, inventory UI and game-specific mechanics are separate. See [fixture](../../tests/fixtures/games/containment-foundation.json).
+Initial values live in the canonical definition; current values follow normalized runtime overrides. Internal containment transfers, physical mutations and lifecycle transitions use shared invariants. Player-facing actions, physics, detailed geometry, inventory UI and game-specific mechanics are separate. See [fixture](../../../tests/fixtures/games/containment-foundation.json).
 
 Runtime state maps authored structural values to reserved asterweave properties and stores only current differences, including explicit removal of containment when an active participant leaves World. See [properties](PROPERTIES.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md). No duplicate authoritative values; core validation remains mandatory.

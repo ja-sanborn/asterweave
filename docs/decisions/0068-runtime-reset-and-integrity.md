@@ -18,7 +18,7 @@ Recovery verification is bounded to engine-controlled structural and domain inva
 
 ### Detailed implementation
 
-Use RuntimeResetter with shared initial-state construction, the RuntimeState operation guard and prepared atomic publication. Keep private operational/compromised integrity status separate from transaction lifecycle; only validated administrative recovery clears compromise. Retain stable facade and registry identity. See [runtime implementation design](../RUNTIME_IMPLEMENTATION.md#reset-integrity-and-facade).
+Use RuntimeResetter with shared initial-state construction, the RuntimeState operation guard and prepared atomic publication. Keep private operational/compromised integrity status separate from transaction lifecycle; only validated administrative recovery clears compromise. Retain stable facade and registry identity. See [runtime implementation design](../engine/RUNTIME_IMPLEMENTATION.md#reset-integrity-and-facade).
 
 ## Alternatives
 
@@ -28,4 +28,4 @@ Requiring new facade construction transfers restoration responsibility to hosts.
 
 Reset provides predictable restart and explicit recovery without gameplay history, implementing persistence itself, pause/resume or rollback of external effects. Tests must distinguish ordinary transaction failure from integrity loss and verify recovery, registry retention and safe read failures.
 
-Elaborates ADRs [0056](0056-persistence.md), [0065](0065-error-handling.md), [0057](0057-engine-interface-and-compatibility.md), [0066](0066-security-and-trust.md) and [0067](0067-operation-results.md). Normative details: [runtime state](../contracts/RUNTIME_STATE.md#administrative-reset-and-integrity), [public API](../contracts/PUBLIC_API.md), [error handling](../contracts/ERROR_HANDLING.md#reset-result).
+Elaborates ADRs [0056](0056-persistence.md), [0065](0065-error-handling.md), [0057](0057-engine-interface-and-compatibility.md), [0066](0066-security-and-trust.md) and [0067](0067-operation-results.md). Normative details: [runtime state](../engine/contracts/RUNTIME_STATE.md#administrative-reset-and-integrity), [public API](../engine/contracts/PUBLIC_API.md), [error handling](../engine/contracts/ERROR_HANDLING.md#reset-result).

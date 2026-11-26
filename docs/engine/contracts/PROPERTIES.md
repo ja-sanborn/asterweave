@@ -1,6 +1,6 @@
 # Namespaced properties
 
-Status: Accepted contract. See [ADR 0055](../decisions/0055-state-and-transactions.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md).
+Status: Accepted contract. See [ADR 0055](../../decisions/0055-state-and-transactions.md), [runtime state](RUNTIME_STATE.md) and [save data](SAVE_DATA.md).
 
 ## Ownership and values
 

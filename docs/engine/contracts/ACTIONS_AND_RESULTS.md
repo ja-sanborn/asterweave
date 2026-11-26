@@ -2,7 +2,7 @@
 
 Status: Runtime action execution infrastructure; production gameplay handlers are planned Foundation work.
 
-This specification elaborates [ADR 0053](../decisions/0053-action-architecture.md) and [ADR 0053](../decisions/0053-action-architecture.md). Commands, choices, narrative and direct callers submit the same platform-independent data. Only the dispatcher authorizes and commits world transitions.
+This specification elaborates [ADR 0053](../../decisions/0053-action-architecture.md) and [ADR 0053](../../decisions/0053-action-architecture.md). Commands, choices, narrative and direct callers submit the same platform-independent data. Only the dispatcher authorizes and commits world transitions.
 
 ## Action envelope
 
@@ -52,7 +52,7 @@ Arguments use descriptive lower camel case keys. Use stable IDs rather than disp
 
 A completed failure is an intentionally resolved gameplay attempt, not a validation rejection or technical failure. It can commit intentional consequences and its configured failure cost. Rejection or execution error commits no engine-owned state change and advances zero turns; discard staged success/failure outputs. Safe diagnostics may still be returned to the submitting caller. A malformed request must not require a valid actor or request ID to receive a result. No stack traces, secrets, or live state references.
 
-The ActionResult class follows [ADR 0067](../decisions/0067-operation-results.md). Its public read-only accessors and all five inherited status predicates (isCompleted, isRejected, isError, isSuccess, isFailure) are distinct from the serialized envelope above. Inherit the common predicate implementation without redefining it; completed gameplay failure is operation success. Its toJSON method returns detached data preserving the documented fields, omission rules and output order; derived Boolean predicates are not serialized. This does not change action outcomes, turn costs, error vocabulary or authorization requirements.
+The ActionResult class follows [ADR 0067](../../decisions/0067-operation-results.md). Its public read-only accessors and all five inherited status predicates (isCompleted, isRejected, isError, isSuccess, isFailure) are distinct from the serialized envelope above. Inherit the common predicate implementation without redefining it; completed gameplay failure is operation success. Its toJSON method returns detached data preserving the documented fields, omission rules and output order; derived Boolean predicates are not serialized. This does not change action outcomes, turn costs, error vocabulary or authorization requirements.
 
 ### Error vocabulary
 
@@ -157,7 +157,7 @@ World references and relationship semantics follow [world containment](WORLD_CON
 
 ## Turn and transaction invariants
 
-The dispatcher alone advances turns. It resolves success/failure costs from trusted action definitions, commits the outcome, state and turn delta together, and releases committed outputs only after success of the transaction. Rejected actions and execution errors leave all engine-owned state unchanged, including random state and pending events when introduced. The initial movement design defaults to one turn on success; invalid or unavailable exits are rejected and cost zero under the current contract. Planned Foundation game overrides apply only to completed outcomes. Use checked nonnegative safe-integer addition without per-turn iteration while no intermediate events exist. Intermediate scheduled turns must not be skipped when events are introduced; exact event ordering and authorized internal actor execution belong to the planned Foundation rules/events design; interruption semantics remain subject to separate review. See [ADR 0053](../decisions/0053-action-architecture.md).
+The dispatcher alone advances turns. It resolves success/failure costs from trusted action definitions, commits the outcome, state and turn delta together, and releases committed outputs only after success of the transaction. Rejected actions and execution errors leave all engine-owned state unchanged, including random state and pending events when introduced. The initial movement design defaults to one turn on success; invalid or unavailable exits are rejected and cost zero under the current contract. Planned Foundation game overrides apply only to completed outcomes. Use checked nonnegative safe-integer addition without per-turn iteration while no intermediate events exist. Intermediate scheduled turns must not be skipped when events are introduced; exact event ordering and authorized internal actor execution belong to the planned Foundation rules/events design; interruption semantics remain subject to separate review. See [ADR 0053](../../decisions/0053-action-architecture.md).
 
 ## Runtime state authority
 

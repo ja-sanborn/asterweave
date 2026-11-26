@@ -1,6 +1,6 @@
 # Active architecture decision records
 
-These records establish current architectural authority. Read the [architecture](../ARCHITECTURE.md), relevant active decisions and normative [contracts](../contracts/README.md). Accepted designs are not evidence of implementation. Use sequential identifiers beginning with 0051 for the reconciled architecture; never reuse identifiers. Active records are self-contained and do not reference historical records. Materially superseded decisions move to the [historical archive](archive/README.md) with forward replacement notices; preserve original text. Carry forward all still-valid requirements. GitHub issues govern actionable scope, not normative architecture.
+These records establish current architectural authority. Read the [architecture](../ARCHITECTURE.md), relevant active decisions and normative [contracts](../engine/contracts/README.md). Accepted designs are not evidence of implementation. Use sequential identifiers beginning with 0051 for the reconciled architecture; never reuse identifiers. Active records are self-contained and do not reference historical records. Materially superseded decisions move to the [historical archive](archive/README.md) with forward replacement notices; preserve original text. Carry forward all still-valid requirements. GitHub issues govern actionable scope, not normative architecture.
 
 | ADR | Subject |
 | --- | --- |

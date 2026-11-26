@@ -122,7 +122,7 @@ Require finite numbers for JSON data; enforce contract-defined integer ranges, n
 
 ## 16. ES modules and dependencies
 
-Follow the [public API contract](contracts/PUBLIC_API.md). Only explicitly documented public interfaces carry compatibility guarantees; do not expose engine-owned construction or mutable internals through unrestricted exports. Document public compatibility changes and deprecations; internal exports do not become public merely by being exported from a module.
+Follow the [public API contract](engine/contracts/PUBLIC_API.md). Only explicitly documented public interfaces carry compatibility guarantees; do not expose engine-owned construction or mutable internals through unrestricted exports. Document public compatibility changes and deprecations; internal exports do not become public merely by being exported from a module.
 
 Use explicit relative .js extensions. Group imports consistently: external/platform imports where permitted, then internal imports, with blank lines as useful. Prefer named exports; default exports MAY be justified. Import immediate collaborators directly, avoid unnecessary internal barrels, and expose a small public facade. No circular dependencies, mutable exported globals, hidden service locators or core imports of platform adapters. Avoid import-time side effects.
 
@@ -132,7 +132,7 @@ Runtime execution is synchronous by default, especially Foundation domain valida
 
 ## 18. Error handling
 
-Follow the normative [error-handling contract](contracts/ERROR_HANDLING.md) and [ADR 0065](decisions/0065-error-handling.md). Preserve operation-specific failure contracts.
+Follow the normative [error-handling contract](engine/contracts/ERROR_HANDLING.md) and [ADR 0065](decisions/0065-error-handling.md). Preserve operation-specific failure contracts.
 
 | Failure | Contract |
 | --- | --- |
@@ -218,7 +218,7 @@ Follow [ADR 0064](decisions/0064-modular-design-patterns.md): high cohesion, loo
 
 Apply DRY (Don't Repeat Yourself) to authoritative domain rules, constants, validation and shared algorithms. Reuse cohesive helpers rather than duplicate knowledge; incidental syntactic similarities alone do not justify abstraction. Inspect and detach untrusted data once where practical; freeze only exclusively engine-owned validated trees, and preserve defensive copying at boundaries that require it. Apply KISS (Keep It Simple) and YAGNI (You Aren't Gonna Need It): choose the simplest design satisfying the accepted contract and defer speculative capabilities. Use native classes for meaningful identity, behavior, lifecycle or encapsulation; prefer pure functions for stateless domain logic and composition over unnecessary inheritance. Encapsulation protects invariants and authoritative state, not merely field visibility. Apply established patterns to concrete problems, not as mandatory class structures.
 
-Keep orchestration separate from domain logic; reuse independently testable effective-state validators across initialization, runtime transactions and future restoration without coupling them to serialized representations. Validate at trust boundaries and fail closed when committed integrity is uncertain, as required by the [security model](contracts/SECURITY_MODEL.md).
+Keep orchestration separate from domain logic; reuse independently testable effective-state validators across initialization, runtime transactions and future restoration without coupling them to serialized representations. Validate at trust boundaries and fail closed when committed integrity is uncertain, as required by the [security model](engine/contracts/SECURITY_MODEL.md).
 
 ## 21. State management and determinism
 
@@ -226,7 +226,7 @@ Keep authored definitions detached and immutable and current state engine-owned 
 
 ## 22. Security and external data
 
-Follow the [security model](contracts/SECURITY_MODEL.md) and its explicit trust boundaries. Validate gameplay authority independently of identifiers; do not treat semantic text as safe executable or presentation syntax. Host-specific authentication, rendering and storage protections belong outside core.
+Follow the [security model](engine/contracts/SECURITY_MODEL.md) and its explicit trust boundaries. Validate gameplay authority independently of identifiers; do not treat semantic text as safe executable or presentation syntax. Host-specific authentication, rendering and storage protections belong outside core.
 
 Validate definitions, actions and saves at their respective boundaries. Inspect own data descriptors and reject unsupported types, accessors, inherited application data, cycles and non-data objects according to normative contracts. Do not execute caller getters during ordinary object validation. Arbitrary Proxy traps cannot be guaranteed side-effect-free; catch inspection failures and prefer parsed JSON from loaders. Use safe indexes and copies; treat arbitrary keys as data, not prototype mutation paths. Do not substitute JSON.stringify for validation. Executable extensions are trusted code, not safe data. Never execute data as code or retain caller-owned mutable references.
 

@@ -14,7 +14,7 @@ Use explicitly named operation-specific properties rather than a mandatory gener
 
 The initial public operations use ValidationResult and InitializationResult. Both expose diagnostics (always a read-only array) and error (undefined unless status is error). Completed results have empty diagnostics and no error; rejected results have one or more diagnostics and no error; error results have empty diagnostics and safe operation-specific error details. InitializationResult additionally exposes game, an initialized Asterweave instance only on completion and undefined otherwise. No separate valid Boolean or partial game publication.
 
-Definition and configuration diagnostics include a required source (definition or options), with JSON Pointer paths relative to that input argument. Standalone validation and initialization preserve the same definition paths; initialization aggregates both sources, definition first, with deterministic within-source ordering and cascade suppression. This intentional public diagnostic contract addition does not change action errors or game/save formats. See [error handling](../contracts/ERROR_HANDLING.md).
+Definition and configuration diagnostics include a required source (definition or options), with JSON Pointer paths relative to that input argument. Standalone validation and initialization preserve the same definition paths; initialization aggregates both sources, definition first, with deterministic within-source ordering and cascade suppression. This intentional public diagnostic contract addition does not change action errors or game/save formats. See [error handling](../engine/contracts/ERROR_HANDLING.md).
 
 ## Serialization
 
@@ -36,6 +36,6 @@ ActionResult serialization preserves the existing action result envelope, includ
 
 Document and test status predicates, result invariants, immutable detached data, construction control, operation-specific envelopes, serialization field presence and omission, and TypeError for unsupported serialization. Preserve the existing action contracts and exception boundaries. Introduce result types only as required by supported operations. No schema version change, implementation, dependency or release is implied.
 
-See [public API](../contracts/PUBLIC_API.md), [error handling](../contracts/ERROR_HANDLING.md), [action results](../contracts/ACTIONS_AND_RESULTS.md), [coding standards](../CODE_STYLE.md) and [testing strategy](../../tests/README.md).
+See [public API](../engine/contracts/PUBLIC_API.md), [error handling](../engine/contracts/ERROR_HANDLING.md), [action results](../engine/contracts/ACTIONS_AND_RESULTS.md), [coding standards](../CODE_STYLE.md) and [testing strategy](../../tests/README.md).
 
 Subsequent decision: [ADR 0068](0068-runtime-reset-and-integrity.md) elaborates the accepted runtime execution or recovery contract without replacing this decision's underlying principles.

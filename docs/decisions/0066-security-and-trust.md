@@ -14,7 +14,7 @@ Executable gameplay behavior is provided only by trusted first-party engine code
 
 Use safe algorithms, cycle detection, safe arithmetic, explicit resource ownership and bounded or managed growth where applicable. Do not introduce arbitrary global semantic limits. Hosts/loaders may impose operational limits; concrete engine budgets are designed when justified, especially before remote untrusted workloads. Resource lifecycle and cleanup follow ownership; introduce a disposal interface only when a capability requires it. Do not depend on garbage-collection timing.
 
-Preserve safe diagnostics, fail-closed integrity and host-owned logging under ADR 0065. The normative [security model](../contracts/SECURITY_MODEL.md) defines responsibilities; [SECURITY.md](../../SECURITY.md) remains the vulnerability-reporting policy.
+Preserve safe diagnostics, fail-closed integrity and host-owned logging under ADR 0065. The normative [security model](../engine/contracts/SECURITY_MODEL.md) defines responsibilities; [SECURITY.md](../../SECURITY.md) remains the vulnerability-reporting policy.
 
 ## Alternatives
 
