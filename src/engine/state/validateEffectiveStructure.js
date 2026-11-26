@@ -10,6 +10,7 @@
  * @module state/validateEffectiveStructure
  */
 
+import { DEFINITION_FORMAT } from '../shared/definitionFormat.js';
 import { isRecord } from '../shared/recordShape.js';
 import { isIdentifier, isGameId, isVersion } from '../shared/identifiers.js';
 import { inspectJsonData } from '../shared/jsonData.js';
@@ -40,7 +41,7 @@ export function validateEffectiveStructure(input) {
         || Object.keys(state).length !== 7
         || Object.keys(state.game).length !== 4
         || !isGameId(state.game.id) || !isVersion(state.game.version)
-        || !isVersion(state.game.formatVersion) || typeof state.game.title !== 'string'
+        || state.game.formatVersion !== DEFINITION_FORMAT || typeof state.game.title !== 'string'
         || state.game.title.trim().length === 0
         || !isRecord(state.world) || Object.keys(state.world).length !== 1) {
         return false;

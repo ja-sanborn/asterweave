@@ -59,3 +59,12 @@ test('destroyed participants cannot resurrect during forward gameplay', () => {
     assert.equal(validateStateTransition(before, after), false);
     assert.equal(validateStateTransition(after, before), true);
 });
+
+test('effective state rejects unsupported canonical definition versions', () => {
+    for (const version of ['1.0.0', '3.2.0', '4.1.0', '5.0.0', null]) {
+        const state = candidate();
+        state.game.formatVersion = version;
+        assert.equal(validateEffectiveState(state), false);
+        assert.equal(validateEffectiveState(state, true), false);
+    }
+});

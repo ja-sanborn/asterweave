@@ -7,7 +7,7 @@
 
 /**
  * @fileoverview Supported canonical format.
- * @module definition/definitionFormat
+ * @module shared/definitionFormat
  */
 
 /** @type {string} Exact supported canonical definition format. */

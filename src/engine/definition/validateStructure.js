@@ -21,7 +21,7 @@ import {
     CONTAINMENT_RELATIONSHIPS,
     LIFECYCLE_STATES,
 } from '../world/worldRelationships.js';
-import { DEFINITION_FORMAT } from './definitionFormat.js';
+import { DEFINITION_FORMAT } from '../shared/definitionFormat.js';
 import { DEFINITION_CODES as C, reportDefinition } from './definitionDiagnostics.js';
 
 /**
