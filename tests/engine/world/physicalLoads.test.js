@@ -26,10 +26,10 @@ import { WORLD_CODES } from '../../../src/engine/world/worldDiagnostics.js';
  */
 function record(id, parentId, measurements, relationship = 'in') {
     return { id, properties: {
-        'asterweave.lifecycle': 'active',
-        'asterweave.containment': { parentId, relationship },
-        'asterweave.associations': [],
-        'asterweave.isContainer': true,
+        'engine.lifecycle': 'active',
+        'engine.containment': { parentId, relationship },
+        'engine.associations': [],
+        'engine.isContainer': true,
         ...Object.fromEntries(Object.entries(measurements).map(([key, value]) => [
             'asterweave.' + key, value,
         ])),
@@ -72,7 +72,7 @@ test('loads count direct size and all descendant weight exactly once', () => {
     assert.equal(queries.physicalLoad('book').weight.value, 0);
     assert.equal(queries.physicalLoad('world'), undefined);
     assert.ok(Object.isFrozen(queries.physicalLoad('hero').weight));
-    state.entities[1].properties['asterweave.weight'] = 6;
+    state.entities[1].properties['engine.weight'] = 6;
     assert.equal(queries.physicalLoad('hero').weight.value, 9);
     assert.equal(new WorldQueries(state).physicalLoad('hero').weight.value, 11);
 });
@@ -81,11 +81,11 @@ test('finite limits are inclusive and individual weight excludes nested contents
     const state = fixture();
     const hero = state.actors[0].properties;
     Object.assign(hero, {
-        'asterweave.maxItemSize': 3, 'asterweave.maxItemWeight': 3,
-        'asterweave.sizeCapacity': 5, 'asterweave.weightCapacity': 9,
+        'engine.maxItemSize': 3, 'engine.maxItemWeight': 3,
+        'engine.sizeCapacity': 5, 'engine.weightCapacity': 9,
     });
     assert.deepEqual(findings(state), []);
-    state.entities[1].properties['asterweave.weight'] = 5;
+    state.entities[1].properties['engine.weight'] = 5;
     assert.deepEqual(findings(state), [
         { code: WORLD_CODES.CAPACITY_EXCEEDED, id: 'hero', property: 'weightCapacity' },
     ]);
@@ -93,17 +93,17 @@ test('finite limits are inclusive and individual weight excludes nested contents
 
 test('unknown loads are not zero and absent limits do not restrict them', () => {
     const state = fixture();
-    delete state.entities[1].properties['asterweave.weight'];
+    delete state.entities[1].properties['engine.weight'];
     const hero = state.actors[0].properties;
     assert.deepEqual(new WorldQueries(state).physicalLoad('hero').weight, {
         unknown: true, overflow: false,
     });
     assert.deepEqual(findings(state), []);
-    hero['asterweave.weightCapacity'] = 100;
+    hero['engine.weightCapacity'] = 100;
     assert.deepEqual(findings(state), [
         { code: WORLD_CODES.UNKNOWN_MEASUREMENT, id: 'hero', property: 'weightCapacity' },
     ]);
-    hero['asterweave.weightCapacity'] = 0;
+    hero['engine.weightCapacity'] = 0;
     assert.deepEqual(findings(state), [
         { code: WORLD_CODES.CAPACITY_EXCEEDED, id: 'hero', property: 'weightCapacity' },
     ]);
@@ -112,24 +112,24 @@ test('unknown loads are not zero and absent limits do not restrict them', () => 
 test('safe integer boundaries distinguish exact maximum and overflow', () => {
     const state = fixture();
     const hero = state.actors[0].properties;
-    state.entities[1].properties['asterweave.weight'] = Number.MAX_SAFE_INTEGER - 5;
-    hero['asterweave.weightCapacity'] = Number.MAX_SAFE_INTEGER;
+    state.entities[1].properties['engine.weight'] = Number.MAX_SAFE_INTEGER - 5;
+    hero['engine.weightCapacity'] = Number.MAX_SAFE_INTEGER;
     assert.equal(new WorldQueries(state).physicalLoad('hero').weight.value, Number.MAX_SAFE_INTEGER);
     assert.deepEqual(findings(state), []);
-    state.entities[1].properties['asterweave.weight']++;
+    state.entities[1].properties['engine.weight']++;
     assert.deepEqual(new WorldQueries(state).physicalLoad('hero').weight, {
         unknown: false, overflow: true,
     });
     assert.deepEqual(findings(state), [
         { code: WORLD_CODES.CAPACITY_EXCEEDED, id: 'hero', property: 'weightCapacity' },
     ]);
-    delete hero['asterweave.weightCapacity'];
+    delete hero['engine.weightCapacity'];
     assert.deepEqual(findings(state), []);
 });
 
 test('movement within a shared ancestor does not double count weight', () => {
     const state = fixture();
-    state.entities[1].properties['asterweave.containment'] = {
+    state.entities[1].properties['engine.containment'] = {
         parentId: 'hero', relationship: 'carried',
     };
     const queries = new WorldQueries(state);
@@ -140,20 +140,20 @@ test('movement within a shared ancestor does not double count weight', () => {
 
 test('empty capacity permits zero load and nonactive participants have no load', () => {
     const state = fixture();
-    state.entities[1].properties['asterweave.weightCapacity'] = 0;
+    state.entities[1].properties['engine.weightCapacity'] = 0;
     assert.deepEqual(findings(state), []);
     const lamp = state.entities[2].properties;
-    lamp['asterweave.lifecycle'] = 'inactive';
-    delete lamp['asterweave.containment'];
+    lamp['engine.lifecycle'] = 'inactive';
+    delete lamp['engine.containment'];
     assert.equal(new WorldQueries(state).physicalLoad('lamp'), undefined);
 });
 
 test('capacity diagnostics preserve independent rooted findings on invalid branches', () => {
     const state = fixture();
-    state.entities[0].properties['asterweave.containment'] = {
+    state.entities[0].properties['engine.containment'] = {
         parentId: 'book', relationship: 'in',
     };
-    state.actors[0].properties['asterweave.weightCapacity'] = 2;
+    state.actors[0].properties['engine.weightCapacity'] = 2;
     const result = findings(state);
     assert.ok(result.some(({ code }) => code === WORLD_CODES.CONTAINMENT_CYCLE));
     assert.ok(result.some(({ code, id }) =>
@@ -162,13 +162,13 @@ test('capacity diagnostics preserve independent rooted findings on invalid branc
 
 test('unknown and overflow flags coexist without exposing an inexact numeric value', () => {
     const state = fixture();
-    state.entities[0].properties['asterweave.weight'] = Number.MAX_SAFE_INTEGER;
-    delete state.entities[1].properties['asterweave.weight'];
+    state.entities[0].properties['engine.weight'] = Number.MAX_SAFE_INTEGER;
+    delete state.entities[1].properties['engine.weight'];
     assert.deepEqual(new WorldQueries(state).physicalLoad('hero').weight, {
         unknown: true, overflow: true,
     });
     assert.deepEqual(findings(state), []);
-    state.actors[0].properties['asterweave.weightCapacity'] = Number.MAX_SAFE_INTEGER;
+    state.actors[0].properties['engine.weightCapacity'] = Number.MAX_SAFE_INTEGER;
     assert.deepEqual(findings(state), [
         { code: WORLD_CODES.CAPACITY_EXCEEDED, id: 'hero', property: 'weightCapacity' },
     ]);

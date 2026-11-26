@@ -18,7 +18,7 @@ test('player control and selection remain ordered, explicit and isolated', () =>
     const original = new Player({ id: 'player', controlledActors: ['hero'], selectedActor: 'hero' });
     const candidate = original.clone();
     const resolve = (id) => ['hero', 'guide'].includes(id)
-        ? { 'asterweave.lifecycle': 'active' } : undefined;
+        ? { 'engine.lifecycle': 'active' } : undefined;
     assert.equal(candidate.grantControl('guide', resolve), true);
     assert.equal(candidate.grantControl('guide', resolve), true);
     assert.equal(candidate.grantControl('missing', resolve), false);
@@ -38,7 +38,7 @@ test('ordinary player values reset independently of protected control', () => {
     assert.equal(player.record.properties['game.note'], null);
     player.resetProperty('game.note', { present: false });
     assert.equal(Object.hasOwn(player.record.properties, 'game.note'), false);
-    assert.throws(() => player.setProperty('asterweave.controlledActors', []), TypeError);
+    assert.throws(() => player.setProperty('engine.controlledActors', []), TypeError);
 });
 
 test('removing an absent ordinary property retains the immutable record', () => {

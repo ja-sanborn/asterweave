@@ -49,8 +49,8 @@ export function validateEffectiveState(state, initial = false) {
     }
     const actors = new Map(state.actors.map(({ id, properties }) => [id, properties]));
     for (const { properties } of state.players) {
-        const controlled = properties['asterweave.controlledActors'];
-        if (!validateControlMembership(controlled, properties['asterweave.selectedActor'],
+        const controlled = properties['engine.controlledActors'];
+        if (!validateControlMembership(controlled, properties['engine.selectedActor'],
             (id) => actors.get(id))) {
             valid = false;
         }
@@ -66,7 +66,7 @@ export function validateEffectiveState(state, initial = false) {
  */
 export function validateStateTransition(committed, candidate) {
     if (!areJsonValuesEqual(committed.game, candidate.game)
-        || candidate.world.properties['asterweave.turn'] < committed.world.properties['asterweave.turn']
+        || candidate.world.properties['engine.turn'] < committed.world.properties['engine.turn']
         || !areJsonValuesEqual(committed.players.map(({ id }) => id), candidate.players.map(({ id }) => id))) {
         return false;
     }
@@ -77,8 +77,8 @@ export function validateStateTransition(committed, candidate) {
         }
         for (const record of committed[collection]) {
             const replacement = next.get(record.id);
-            if (!replacement || (record.properties['asterweave.lifecycle'] === 'destroyed'
-                && replacement.properties['asterweave.lifecycle'] !== 'destroyed')
+            if (!replacement || (record.properties['engine.lifecycle'] === 'destroyed'
+                && replacement.properties['engine.lifecycle'] !== 'destroyed')
                 || !areJsonValuesEqual(record.exits, replacement.exits)) {
                 return false;
             }

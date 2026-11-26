@@ -115,7 +115,7 @@ function checkPlayer(player, candidate, report) {
         } else {
             // Grammar and the reserved namespace can be checked without a valid definition.
             for (const key of Object.keys(properties).sort()) {
-                if (!isQualifiedKey(key) || key.startsWith('asterweave.')) {
+                if (!isQualifiedKey(key) || key.startsWith('engine.')) {
                     report(C.INVALID_VALUE, appendPointer('/player/initialProperties', key),
                         'Invalid or reserved property key.');
                 }

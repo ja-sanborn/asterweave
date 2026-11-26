@@ -24,24 +24,24 @@ import { WORLD_CODES as C } from './worldDiagnostics.js';
 export function validateCapacity(participants, hierarchy, report) {
     const totals = calculatePhysicalLoads(participants, hierarchy);
     for (const [id, { properties }] of participants) {
-        if (properties['asterweave.lifecycle'] !== 'active' || !totals.has(id)) {
+        if (properties['engine.lifecycle'] !== 'active' || !totals.has(id)) {
             continue;
         }
         const children = hierarchy.children.get(id) ?? [];
         for (const { limit, score } of INDIVIDUAL_LIMITS) {
-            const maximum = properties['asterweave.' + limit];
+            const maximum = properties['engine.' + limit];
             if (maximum === undefined) {
                 continue;
             }
             for (const child of children) {
-                const value = participants.get(child).properties['asterweave.' + score];
+                const value = participants.get(child).properties['engine.' + score];
                 checkLimit(id, limit, maximum, measurement(value), true, report);
             }
         }
         const total = totals.get(id);
         for (const { limit, score } of CUMULATIVE_LIMITS) {
             const load = score === 'size' ? total.contentsSize : total.contentsWeight;
-            const maximum = properties['asterweave.' + limit];
+            const maximum = properties['engine.' + limit];
             if (maximum !== undefined) {
                 checkLimit(id, limit, maximum, load, children.length > 0, report);
             }

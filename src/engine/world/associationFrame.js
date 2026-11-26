@@ -19,8 +19,8 @@
  */
 export function validAssociationEndpoints(resolve, id, targetId) {
     return id !== targetId
-        && resolve(id)?.properties['asterweave.lifecycle'] === 'active'
-        && resolve(targetId)?.properties['asterweave.lifecycle'] === 'active';
+        && resolve(id)?.properties['engine.lifecycle'] === 'active'
+        && resolve(targetId)?.properties['engine.lifecycle'] === 'active';
 }
 
 /**
@@ -31,7 +31,7 @@ export function validAssociationEndpoints(resolve, id, targetId) {
  * @returns {boolean} Shared frame.
  */
 export function sharesAssociationFrame(resolve, id, targetId) {
-    const parent = resolve(id)?.properties['asterweave.containment']?.parentId;
+    const parent = resolve(id)?.properties['engine.containment']?.parentId;
     return parent !== undefined
-        && parent === resolve(targetId)?.properties['asterweave.containment']?.parentId;
+        && parent === resolve(targetId)?.properties['engine.containment']?.parentId;
 }

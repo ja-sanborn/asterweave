@@ -46,10 +46,10 @@ export class WorldQueries {
         this.#children = hierarchy.children;
         this.#loads = calculatePhysicalLoads(participants, hierarchy);
         for (const [id, { kind, properties }] of participants) {
-            const containment = properties['asterweave.containment'];
+            const containment = properties['engine.containment'];
             this.#participants.set(id, Object.freeze({
                 kind,
-                lifecycle: properties['asterweave.lifecycle'],
+                lifecycle: properties['engine.lifecycle'],
                 containment: containment === undefined ? undefined : Object.freeze({
                     parentId: containment.parentId, relationship: containment.relationship,
                 }),

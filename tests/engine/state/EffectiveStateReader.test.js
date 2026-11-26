@@ -51,10 +51,10 @@ test('effective reads distinguish null, removal and isolated candidate values', 
 
 test('world query views follow isolated effective placement overrides', () => {
     const properties = (parentId) => ({
-        'asterweave.lifecycle': 'active',
-        'asterweave.isContainer': true,
-        'asterweave.associations': [],
-        'asterweave.containment': { parentId, relationship: 'in' },
+        'engine.lifecycle': 'active',
+        'engine.isContainer': true,
+        'engine.associations': [],
+        'engine.containment': { parentId, relationship: 'in' },
     });
     const baseline = new GameBaseline({
         game: {}, world: { properties: {} },
@@ -67,7 +67,7 @@ test('world query views follow isolated effective placement overrides', () => {
     const candidateStore = store.clone();
     const candidate = new EffectiveStateReader(baseline, candidateStore);
     const address = { scope: 'actor', id: 'hero' };
-    const key = 'asterweave.containment';
+    const key = 'engine.containment';
     const before = candidate.readWorldQueries();
     candidateStore.set(address, key, { parentId: 'roomB', relationship: 'in' },
         candidate.getInitialProperty(address, key));

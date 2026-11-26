@@ -142,7 +142,7 @@ test('rejects invalid endpoint shape and empty relationship properties', () => {
 
 test('rejects reserved namespace and reserved participant identity', () => {
     const input = fixture();
-    input.game.namespace = 'asterweave';
+    input.game.namespace = 'engine';
     input.world.entities[0].id = 'world';
     assert.deepEqual(validate(input).diagnostics.map((item) => item.path), [
         '/game/namespace', '/world/entities/0/id',

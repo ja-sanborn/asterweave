@@ -30,10 +30,10 @@ export class GameDefinitionMapper {
             world: {
                 properties: {
                     ...gameProperties(world.initialProperties),
-                    'asterweave.id': WORLD_ID,
-                    'asterweave.name': 'World',
-                    'asterweave.lifecycle': 'active',
-                    'asterweave.turn': 0,
+                    'engine.id': WORLD_ID,
+                    'engine.name': 'World',
+                    'engine.lifecycle': 'active',
+                    'engine.turn': 0,
                 },
             },
             ...Object.fromEntries(PARTICIPANT_CATEGORIES.map(({ kind, collection }) => [
@@ -58,21 +58,21 @@ export class GameDefinitionMapper {
 function mapParticipant(record, kind) {
     const properties = {
         ...gameProperties(record.initialProperties),
-        'asterweave.id': record.id,
-        'asterweave.name': record.name,
-        'asterweave.lifecycle': record.initialLifecycle ?? 'active',
-        'asterweave.associations': record.initialAssociations ?? [],
-        'asterweave.isContainer': record.physical?.isContainer ?? (kind === 'location'),
+        'engine.id': record.id,
+        'engine.name': record.name,
+        'engine.lifecycle': record.initialLifecycle ?? 'active',
+        'engine.associations': record.initialAssociations ?? [],
+        'engine.isContainer': record.physical?.isContainer ?? (kind === 'location'),
     };
     if (Object.hasOwn(record, 'description')) {
-        properties['asterweave.description'] = record.description;
+        properties['engine.description'] = record.description;
     }
     if (Object.hasOwn(record, 'initialContainment')) {
-        properties['asterweave.containment'] = record.initialContainment;
+        properties['engine.containment'] = record.initialContainment;
     }
     for (const key of PHYSICAL_MEASUREMENTS) {
         if (record.physical !== undefined && Object.hasOwn(record.physical, key)) {
-            properties['asterweave.' + key] = record.physical[key];
+            properties['engine.' + key] = record.physical[key];
         }
     }
     return kind === 'location'
@@ -88,5 +88,5 @@ function mapParticipant(record, kind) {
  */
 function gameProperties(properties) {
     return Object.fromEntries(Object.entries(properties ?? {})
-        .filter(([key]) => !key.startsWith('asterweave.')));
+        .filter(([key]) => !key.startsWith('engine.')));
 }

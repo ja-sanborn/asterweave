@@ -90,7 +90,7 @@ test('malformed outcomes and caught expired capability violations discard all st
         () => ({ then() { assert.fail('thenable must not be assimilated'); } }),
         (context) => new Proxy({ status: 'completed', outcome: 'success' }, {
             ownKeys(target) {
-                assert.throws(() => context.getProperty({ scope: 'world' }, 'asterweave.turn'));
+                assert.throws(() => context.getProperty({ scope: 'world' }, 'engine.turn'));
                 return Reflect.ownKeys(target);
             },
         }),
@@ -114,7 +114,7 @@ test('late expired context cannot invalidate a later invocation', () => {
     let previous;
     const { state, dispatcher, action } = setup((submitted, context) => {
         if (previous !== undefined) {
-            assert.throws(() => previous.getProperty({ scope: 'world' }, 'asterweave.turn'));
+            assert.throws(() => previous.getProperty({ scope: 'world' }, 'engine.turn'));
         }
         previous = context;
         return { status: 'completed', outcome: 'success' };

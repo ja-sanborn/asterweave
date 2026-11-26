@@ -29,7 +29,7 @@ Format and content versions use three nonnegative decimal integer components sep
 | Field | Required | Type and constraints |
 | --- | --- | --- |
 | id | Yes | Stable reverse-domain-style identifier, at least two dot-separated segments |
-| namespace | Yes | Stable machine-readable namespace, not asterweave; see [properties](PROPERTIES.md) |
+| namespace | Yes | Stable machine-readable namespace, not engine; see [properties](PROPERTIES.md) |
 | version | Yes | Content version string using the version grammar above |
 | title | Yes | Nonblank Unicode string |
 

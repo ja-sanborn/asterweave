@@ -23,11 +23,11 @@ import { WORLD_CODES as C } from './worldDiagnostics.js';
 export function validateAssociations(participants, hierarchy, report) {
     const resolve = (id) => participants.get(id);
     for (const [id, { properties }] of participants) {
-        if (properties['asterweave.lifecycle'] !== 'active') {
+        if (properties['engine.lifecycle'] !== 'active') {
             continue;
         }
         const seen = new Set();
-        for (const [index, association] of properties['asterweave.associations'].entries()) {
+        for (const [index, association] of properties['engine.associations'].entries()) {
             const { targetId, relationship } = association;
             const identity = JSON.stringify([targetId, relationship]);
             let message;

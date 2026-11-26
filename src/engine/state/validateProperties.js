@@ -21,7 +21,7 @@ import { PROPERTY_CODES as C } from './propertyDiagnostics.js';
  * @returns {boolean} Whether this key belongs to the game.
  */
 export function isGamePropertyKey(key, namespace) {
-    return namespace !== 'asterweave' && isQualifiedKey(key) && key.startsWith(namespace + '.');
+    return namespace !== 'engine' && isQualifiedKey(key) && key.startsWith(namespace + '.');
 }
 
 /**

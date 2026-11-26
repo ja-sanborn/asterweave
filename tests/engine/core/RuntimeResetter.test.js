@@ -43,13 +43,13 @@ test('reset restores original state and preserves registry, snapshots and identi
     assert.equal(result.status, 'completed');
     const changed = state.readEffectiveState();
     assert.equal(identity.getProperty('stateFoundation.fuel'), 10);
-    assert.equal(state.player.properties['asterweave.selectedActor'], undefined);
+    assert.equal(state.player.properties['engine.selectedActor'], undefined);
     assert.equal(resetter.reset().status, 'completed');
     assert.deepEqual(state.readEffectiveState(), original);
     assert.equal(state.world.resolve('brassLantern'), identity);
     assert.equal(identity.getProperty('stateFoundation.fuel'), 100);
     assert.equal(registry.size, 1);
-    assert.equal(changed.world.properties['asterweave.turn'], 1);
+    assert.equal(changed.world.properties['engine.turn'], 1);
 
     const lease = state.acquireOperation();
     state.markCompromised(lease);

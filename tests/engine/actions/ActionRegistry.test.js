@@ -191,7 +191,7 @@ test('mutation grants are separate from registration authority and remain valid 
     const valid = { namespaces: ['zork'], operations: ['grantControl'] };
     assert.throws(() => registry.establishMutationGrants(registrationAuthority, 'interact', valid), TypeError);
     for (const invalid of [
-        { namespaces: ['asterweave'], operations: [] },
+        { namespaces: ['engine'], operations: [] },
         { namespaces: ['zork', 'zork'], operations: [] },
         { namespaces: [], operations: ['advanceTurns'] },
         { namespaces: [], operations: [], extra: true },

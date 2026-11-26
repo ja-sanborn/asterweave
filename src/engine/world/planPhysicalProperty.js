@@ -56,6 +56,6 @@ export function planPhysicalProperty(state, operation, id, name, value, readInit
     }
     const proposed = operation === 'reset' ? readInitial(id, name) : value;
     requirePhysicalPropertyRequest(proposed === undefined ? 'remove' : 'set', id, name, proposed);
-    plan.set(id, 'asterweave.' + name, proposed);
+    plan.set(id, 'engine.' + name, proposed);
     return plan.finish();
 }

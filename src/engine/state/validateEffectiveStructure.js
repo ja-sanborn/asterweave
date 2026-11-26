@@ -30,7 +30,7 @@ import { validatePropertyAddress } from './propertyAddress.js';
 function mapValid(properties, namespace, reserved) {
     return isRecord(properties) && Object.keys(properties).every((key) =>
         isGamePropertyKey(key, namespace)
-            || reserved.some((name) => key === 'asterweave.' + name));
+            || reserved.some((name) => key === 'engine.' + name));
 }
 
 /**
@@ -46,16 +46,16 @@ export function validateEffectiveStructure(input) {
         || !isGameId(state.game.id) || !isVersion(state.game.version)
         || !isVersion(state.game.formatVersion) || typeof state.game.title !== 'string'
         || state.game.title.trim().length === 0
-        || !isIdentifier(state.game.namespace) || state.game.namespace === 'asterweave'
+        || !isIdentifier(state.game.namespace) || state.game.namespace === 'engine'
         || !isRecord(state.world) || Object.keys(state.world).length !== 1) {
         return false;
     }
     const namespace = state.game.namespace;
     const world = state.world.properties;
     if (!mapValid(world, namespace, ['id', 'name', 'lifecycle', 'turn'])
-        || world['asterweave.id'] !== WORLD_ID || world['asterweave.name'] !== 'World'
-        || world['asterweave.lifecycle'] !== 'active'
-        || !Number.isSafeInteger(world['asterweave.turn']) || world['asterweave.turn'] < 0) {
+        || world['engine.id'] !== WORLD_ID || world['engine.name'] !== 'World'
+        || world['engine.lifecycle'] !== 'active'
+        || !Number.isSafeInteger(world['engine.turn']) || world['engine.turn'] < 0) {
         return false;
     }
     const ids = new Set([WORLD_ID]);
@@ -71,14 +71,14 @@ export function validateEffectiveStructure(input) {
             ids.add(record.id);
             const p = record.properties;
             if (!mapValid(p, namespace, ['id', 'name', 'description', ...WORLD_PROPERTY_NAMES])
-                || p['asterweave.id'] !== record.id || typeof p['asterweave.name'] !== 'string'
-                || p['asterweave.name'].trim().length === 0
+                || p['engine.id'] !== record.id || typeof p['engine.name'] !== 'string'
+                || p['engine.name'].trim().length === 0
                 || !WORLD_PROPERTY_NAMES.every((name) =>
-                    isWorldPropertyValue(name, p['asterweave.' + name]))) {
+                    isWorldPropertyValue(name, p['engine.' + name]))) {
                 return false;
             }
-            if (Object.hasOwn(p, 'asterweave.description')
-                && typeof p['asterweave.description'] !== 'string') {
+            if (Object.hasOwn(p, 'engine.description')
+                && typeof p['engine.description'] !== 'string') {
                 return false;
             }
             if (kind === 'location' && (!Array.isArray(record.exits)
@@ -95,11 +95,11 @@ export function validateEffectiveStructure(input) {
     for (const player of state.players) {
         if (!isRecord(player) || Object.keys(player).length !== 2 || !isIdentifier(player.id)
             || !mapValid(player.properties, namespace, ['id', 'controlledActors', 'selectedActor'])
-            || player.properties['asterweave.id'] !== player.id
-            || !Array.isArray(player.properties['asterweave.controlledActors'])
-            || !player.properties['asterweave.controlledActors'].every(isIdentifier)
-            || (Object.hasOwn(player.properties, 'asterweave.selectedActor')
-                && !isIdentifier(player.properties['asterweave.selectedActor']))) {
+            || player.properties['engine.id'] !== player.id
+            || !Array.isArray(player.properties['engine.controlledActors'])
+            || !player.properties['engine.controlledActors'].every(isIdentifier)
+            || (Object.hasOwn(player.properties, 'engine.selectedActor')
+                && !isIdentifier(player.properties['engine.selectedActor']))) {
             return false;
         }
     }

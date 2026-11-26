@@ -30,11 +30,11 @@ function candidate() {
 test('effective candidate validation rejects malformed protected values and domain violations', () => {
     assert.equal(validateEffectiveState(candidate(), true), true);
     for (const mutate of [
-        (s) => { s.world.properties['asterweave.turn'] = -1; },
-        (s) => { s.entities[0].properties['asterweave.weight'] = 0; },
-        (s) => { s.entities[0].properties['asterweave.containment'] = { parentId: 'missing', relationship: 'in' }; },
-        (s) => { s.players[0].properties['asterweave.controlledActors'] = ['guide', 'guide']; },
-        (s) => { s.players[0].properties['asterweave.selectedActor'] = 'guide'; },
+        (s) => { s.world.properties['engine.turn'] = -1; },
+        (s) => { s.entities[0].properties['engine.weight'] = 0; },
+        (s) => { s.entities[0].properties['engine.containment'] = { parentId: 'missing', relationship: 'in' }; },
+        (s) => { s.players[0].properties['engine.controlledActors'] = ['guide', 'guide']; },
+        (s) => { s.players[0].properties['engine.selectedActor'] = 'guide'; },
         (s) => { s.relationships[0].from.id = 'missing'; },
         (s) => { s.relationships.push(s.relationships[0]); },
         (s) => { s.locations[0].exits[0].destinationId = 'guide'; },
@@ -49,8 +49,8 @@ test('effective candidate validation rejects malformed protected values and doma
 test('destroyed participants cannot resurrect during forward gameplay', () => {
     const before = candidate();
     const after = copyJsonData(before);
-    before.entities[2].properties['asterweave.lifecycle'] = 'destroyed';
-    delete before.entities[2].properties['asterweave.containment'];
+    before.entities[2].properties['engine.lifecycle'] = 'destroyed';
+    delete before.entities[2].properties['engine.containment'];
     assert.equal(validateEffectiveState(before), true);
     assert.equal(validateEffectiveState(after), true);
     assert.equal(validateStateTransition(before, after), false);

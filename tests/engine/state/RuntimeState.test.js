@@ -39,7 +39,7 @@ function initialize(options) {
 test('initial runtime has zero turn, empty differences and no implicit player', () => {
     const state = initialize();
     assert.equal(state.turn, 0);
-    assert.equal(state.world.getProperty('asterweave.turn'), state.turn);
+    assert.equal(state.world.getProperty('engine.turn'), state.turn);
     assert.equal(state.player, undefined);
     assert.deepEqual(state.overrides, []);
     assert.ok(Object.isFrozen(state.overrides));
@@ -60,11 +60,11 @@ test('player is separate from physical participants and stores complete properti
     assert.equal(state.player.id, 'guide');
     assert.equal(state.controllingPlayerId('adventurer'), 'guide');
     assert.equal(state.controllingPlayerId('missing'), undefined);
-    assert.equal(state.player.properties['asterweave.selectedActor'], 'guide');
+    assert.equal(state.player.properties['engine.selectedActor'], 'guide');
     assert.deepEqual(state.player.properties, {
-        'asterweave.id': 'guide',
-        'asterweave.controlledActors': ['guide', 'adventurer'],
-        'asterweave.selectedActor': 'guide',
+        'engine.id': 'guide',
+        'engine.controlledActors': ['guide', 'adventurer'],
+        'engine.selectedActor': 'guide',
         'stateFoundation.note': null,
     });
     assert.deepEqual(state.overrides, []);
@@ -73,8 +73,8 @@ test('player is separate from physical participants and stores complete properti
 
 test('selection remains absent even with one controlled actor', () => {
     const state = initialize({ player: { id: 'playerOne', controlledActors: ['guide'] } });
-    assert.equal(state.player.properties['asterweave.selectedActor'], undefined);
-    assert.equal(Object.hasOwn(state.player.properties, 'asterweave.selectedActor'), false);
+    assert.equal(state.player.properties['engine.selectedActor'], undefined);
+    assert.equal(Object.hasOwn(state.player.properties, 'engine.selectedActor'), false);
 });
 
 test('runtime isolates original configuration and current player state', () => {
@@ -83,13 +83,13 @@ test('runtime isolates original configuration and current player state', () => {
     const state = initialize(options);
     options.player.controlledActors.push('adventurer');
     options.player.initialProperties['stateFoundation.notes'].push('two');
-    assert.deepEqual(state.player.properties['asterweave.controlledActors'], ['guide']);
+    assert.deepEqual(state.player.properties['engine.controlledActors'], ['guide']);
     assert.deepEqual(state.initialOptions.player.initialProperties['stateFoundation.notes'], ['one']);
     assert.ok(Object.isFrozen(state.player.properties));
     assert.ok(Object.isFrozen(state.initialOptions.player.controlledActors));
     assert.notEqual(state.initialOptions, state.initialOptions);
     assert.throws(() => {
-        state.player.properties['asterweave.controlledActors'].push('adventurer');
+        state.player.properties['engine.controlledActors'].push('adventurer');
     }, TypeError);
 });
 
@@ -97,7 +97,7 @@ test('runtime reads baseline values through authoritative domain collaborators',
     const state = initialize();
     const actor = state.world.resolve('guide');
     assert.equal(actor.name, 'Guide');
-    assert.equal(actor.getProperty('asterweave.containment').parentId, 'cellar');
+    assert.equal(actor.getProperty('engine.containment').parentId, 'cellar');
     const properties = state.readWorldProperties('brassLantern');
     assert.equal(properties['stateFoundation.fuel'], 100);
     assert.equal(state.readWorldProperties('missing'), undefined);

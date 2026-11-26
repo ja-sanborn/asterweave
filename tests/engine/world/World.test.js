@@ -45,8 +45,8 @@ test('World is a separate non-navigable root and resolves stable participant cla
     assert.equal(world.resolve('world'), world);
     assert.equal(world instanceof WorldObject, false);
     assert.equal(world.getExit, undefined);
-    assert.equal(world.getProperty('asterweave.turn'), 0);
-    assert.equal(world.getProperty('asterweave.containment'), undefined);
+    assert.equal(world.getProperty('engine.turn'), 0);
+    assert.equal(world.getProperty('engine.containment'), undefined);
     assert.ok(world.resolve('bedroom') instanceof Location);
     assert.ok(world.resolve('driver') instanceof Actor);
     assert.ok(world.resolve('car') instanceof Entity);
@@ -60,7 +60,7 @@ test('registry retains inactive and destroyed identities and orders categories',
     assert.equal(world.resolve('brokenBottle').lifecycle, 'destroyed');
     assert.equal(world.resolve('visitor').isActive, false);
     assert.equal(world.resolve('car').isActive, true);
-    assert.equal(world.resolve('visitor').getProperty('asterweave.containment'), undefined);
+    assert.equal(world.resolve('visitor').getProperty('engine.containment'), undefined);
     const entities = world.participants('entity');
     const ids = entities.map((entry) => entry.id);
     assert.deepEqual(ids, [...ids].sort());
@@ -71,11 +71,11 @@ test('registry retains inactive and destroyed identities and orders categories',
 });
 
 test('domain objects read current state instead of retaining duplicate mutable values', () => {
-    const properties = { 'asterweave.name': 'Before', 'asterweave.lifecycle': 'active' };
+    const properties = { 'engine.name': 'Before', 'engine.lifecycle': 'active' };
     const actor = new Actor('person', () => properties);
     assert.equal(actor.name, 'Before');
-    properties['asterweave.name'] = 'After';
-    properties['asterweave.lifecycle'] = 'inactive';
+    properties['engine.name'] = 'After';
+    properties['engine.lifecycle'] = 'inactive';
     assert.equal(actor.name, 'After');
     assert.equal(actor.isActive, false);
     assert.ok(Object.isFrozen(actor));

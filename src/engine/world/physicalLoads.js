@@ -43,11 +43,11 @@ export function calculatePhysicalLoads(participants, hierarchy) {
         let size = { sum: 0, unknown: false, overflow: false };
         for (const child of children) {
             const childProperties = participants.get(child).properties;
-            size = combine(size, measurement(childProperties['asterweave.size']));
+            size = combine(size, measurement(childProperties['engine.size']));
             weight = combine(weight, totals.get(child));
         }
         totals.set(id, {
-            ...combine(weight, measurement(properties['asterweave.weight'])),
+            ...combine(weight, measurement(properties['engine.weight'])),
             contentsWeight: weight,
             contentsSize: size,
         });

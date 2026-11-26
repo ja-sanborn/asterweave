@@ -20,7 +20,7 @@ import { WORLD_CODES as C } from './worldDiagnostics.js';
 export function validateInitialViability(participants, report) {
     const activeKinds = new Set();
     for (const { kind, properties } of participants.values()) {
-        if (properties['asterweave.lifecycle'] === 'active') {
+        if (properties['engine.lifecycle'] === 'active') {
             activeKinds.add(kind);
         }
     }

@@ -92,7 +92,7 @@ export class RuntimeState {
 
     /** @returns {number} Authoritative World turn property. */
     get turn() {
-        return this.readWorldProperties(WORLD_ID)['asterweave.turn'];
+        return this.readWorldProperties(WORLD_ID)['engine.turn'];
     }
 
     /** @returns {object} Detached immutable original initialization configuration. */
@@ -252,7 +252,7 @@ export class RuntimeState {
                 || configuration.diagnostics.length !== 0
                 || !areJsonValuesEqual(configuration.options, this.#initialOptions)
                 || !areJsonValuesEqual(originalPlayer, this.#initialPlayer)
-                || baseline.world.properties['asterweave.turn'] !== 0
+                || baseline.world.properties['engine.turn'] !== 0
                 || !this.#verifyIdentities()) {
                 throw new Error('Original state could not be verified.');
             }
@@ -264,7 +264,7 @@ export class RuntimeState {
         const view = prepared.reader.readEffectiveState();
         if (!validateEffectiveState(view, true)
             || !areJsonValuesEqual(prepared.player?.record, this.#initialPlayer)
-            || prepared.reader.readWorldProperties(WORLD_ID)['asterweave.turn'] !== 0
+            || prepared.reader.readWorldProperties(WORLD_ID)['engine.turn'] !== 0
             || prepared.overrides.listOverrides().length !== 0) {
             throw new Error('Invalid isolated reset candidate.');
         }

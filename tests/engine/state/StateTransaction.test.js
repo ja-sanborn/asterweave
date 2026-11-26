@@ -69,7 +69,7 @@ test('invalidated candidate cannot prepare or publish even when exception is cau
     const state = new RuntimeState(new GameDefinitionValidator().validate(definition).candidate, {});
     const lease = state.acquireOperation();
     const transaction = state.beginTransaction(lease);
-    assert.throws(() => transaction.stagePropertySet({ scope: 'world' }, 'asterweave.turn', 5));
+    assert.throws(() => transaction.stagePropertySet({ scope: 'world' }, 'engine.turn', 5));
     assert.equal(transaction.isInvalidated, true);
     assert.throws(() => transaction.prepare());
     state.releaseOperation(lease);

@@ -21,15 +21,15 @@ import { WORLD_CODES as C } from './worldDiagnostics.js';
 export function validateLifecycle(participants, report) {
     const invalid = new Set();
     for (const [id, { properties }] of participants) {
-        const active = properties['asterweave.lifecycle'] === 'active';
-        const placed = Object.hasOwn(properties, 'asterweave.containment');
+        const active = properties['engine.lifecycle'] === 'active';
+        const placed = Object.hasOwn(properties, 'engine.containment');
         if (active !== placed) {
             invalid.add(id);
             report(C.INVALID_LIFECYCLE, id, 'containment', active
                 ? 'Active participant requires containment.'
                 : 'Nonactive participant must not have containment.');
         }
-        if (!active && properties['asterweave.associations'].length > 0) {
+        if (!active && properties['engine.associations'].length > 0) {
             report(C.INVALID_LIFECYCLE, id, 'associations',
                 'Nonactive participant must not have associations.');
         }

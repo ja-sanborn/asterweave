@@ -60,7 +60,7 @@ test('authorized relocation preserves occupied subtree and stable identities', (
     assert.equal(state.readWorldQueries().effectiveLocation('notebook'), 'driveway');
     assert.deepEqual(state.readWorldQueries().recursiveContents('car'),
         ['backpack', 'driver', 'notebook']);
-    assert.deepEqual(state.player.properties['asterweave.controlledActors'], ['player']);
+    assert.deepEqual(state.player.properties['engine.controlledActors'], ['player']);
 });
 
 test('returning to baseline normalizes placement and same placement is a no-op', () => {
@@ -80,14 +80,14 @@ test('relocation removes incoming and outgoing associations but preserves subtre
         assert.equal(context.establishAssociation('rug', 'hiddenKey', 'near').changed, true);
         assert.equal(context.relocate('bedroom', 'garage', 'in').changed, true);
         assert.equal(context.getProperty({ scope: 'entity', id: 'hiddenKey' },
-            'asterweave.associations').value.length, 1);
+            'engine.associations').value.length, 1);
         assert.equal(context.relocate('rug', 'garage', 'in').changed, true);
         assert.deepEqual(context.getProperty({ scope: 'entity', id: 'rug' },
-            'asterweave.associations').value, []);
+            'engine.associations').value, []);
         return completed();
     });
     assert.equal(run().status, 'completed');
-    assert.deepEqual(state.readWorldProperties('hiddenKey')['asterweave.associations'], []);
+    assert.deepEqual(state.readWorldProperties('hiddenKey')['engine.associations'], []);
     assert.equal(state.readWorldQueries().parent('hiddenKey'), 'bedroom');
 });
 
@@ -145,7 +145,7 @@ test('relocation alone authorizes required automatic association cleanup', () =>
         return completed();
     }, ['relocate']);
     assert.equal(run().status, 'completed');
-    assert.deepEqual(state.readWorldProperties('hiddenKey')['asterweave.associations'], []);
+    assert.deepEqual(state.readWorldProperties('hiddenKey')['engine.associations'], []);
 });
 
 test('rejected actions discard relocation, association cleanup and outputs', () => {
@@ -195,9 +195,9 @@ test('removing an authored optional measurement commits explicit absence', () =>
         return completed();
     }, ['modifyPhysicalProperties']);
     assert.equal(run().status, 'completed');
-    assert.equal(Object.hasOwn(state.readWorldProperties('rug'), 'asterweave.weight'), false);
+    assert.equal(Object.hasOwn(state.readWorldProperties('rug'), 'engine.weight'), false);
     assert.deepEqual(state.overrides, [
-        { scope: 'entity', id: 'rug', removed: ['asterweave.weight'] },
+        { scope: 'entity', id: 'rug', removed: ['engine.weight'] },
     ]);
 });
 
@@ -230,9 +230,9 @@ test('physical weight changes revalidate ancestors and preserve prior successful
         return completed();
     }, ['modifyPhysicalProperties', 'relocate']);
     assert.equal(run().status, 'completed');
-    assert.equal(state.readWorldProperties('driver')['asterweave.weightCapacity'], 4);
-    assert.equal(state.readWorldProperties('notebook')['asterweave.weight'], 2);
-    assert.equal(state.readWorldProperties('backpack')['asterweave.isContainer'], false);
+    assert.equal(state.readWorldProperties('driver')['engine.weightCapacity'], 4);
+    assert.equal(state.readWorldProperties('notebook')['engine.weight'], 2);
+    assert.equal(state.readWorldProperties('backpack')['engine.isContainer'], false);
     assert.equal(state.readWorldQueries().parent('notebook'), 'garage');
 });
 
@@ -247,7 +247,7 @@ test('reset revalidates baseline limits against current candidate contents', () 
         return completed();
     }, ['modifyPhysicalProperties', 'relocate']);
     assert.equal(run().status, 'completed');
-    assert.equal(Object.hasOwn(state.readWorldProperties('safe'), 'asterweave.maxItemSize'), false);
+    assert.equal(Object.hasOwn(state.readWorldProperties('safe'), 'engine.maxItemSize'), false);
     assert.equal(state.readWorldQueries().parent('table'), 'safe');
 });
 
@@ -261,7 +261,7 @@ test('physical mutation authority is independent and malformed values invalidate
         [['modifyPhysicalProperties'], (context) => context.removePhysicalProperty('rug', 'isContainer')],
         [['modifyPhysicalProperties'], (context) => context.setPhysicalProperty('rug', 'lifecycle', 'inactive')],
         [['modifyPhysicalProperties'], (context) =>
-            context.setProperty({ scope: 'entity', id: 'rug' }, 'asterweave.weight', 1)],
+            context.setProperty({ scope: 'entity', id: 'rug' }, 'engine.weight', 1)],
     ]) {
         const { state, run } = setup((action, context) => {
             assert.throws(() => operation(context), TypeError);
@@ -323,7 +323,7 @@ test('deactivation requires explicit descendant resolution and removes placement
     assert.equal(state.world.resolve('safe').lifecycle, 'inactive');
     assert.equal(state.readWorldQueries().parent('safe'), undefined);
     assert.equal(state.readWorldQueries().parent('money'), 'bedroom');
-    assert.ok(state.overrides.find(({ id }) => id === 'safe').removed.includes('asterweave.containment'));
+    assert.ok(state.overrides.find(({ id }) => id === 'safe').removed.includes('engine.containment'));
 });
 
 test('individual destruction is terminal even before the current action commits', () => {
@@ -358,10 +358,10 @@ test('explicit recursive destruction preserves identities and cleans control and
         assert.equal(state.world.resolve(id).lifecycle, 'destroyed');
         assert.equal(state.readWorldQueries().parent(id), undefined);
     }
-    assert.deepEqual(state.player.properties['asterweave.controlledActors'], ['player']);
-    assert.equal(state.player.properties['asterweave.selectedActor'], undefined);
+    assert.deepEqual(state.player.properties['engine.controlledActors'], ['player']);
+    assert.equal(state.player.properties['engine.selectedActor'], undefined);
     assert.equal(state.world.resolve('garage').lifecycle, 'active');
-    assert.equal(state.world.resolve('driver').getProperty('asterweave.weight'), 4);
+    assert.equal(state.world.resolve('driver').getProperty('engine.weight'), 4);
 });
 
 test('lifecycle cleanup removes physical associations but preserves nonphysical relationships', () => {
@@ -376,8 +376,8 @@ test('lifecycle cleanup removes physical associations but preserves nonphysical 
         return completed();
     }, ['deactivate', 'activate', 'establishAssociation'], { namespaces: ['containment'] });
     assert.equal(run().status, 'completed');
-    assert.deepEqual(state.readWorldProperties('rug')['asterweave.associations'], []);
-    assert.deepEqual(state.readWorldProperties('hiddenKey')['asterweave.associations'], []);
+    assert.deepEqual(state.readWorldProperties('rug')['engine.associations'], []);
+    assert.deepEqual(state.readWorldProperties('hiddenKey')['engine.associations'], []);
     assert.equal(state.readEffectiveState().relationships[0].properties['containment.memory'], true);
 });
 
@@ -393,8 +393,8 @@ test('reactivation restores neither control nor selection and allows baseline no
     });
     assert.equal(run().status, 'completed');
     assert.deepEqual(state.overrides, []);
-    assert.deepEqual(state.player.properties['asterweave.controlledActors'], ['player']);
-    assert.equal(state.player.properties['asterweave.selectedActor'], undefined);
+    assert.deepEqual(state.player.properties['engine.controlledActors'], ['player']);
+    assert.equal(state.player.properties['engine.selectedActor'], undefined);
 });
 
 test('recursive destruction requires its own grant and caught denial rolls back everything', () => {
@@ -454,7 +454,7 @@ test('completed gameplay failure may intentionally destroy the acting participan
     assert.equal(result.status, 'completed');
     assert.equal(result.outcome, 'failure');
     assert.equal(state.turn, 1);
-    assert.deepEqual(state.player.properties['asterweave.controlledActors'], []);
+    assert.deepEqual(state.player.properties['engine.controlledActors'], []);
     assert.equal(state.world.resolve('player').lifecycle, 'destroyed');
     assert.equal(state.world.resolve('key').lifecycle, 'destroyed');
 });

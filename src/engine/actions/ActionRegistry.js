@@ -32,7 +32,7 @@ const CONSTRUCTION = Symbol('ActionRegistry construction');
 function validGrants(grants) {
     return !(!isRecord(grants) || Object.keys(grants).length !== 2
                 || !Array.isArray(grants.namespaces) || !Array.isArray(grants.operations)
-                || grants.namespaces.some((name) => !isIdentifier(name) || name === 'asterweave')
+                || grants.namespaces.some((name) => !isIdentifier(name) || name === 'engine')
                 || grants.operations.some((name) => !['grantControl', 'revokeControl',
                     'selectActor', 'clearSelection', ...WORLD_OPERATIONS].includes(name))
                 || new Set(grants.namespaces).size !== grants.namespaces.length

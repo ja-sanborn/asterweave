@@ -25,10 +25,10 @@ export function validateContainment(participants, invalidLifecycle, report) {
     const children = new Map();
     const invalid = new Set(invalidLifecycle);
     for (const [id, { properties }] of participants) {
-        if (properties['asterweave.lifecycle'] !== 'active' || invalid.has(id)) {
+        if (properties['engine.lifecycle'] !== 'active' || invalid.has(id)) {
             continue;
         }
-        const { parentId, relationship } = properties['asterweave.containment'];
+        const { parentId, relationship } = properties['engine.containment'];
         const parent = participants.get(parentId);
         let message;
         if (parentId === id) {
@@ -40,9 +40,9 @@ export function validateContainment(participants, invalidLifecycle, report) {
             if (relationship !== 'in') {
                 message = 'World accepts only the in relationship.';
             }
-        } else if (parent === undefined || parent.properties['asterweave.lifecycle'] !== 'active') {
+        } else if (parent === undefined || parent.properties['engine.lifecycle'] !== 'active') {
             message = 'Containment requires an active parent.';
-        } else if (relationship === 'in' && !parent.properties['asterweave.isContainer']) {
+        } else if (relationship === 'in' && !parent.properties['engine.isContainer']) {
             message = 'Parent is not a container.';
         } else if (['carried', 'held', 'worn'].includes(relationship) && parent.kind !== 'actor') {
             message = 'Relationship requires an actor parent.';

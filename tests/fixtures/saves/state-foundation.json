@@ -8,7 +8,7 @@
       {
         "scope": "world",
         "values": {
-          "asterweave.turn": 42,
+          "engine.turn": 42,
           "stateFoundation.powerRestored": true
         }
       },
@@ -23,10 +23,10 @@
         "scope": "entity",
         "id": "apple",
         "values": {
-          "asterweave.lifecycle": "destroyed"
+          "engine.lifecycle": "destroyed"
         },
         "removed": [
-          "asterweave.containment"
+          "engine.containment"
         ]
       },
       {
@@ -61,7 +61,7 @@
         "scope": "actor",
         "id": "adventurer",
         "values": {
-          "asterweave.containment": {
+          "engine.containment": {
             "parentId": "cellar",
             "relationship": "in"
           }
@@ -86,10 +86,10 @@
       {
         "id": "playerOne",
         "properties": {
-          "asterweave.controlledActors": [
+          "engine.controlledActors": [
             "adventurer"
           ],
-          "asterweave.selectedActor": "adventurer"
+          "engine.selectedActor": "adventurer"
         }
       }
     ]

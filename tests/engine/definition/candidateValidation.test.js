@@ -64,13 +64,13 @@ test('maps every current fixture to valid detached effective state', () => {
         const result = validate(input);
         assert.deepEqual(result.diagnostics, []);
         assert.deepEqual(input, before);
-        assert.equal(result.candidate.world.properties['asterweave.turn'], 0);
-        assert.equal(result.candidate.world.properties['asterweave.id'], 'world');
-        assert.equal(result.candidate.locations[0].properties['asterweave.isContainer'], true);
-        assert.equal(result.candidate.actors[0].properties['asterweave.isContainer'], false);
+        assert.equal(result.candidate.world.properties['engine.turn'], 0);
+        assert.equal(result.candidate.world.properties['engine.id'], 'world');
+        assert.equal(result.candidate.locations[0].properties['engine.isContainer'], true);
+        assert.equal(result.candidate.actors[0].properties['engine.isContainer'], false);
         assert.deepEqual(result.candidate.players, []);
         assert.deepEqual(result.candidate, validate(input).candidate);
-        result.candidate.locations[0].properties['asterweave.name'] = 'Changed';
+        result.candidate.locations[0].properties['engine.name'] = 'Changed';
         assert.deepEqual(input, before);
     }
 });
@@ -79,9 +79,9 @@ test('preserves inactive and destroyed identities without placement', () => {
     const { candidate } = validate(fixture());
     for (const [id, lifecycle] of [['visitor', 'inactive'], ['brokenBottle', 'destroyed']]) {
         const entry = candidate.entities.find((record) => record.id === id);
-        assert.equal(entry.properties['asterweave.lifecycle'], lifecycle);
-        assert.equal(Object.hasOwn(entry.properties, 'asterweave.containment'), false);
-        assert.deepEqual(entry.properties['asterweave.associations'], []);
+        assert.equal(entry.properties['engine.lifecycle'], lifecycle);
+        assert.equal(Object.hasOwn(entry.properties, 'engine.containment'), false);
+        assert.deepEqual(entry.properties['engine.associations'], []);
     }
 });
 
@@ -183,12 +183,12 @@ test('rejects reserved, foreign and malformed property keys without losing null 
     const input = fixture('state-foundation');
     input.world.initialProperties['stateFoundation.nullValue'] = null;
     assert.equal(validate(input).candidate.world.properties['stateFoundation.nullValue'], null);
-    input.world.initialProperties['asterweave.turn'] = 90;
+    input.world.initialProperties['engine.turn'] = 90;
     input.world.initialProperties['foreign.value'] = true;
     input.world.initialProperties['bad~/key'] = false;
     const result = validate(input);
     assert.deepEqual(result.diagnostics.map((item) => item.path), [
-        '/world/initialProperties/asterweave.turn',
+        '/world/initialProperties/engine.turn',
         '/world/initialProperties/bad~0~1key',
         '/world/initialProperties/foreign.value',
     ]);
@@ -215,8 +215,8 @@ test('rejects explicitly empty authored associations on nonactive participants',
 
 test('reserved authored properties cannot contaminate effective structural validation', () => {
     const input = fixture();
-    participant(input, 'key').initialProperties = { 'asterweave.weightCapacity': 'invalid' };
-    participant(input, 'visitor').initialProperties = { 'asterweave.containment': null };
+    participant(input, 'key').initialProperties = { 'engine.weightCapacity': 'invalid' };
+    participant(input, 'visitor').initialProperties = { 'engine.containment': null };
     const result = validate(input);
     assert.equal(result.candidate, undefined);
     assert.deepEqual(result.diagnostics.map((entry) => entry.code), ['INVALID_VALUE', 'INVALID_VALUE']);

@@ -17,7 +17,7 @@ import { validateInitialViability } from '../../../src/engine/world/validateInit
 
 test('ongoing lifecycle permits no active participants while initial viability does not', () => {
     const participants = new Map([['hero', { kind: 'actor', properties: {
-        'asterweave.lifecycle': 'destroyed', 'asterweave.associations': [],
+        'engine.lifecycle': 'destroyed', 'engine.associations': [],
     } }]]);
     const findings = [];
     const report = (...args) => findings.push(args);

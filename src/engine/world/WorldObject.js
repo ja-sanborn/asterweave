@@ -43,7 +43,7 @@ export class WorldObject {
 
     /** @returns {string} Current lifecycle state. */
     get lifecycle() {
-        return this.getProperty('asterweave.lifecycle');
+        return this.getProperty('engine.lifecycle');
     }
 
     /** @returns {boolean} Whether the participant is active. */
@@ -53,7 +53,7 @@ export class WorldObject {
 
     /** @returns {string} Current authored or effective name. */
     get name() {
-        return this.getProperty('asterweave.name');
+        return this.getProperty('engine.name');
     }
 
     /**

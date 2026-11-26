@@ -92,7 +92,7 @@ test('rejects duplicate controls, unknown references and wrong categories', () =
 test('rejects control of inactive and destroyed actors', () => {
     for (const lifecycle of ['inactive', 'destroyed']) {
         const state = candidate();
-        state.actors[0].properties['asterweave.lifecycle'] = lifecycle;
+        state.actors[0].properties['engine.lifecycle'] = lifecycle;
         const result = validatePlayerConfiguration({
             player: { id: 'playerOne', controlledActors: [state.actors[0].id] },
         }, state);
@@ -117,13 +117,13 @@ test('rejects selection outside the controlled list and preserves omission', () 
 test('rejects reserved, foreign and malformed player property keys', () => {
     const result = validatePlayerConfiguration({
         player: { id: 'playerOne', controlledActors: [], initialProperties: {
-            'asterweave.selectedActor': 'guide',
+            'engine.selectedActor': 'guide',
             'foreign.value': true,
             'bad~/key': null,
         } },
     }, candidate());
     assert.deepEqual(result.diagnostics.map((item) => item.path), [
-        '/player/initialProperties/asterweave.selectedActor',
+        '/player/initialProperties/engine.selectedActor',
         '/player/initialProperties/bad~0~1key',
         '/player/initialProperties/foreign.value',
     ]);
@@ -133,11 +133,11 @@ test('checks independent options with invalid definition and suppresses unavaila
     const result = validatePlayerConfiguration({
         player: { id: 'playerOne', controlledActors: ['unknown'],
             selectedActor: 'other', initialProperties: {
-                'asterweave.id': 'bad', 'foreign.value': null,
+                'engine.id': 'bad', 'foreign.value': null,
             } },
     }, undefined);
     assert.deepEqual(result.diagnostics.map((item) => item.path), [
-        '/player/selectedActor', '/player/initialProperties/asterweave.id',
+        '/player/selectedActor', '/player/initialProperties/engine.id',
     ]);
     assert.ok(result.diagnostics.every((item) => item.source === 'options'));
 });

@@ -54,12 +54,12 @@ export function planWorldOperation(state, operation, id, targetId, relationship)
  * @returns {string|undefined} Rejection reason.
  */
 function relocate(plan, id, parentId, relationship) {
-    if (plan.participant(id)?.properties['asterweave.lifecycle'] !== 'active'
+    if (plan.participant(id)?.properties['engine.lifecycle'] !== 'active'
         || (parentId !== WORLD_ID
-            && plan.participant(parentId)?.properties['asterweave.lifecycle'] !== 'active')) {
+            && plan.participant(parentId)?.properties['engine.lifecycle'] !== 'active')) {
         return C.INVALID_CONTAINMENT;
     }
-    plan.set(id, 'asterweave.containment', { parentId, relationship });
+    plan.set(id, 'engine.containment', { parentId, relationship });
     cleanInvalidAssociations(plan);
     return undefined;
 }
@@ -79,13 +79,13 @@ function associate(plan, operation, id, targetId, relationship) {
         || !sharesAssociationFrame(resolve, id, targetId)) {
         return C.INVALID_ASSOCIATION;
     }
-    const associations = plan.participant(id).properties['asterweave.associations'];
+    const associations = plan.participant(id).properties['engine.associations'];
     const matches = (edge) => edge.targetId === targetId && edge.relationship === relationship;
     const exists = associations.some(matches);
     if (operation === 'establishAssociation' && !exists) {
-        plan.set(id, 'asterweave.associations', [...associations, { targetId, relationship }]);
+        plan.set(id, 'engine.associations', [...associations, { targetId, relationship }]);
     } else if (operation === 'removeAssociation' && exists) {
-        plan.set(id, 'asterweave.associations', associations.filter((edge) => !matches(edge)));
+        plan.set(id, 'engine.associations', associations.filter((edge) => !matches(edge)));
     }
     return undefined;
 }

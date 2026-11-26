@@ -28,9 +28,9 @@ test('baseline owns detached immutable normalized state', () => {
     const input = candidate();
     const baseline = new GameBaseline(input);
     input.game.title = 'Changed';
-    input.world.properties['asterweave.turn'] = 10;
+    input.world.properties['engine.turn'] = 10;
     assert.equal(baseline.game.title, 'State Foundation');
-    assert.equal(baseline.world.properties['asterweave.turn'], 0);
+    assert.equal(baseline.world.properties['engine.turn'], 0);
     assert.ok(Object.isFrozen(baseline.game));
     assert.ok(Object.isFrozen(baseline.world.properties));
     assert.ok(Object.isFrozen(baseline.locations));

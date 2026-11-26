@@ -219,7 +219,7 @@ export class StateTransaction {
                 reader.readEffectiveState(), operation, id, name, value,
                 (subject, property) => reader.getInitialProperty(
                     { scope: reader.participantKind(subject), id: subject },
-                    'asterweave.' + property,
+                    'engine.' + property,
                 ).value,
             ));
         });
@@ -242,7 +242,7 @@ export class StateTransaction {
             const result = this.#stageWorldPlan(proposal);
             if (result.status === 'completed' && player !== undefined) {
                 const revoked = proposal.changes.filter(({ address, key, value }) =>
-                    address.scope === 'actor' && key === 'asterweave.lifecycle' && value !== 'active')
+                    address.scope === 'actor' && key === 'engine.lifecycle' && value !== 'active')
                     .map(({ address }) => address.id);
                 player.revokeControls(revoked);
             }
@@ -282,7 +282,7 @@ export class StateTransaction {
     advanceTurns(cost) {
         this.#perform(() => {
             const address = { scope: 'world' };
-            const key = 'asterweave.turn';
+            const key = 'engine.turn';
             const { reader, overrides } = this.#candidate;
             const next = addNonnegative(reader.getProperty(address, key).value, cost);
             if (next === undefined) {

@@ -16,7 +16,7 @@
  * @returns {boolean} Whether actor may be controlled.
  */
 export function isControllableActor(properties) {
-    return properties?.['asterweave.lifecycle'] === 'active';
+    return properties?.['engine.lifecycle'] === 'active';
 }
 
 /**

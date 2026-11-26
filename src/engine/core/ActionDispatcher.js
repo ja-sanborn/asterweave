@@ -92,7 +92,7 @@ export class ActionDispatcher {
             if (this.#state.participantKind(action.actorId) !== 'actor') {
                 return reject('ACTOR_NOT_FOUND');
             }
-            if (this.#state.readWorldProperties(action.actorId)['asterweave.lifecycle'] !== 'active') {
+            if (this.#state.readWorldProperties(action.actorId)['engine.lifecycle'] !== 'active') {
                 return reject('ACTION_UNAVAILABLE');
             }
             const authorized = trusted ? authority === this.#trustedAuthority

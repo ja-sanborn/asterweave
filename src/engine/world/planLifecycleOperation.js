@@ -42,7 +42,7 @@ export function planLifecycleOperation(state, operation, id, parentId, relations
     if (id === WORLD_ID) {
         return plan.finish(C.INVALID_LIFECYCLE);
     }
-    const lifecycle = plan.participant(id).properties['asterweave.lifecycle'];
+    const lifecycle = plan.participant(id).properties['engine.lifecycle'];
     if (operation === 'activate') {
         return activate(plan, id, lifecycle, parentId, relationship);
     }
@@ -58,8 +58,8 @@ export function planLifecycleOperation(state, operation, id, parentId, relations
         return plan.finish(C.INVALID_LIFECYCLE);
     }
     for (const subject of [id, ...descendants]) {
-        plan.set(subject, 'asterweave.lifecycle', next);
-        plan.set(subject, 'asterweave.containment', undefined);
+        plan.set(subject, 'engine.lifecycle', next);
+        plan.set(subject, 'engine.containment', undefined);
     }
     cleanInvalidAssociations(plan);
     return plan.finish();
@@ -79,11 +79,11 @@ function activate(plan, id, lifecycle, parentId, relationship) {
         return plan.finish(C.INVALID_LIFECYCLE);
     }
     if (lifecycle === 'active') {
-        const placement = plan.participant(id).properties['asterweave.containment'];
+        const placement = plan.participant(id).properties['engine.containment'];
         return plan.finish(placement.parentId === parentId && placement.relationship === relationship
             ? undefined : C.INVALID_LIFECYCLE);
     }
-    plan.set(id, 'asterweave.lifecycle', 'active');
-    plan.set(id, 'asterweave.containment', { parentId, relationship });
+    plan.set(id, 'engine.lifecycle', 'active');
+    plan.set(id, 'engine.containment', { parentId, relationship });
     return plan.finish();
 }

@@ -30,11 +30,11 @@ export class Player {
         }
         const properties = {
             ...configuration.initialProperties,
-            'asterweave.id': configuration.id,
-            'asterweave.controlledActors': configuration.controlledActors,
+            'engine.id': configuration.id,
+            'engine.controlledActors': configuration.controlledActors,
         };
         if (Object.hasOwn(configuration, 'selectedActor')) {
-            properties['asterweave.selectedActor'] = configuration.selectedActor;
+            properties['engine.selectedActor'] = configuration.selectedActor;
         }
         this.#record = immutableCopy({ id: configuration.id, properties });
         Object.freeze(this);
@@ -52,12 +52,12 @@ export class Player {
 
     /** @returns {ReadonlyArray<string>} Ordered controlled actor identities. */
     get controlledActors() {
-        return this.#record.properties['asterweave.controlledActors'];
+        return this.#record.properties['engine.controlledActors'];
     }
 
     /** @returns {string|undefined} Explicit selection or absence. */
     get selectedActor() {
-        return this.#record.properties['asterweave.selectedActor'];
+        return this.#record.properties['engine.selectedActor'];
     }
 
     /**
@@ -88,7 +88,7 @@ export class Player {
         }
         if (!this.controls(id)) {
             this.#replace({ ...this.#record.properties,
-                'asterweave.controlledActors': [...this.controlledActors, id] });
+                'engine.controlledActors': [...this.controlledActors, id] });
         }
         return true;
     }
@@ -117,9 +117,9 @@ export class Player {
         if (controlled.length === this.controlledActors.length) {
             return;
         }
-        const properties = { ...this.#record.properties, 'asterweave.controlledActors': controlled };
+        const properties = { ...this.#record.properties, 'engine.controlledActors': controlled };
         if (removed.has(this.selectedActor)) {
-            delete properties['asterweave.selectedActor'];
+            delete properties['engine.selectedActor'];
         }
         this.#replace(properties);
     }
@@ -135,7 +135,7 @@ export class Player {
             return false;
         }
         if (this.selectedActor !== id) {
-            this.#replace({ ...this.#record.properties, 'asterweave.selectedActor': id });
+            this.#replace({ ...this.#record.properties, 'engine.selectedActor': id });
         }
         return true;
     }
@@ -144,7 +144,7 @@ export class Player {
     clearSelection() {
         if (this.selectedActor !== undefined) {
             const properties = { ...this.#record.properties };
-            delete properties['asterweave.selectedActor'];
+            delete properties['engine.selectedActor'];
             this.#replace(properties);
         }
     }
@@ -155,7 +155,7 @@ export class Player {
      * @throws {TypeError} For protected or invalid keys.
      */
     #requireOrdinary(key) {
-        if (!isQualifiedKey(key) || key.startsWith('asterweave.')) {
+        if (!isQualifiedKey(key) || key.startsWith('engine.')) {
             throw new TypeError('Invalid ordinary player property.');
         }
     }

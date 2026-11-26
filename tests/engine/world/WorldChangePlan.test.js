@@ -20,10 +20,10 @@ import { PLACEMENT_OPERATIONS, LIFECYCLE_OPERATIONS, WORLD_OPERATIONS } from '..
 /** @returns {object} Fresh effective records for a simple nested world. */
 function fixture() {
     const record = (id, parentId) => ({ id, properties: {
-        'asterweave.lifecycle': 'active',
-        'asterweave.containment': { parentId, relationship: 'in' },
-        'asterweave.associations': [],
-        'asterweave.isContainer': true,
+        'engine.lifecycle': 'active',
+        'engine.containment': { parentId, relationship: 'in' },
+        'engine.associations': [],
+        'engine.isContainer': true,
     } });
     return { locations: [record('room', 'world')], actors: [],
         entities: [record('box', 'room'), record('item', 'box')] };
@@ -34,13 +34,13 @@ test('world proposals expose immutable records and detached identity enumeration
     const plan = new WorldChangePlan(state);
     assert.equal(plan.participants, undefined);
     assert.throws(() => plan.participantIds().push('fake'), TypeError);
-    assert.throws(() => { plan.participant('box').properties['asterweave.containment'].parentId = 'world'; },
+    assert.throws(() => { plan.participant('box').properties['engine.containment'].parentId = 'world'; },
         TypeError);
     assert.deepEqual(plan.originalDescendants('room'), ['box', 'item']);
-    plan.set('box', 'asterweave.containment', { parentId: 'world', relationship: 'in' });
-    assert.throws(() => { plan.participant('box').properties['asterweave.lifecycle'] = 'destroyed'; },
+    plan.set('box', 'engine.containment', { parentId: 'world', relationship: 'in' });
+    assert.throws(() => { plan.participant('box').properties['engine.lifecycle'] = 'destroyed'; },
         TypeError);
-    assert.equal(state.entities[0].properties['asterweave.containment'].parentId, 'room');
+    assert.equal(state.entities[0].properties['engine.containment'].parentId, 'room');
     assert.deepEqual(plan.originalDescendants('room'), ['box', 'item']);
     assert.equal(plan.finish().result.changed, true);
 });
@@ -75,19 +75,19 @@ test('proposal boundary rejects unsupported keys, unsafe shapes and terminal res
     const accessor = { get parentId() { assert.fail('getter invoked'); }, relationship: 'in' };
     for (const [key, value] of [
         ['__proto__', { polluted: true }], ['constructor', {}], ['prototype', {}],
-        ['game.flag', true], ['asterweave.turn', 2], ['asterweave.lifecycle', 'missing'],
-        ['asterweave.isContainer', undefined], ['asterweave.weight', 0],
-        ['asterweave.associations', [{ targetId: 'item', relationship: 'in' }]],
-        ['asterweave.containment', accessor],
-        ['asterweave.containment', { parentId: 'room', relationship: 'in', extra: true }],
+        ['game.flag', true], ['engine.turn', 2], ['engine.lifecycle', 'missing'],
+        ['engine.isContainer', undefined], ['engine.weight', 0],
+        ['engine.associations', [{ targetId: 'item', relationship: 'in' }]],
+        ['engine.containment', accessor],
+        ['engine.containment', { parentId: 'room', relationship: 'in', extra: true }],
     ]) {
         assert.throws(() => plan.set('box', key, value), TypeError);
     }
     assert.deepEqual(plan.changes(), []);
     assert.equal(Object.prototype.polluted, undefined);
-    plan.set('item', 'asterweave.lifecycle', 'destroyed');
-    plan.set('item', 'asterweave.containment', undefined);
-    assert.throws(() => plan.set('item', 'asterweave.lifecycle', 'active'), TypeError);
+    plan.set('item', 'engine.lifecycle', 'destroyed');
+    plan.set('item', 'engine.containment', undefined);
+    assert.throws(() => plan.set('item', 'engine.lifecycle', 'active'), TypeError);
     assert.equal(plan.finish().result.changed, true);
 });
 
@@ -96,8 +96,8 @@ test('world proposals retain only structural data and detach source placement', 
     state.entities[0].properties['game.large'] = { values: Array(10000).fill('data') };
     const plan = new WorldChangePlan(state);
     assert.equal(Object.hasOwn(plan.participant('box').properties, 'game.large'), false);
-    state.entities[0].properties['asterweave.containment'].parentId = 'world';
-    assert.equal(plan.participant('box').properties['asterweave.containment'].parentId, 'room');
+    state.entities[0].properties['engine.containment'].parentId = 'world';
+    assert.equal(plan.participant('box').properties['engine.containment'].parentId, 'room');
     assert.deepEqual(plan.changes(), []);
 });
 
@@ -106,16 +106,16 @@ test('deep recursive destruction plans iteratively and deterministically', () =>
     const count = 12000;
     for (let index = 0; index < count; index++) {
         state.entities.push({ id: 'node' + index, properties: {
-            'asterweave.lifecycle': 'active',
-            'asterweave.containment': {
+            'engine.lifecycle': 'active',
+            'engine.containment': {
                 parentId: index === 0 ? 'item' : 'node' + (index - 1), relationship: 'in',
             },
-            'asterweave.associations': [], 'asterweave.isContainer': true,
+            'engine.associations': [], 'engine.isContainer': true,
         } });
     }
     const result = planLifecycleOperation(state, 'destroyRecursively', 'box');
     assert.equal(result.result.changed, true);
     assert.equal(result.changes.length, (count + 2) * 2);
     assert.deepEqual(result, planLifecycleOperation(state, 'destroyRecursively', 'box'));
-    assert.equal(state.entities.at(-1).properties['asterweave.lifecycle'], 'active');
+    assert.equal(state.entities.at(-1).properties['engine.lifecycle'], 'active');
 });

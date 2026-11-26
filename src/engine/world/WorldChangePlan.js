@@ -32,7 +32,7 @@ export class WorldChangePlan {
         for (const [id, record] of this.#participants) {
             const properties = {};
             for (const name of WORLD_PROPERTY_NAMES) {
-                const key = 'asterweave.' + name;
+                const key = 'engine.' + name;
                 if (Object.hasOwn(record.properties, key)) {
                     const value = immutableCopy(record.properties[key]);
                     if (!isWorldPropertyValue(name, value)) {
@@ -81,12 +81,12 @@ export class WorldChangePlan {
     set(id, key, value) {
         const record = this.#participants.get(id);
         if (record === undefined || typeof key !== 'string'
-            || !WORLD_PROPERTY_NAMES.some((name) => key === 'asterweave.' + name)) {
+            || !WORLD_PROPERTY_NAMES.some((name) => key === 'engine.' + name)) {
             throw new TypeError('Invalid protected world property.');
         }
         const detached = value === undefined ? undefined : immutableCopy(value);
-        if (!isWorldPropertyValue(key.slice('asterweave.'.length), detached)
-            || (key === 'asterweave.lifecycle'
+        if (!isWorldPropertyValue(key.slice('engine.'.length), detached)
+            || (key === 'engine.lifecycle'
                 && record.properties[key] === 'destroyed' && detached !== 'destroyed')) {
             throw new TypeError('Invalid proposed world property.');
         }

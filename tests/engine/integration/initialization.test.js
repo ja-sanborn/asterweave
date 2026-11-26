@@ -49,14 +49,14 @@ test('all current game fixtures initialize and expose metadata and exact snapsho
         ]);
         assert.deepEqual(snapshot.game, { ...definition.game, formatVersion: '3.2.0' });
         assert.deepEqual(Object.keys(snapshot.world), ['properties']);
-        assert.equal(snapshot.world.properties['asterweave.turn'], 0);
+        assert.equal(snapshot.world.properties['engine.turn'], 0);
         assert.deepEqual(snapshot.players, []);
         for (const record of snapshot.locations) {
             assert.deepEqual(Object.keys(record).sort(), ['exits', 'id', 'properties']);
         }
         for (const record of [...snapshot.actors, ...snapshot.entities]) {
             assert.deepEqual(Object.keys(record).sort(), ['id', 'properties']);
-            assert.equal(record.properties['asterweave.id'], record.id);
+            assert.equal(record.properties['engine.id'], record.id);
         }
         assert.deepEqual(JSON.parse(JSON.stringify(snapshot)), snapshot);
     }
@@ -68,8 +68,8 @@ test('snapshot preserves authored exits, explicit null and omitted values withou
     const snapshot = initialize(definition).getStateSnapshot();
     const lantern = snapshot.entities.find((record) => record.id === 'brassLantern');
     assert.equal(lantern.properties['stateFoundation.target'], null);
-    assert.equal(lantern.properties['asterweave.description'], undefined);
-    assert.equal(Object.hasOwn(lantern.properties, 'asterweave.description'), false);
+    assert.equal(lantern.properties['engine.description'], undefined);
+    assert.equal(Object.hasOwn(lantern.properties, 'engine.description'), false);
     assert.equal(lantern.properties['stateFoundation.isLit'], false);
     assert.equal(snapshot.world.properties['stateFoundation.powerRestored'], false);
     assert.deepEqual(snapshot.locations.find((entry) => entry.id === 'entrance').exits,
@@ -88,9 +88,9 @@ test('all six scopes are present with player controls and directed relationship 
     const snapshot = game.getStateSnapshot();
     assert.deepEqual(snapshot.players, [{
         id: 'playerOne', properties: {
-            'asterweave.id': 'playerOne',
-            'asterweave.controlledActors': ['guide', 'adventurer'],
-            'asterweave.selectedActor': 'guide',
+            'engine.id': 'playerOne',
+            'engine.controlledActors': ['guide', 'adventurer'],
+            'engine.selectedActor': 'guide',
             'stateFoundation.value': null,
         },
     }]);
@@ -156,7 +156,7 @@ test('snapshots and independently initialized games share no mutable caller or s
     assert.deepEqual(first.getStateSnapshot(), a);
     assert.deepEqual(second.getStateSnapshot(), a);
     assert.throws(() => {
-        a.players[0].properties['asterweave.controlledActors'].push('adventurer');
+        a.players[0].properties['engine.controlledActors'].push('adventurer');
     }, TypeError);
 });
 
@@ -164,9 +164,9 @@ test('inactive and destroyed identities remain visible without containment', () 
     const snapshot = initialize(fixture('containment-foundation')).getStateSnapshot();
     for (const [id, lifecycle] of [['visitor', 'inactive'], ['brokenBottle', 'destroyed']]) {
         const entry = snapshot.entities.find((record) => record.id === id);
-        assert.equal(entry.properties['asterweave.lifecycle'], lifecycle);
-        assert.equal(Object.hasOwn(entry.properties, 'asterweave.containment'), false);
-        assert.deepEqual(entry.properties['asterweave.associations'], []);
+        assert.equal(entry.properties['engine.lifecycle'], lifecycle);
+        assert.equal(Object.hasOwn(entry.properties, 'engine.containment'), false);
+        assert.deepEqual(entry.properties['engine.associations'], []);
     }
 });
 

@@ -40,7 +40,7 @@ export function* participants(world) {
 export function validateIdentity(definition, collector) {
     const identities = new Map([[WORLD_ID, { kind: 'world' }]]);
     const ambiguous = new Set();
-    if (definition.game.namespace === 'asterweave') {
+    if (definition.game.namespace === 'engine') {
         reportDefinition(collector, C.INVALID_VALUE, '/game/namespace', 'Reserved engine namespace.');
     }
     for (const entry of participants(definition.world)) {

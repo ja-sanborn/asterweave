@@ -24,11 +24,11 @@ import { WorldQueries } from '../../../src/engine/world/WorldQueries.js';
  */
 function record(id, parentId, relationship = 'in', lifecycle = 'active') {
     return { id, properties: {
-        'asterweave.lifecycle': lifecycle,
-        'asterweave.isContainer': true,
-        'asterweave.associations': [],
+        'engine.lifecycle': lifecycle,
+        'engine.isContainer': true,
+        'engine.associations': [],
         ...(parentId === undefined ? {} : {
-            'asterweave.containment': { parentId, relationship },
+            'engine.containment': { parentId, relationship },
         }),
     } };
 }
@@ -91,7 +91,7 @@ test('query results are detached, immutable and independent of subsequent source
     const state = fixture();
     const before = new WorldQueries(state);
     const car = state.entities.find(({ id }) => id === 'car');
-    car.properties['asterweave.containment'].parentId = 'house';
+    car.properties['engine.containment'].parentId = 'house';
     const after = new WorldQueries(state);
     assert.equal(before.effectiveLocation('driver'), 'room');
     assert.equal(after.effectiveLocation('driver'), 'house');
@@ -103,10 +103,10 @@ test('query results are detached, immutable and independent of subsequent source
 
 test('queries fail closed on cycles and invalid ancestry', () => {
     const state = fixture();
-    state.locations[1].properties['asterweave.containment'].parentId = 'room';
+    state.locations[1].properties['engine.containment'].parentId = 'room';
     assert.throws(() => new WorldQueries(state), /Invalid effective world hierarchy/);
     const other = fixture();
-    other.entities[1].properties['asterweave.containment'].parentId = 'visitor';
+    other.entities[1].properties['engine.containment'].parentId = 'visitor';
     assert.throws(() => new WorldQueries(other), /Invalid effective world hierarchy/);
 });
 

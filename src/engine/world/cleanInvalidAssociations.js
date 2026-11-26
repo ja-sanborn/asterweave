@@ -20,12 +20,12 @@ export function cleanInvalidAssociations(plan) {
     const resolve = (id) => plan.participant(id);
     for (const subject of plan.participantIds()) {
         const { properties } = resolve(subject);
-        const associations = properties['asterweave.associations'];
+        const associations = properties['engine.associations'];
         const retained = associations.filter(({ targetId }) =>
             validAssociationEndpoints(resolve, subject, targetId)
             && sharesAssociationFrame(resolve, subject, targetId));
         if (retained.length !== associations.length) {
-            plan.set(subject, 'asterweave.associations', retained);
+            plan.set(subject, 'engine.associations', retained);
         }
     }
 }
