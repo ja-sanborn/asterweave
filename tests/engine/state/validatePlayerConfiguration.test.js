@@ -123,8 +123,8 @@ test('rejects reserved, foreign and malformed player property keys', () => {
         } },
     }, candidate());
     assert.deepEqual(result.diagnostics.map((item) => item.path), [
-        '/player/initialProperties/engine.selectedActor',
         '/player/initialProperties/bad~0~1key',
+        '/player/initialProperties/engine.selectedActor',
         '/player/initialProperties/foreign.value',
     ]);
 });

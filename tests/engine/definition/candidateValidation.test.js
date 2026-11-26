@@ -188,8 +188,8 @@ test('rejects reserved, foreign and malformed property keys without losing null 
     input.world.initialProperties['bad~/key'] = false;
     const result = validate(input);
     assert.deepEqual(result.diagnostics.map((item) => item.path), [
-        '/world/initialProperties/engine.turn',
         '/world/initialProperties/bad~0~1key',
+        '/world/initialProperties/engine.turn',
         '/world/initialProperties/foreign.value',
     ]);
 });
