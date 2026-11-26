@@ -137,6 +137,10 @@ test('public dispatch enforces explicit actor control and retains empty producti
     }).game;
     assert.equal(game.dispatchAction(action).error.code, 'UNKNOWN_ACTION_TYPE');
     assert.equal(game.dispatchAction(null).error.code, 'INVALID_ACTION');
+    for (const type of ['game.ringBell', 'combat.attack', 'asterweave.move', 'teleport']) {
+        assert.equal(game.dispatchAction({ ...action, type }).error.code, 'INVALID_ACTION');
+        assert.equal(noPlayer.dispatchAction({ ...action, type }).error.code, 'INVALID_ACTION');
+    }
     assert.equal(game.turn, 0);
     const before = game.getStateSnapshot();
     assert.deepEqual(game.reset().toJSON(), { status: 'completed' });

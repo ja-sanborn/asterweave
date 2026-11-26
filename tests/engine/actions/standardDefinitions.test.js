@@ -41,14 +41,14 @@ test('defines Foundation movement metadata using the authoritative direction voc
 });
 
 test('registers and resolves move with a test-only handler without executing it', () => {
-    const { registry, engineOwner } = ActionRegistry.create();
+    const { registry, registrationAuthority } = ActionRegistry.create();
     let calls = 0;
     /** Counts unexpected invocations; no navigation or gameplay behavior. */
     function testHandler() {
         calls++;
     }
     assert.equal(registry.has('move'), false);
-    assert.equal(registry.register(engineOwner, MOVE_DEFINITION, testHandler).status, 'completed');
+    assert.equal(registry.register(registrationAuthority, MOVE_DEFINITION, testHandler).status, 'completed');
     assert.equal(registry.finalize().status, 'completed');
     const record = registry.resolve('move');
     assert.equal(record.handler, testHandler);
@@ -66,8 +66,8 @@ test('registers and resolves move with a test-only handler without executing it'
 });
 
 test('rejects aliases, missing directions, wrong types and caller-selected destinations', () => {
-    const { registry, engineOwner } = ActionRegistry.create();
-    registry.register(engineOwner, MOVE_DEFINITION, () => {});
+    const { registry, registrationAuthority } = ActionRegistry.create();
+    registry.register(registrationAuthority, MOVE_DEFINITION, () => {});
     registry.finalize();
     const { definition } = registry.resolve('move');
     for (const args of [
@@ -82,17 +82,16 @@ test('rejects aliases, missing directions, wrong types and caller-selected desti
     }
 });
 
-test('keeps movement registrations isolated and requires engine ownership', () => {
+test('keeps movement registrations isolated and requires engine registration authority', () => {
     const first = ActionRegistry.create();
     const second = ActionRegistry.create();
-    const extensionOwner = first.registry.claimNamespace('navigation').owner;
-    for (const owner of [extensionOwner, first.gameOwner, second.engineOwner]) {
-        const result = first.registry.register(owner, MOVE_DEFINITION, () => {});
+    for (const authority of [Symbol('registration'), first.grantAuthority, second.registrationAuthority]) {
+        const result = first.registry.register(authority, MOVE_DEFINITION, () => {});
         assert.equal(result.status, 'rejected');
-        assert.equal(result.diagnostics[0].code, 'INVALID_REGISTRATION_OWNER');
+        assert.equal(result.diagnostics[0].code, 'INVALID_REGISTRATION_AUTHORITY');
     }
-    assert.equal(first.registry.register(first.engineOwner, MOVE_DEFINITION, () => {}).status, 'completed');
+    assert.equal(first.registry.register(first.registrationAuthority, MOVE_DEFINITION, () => {}).status, 'completed');
     assert.equal(second.registry.has('move'), false);
-    assert.equal(second.registry.register(second.engineOwner, MOVE_DEFINITION, () => {}).status, 'completed');
+    assert.equal(second.registry.register(second.registrationAuthority, MOVE_DEFINITION, () => {}).status, 'completed');
     assert.notEqual(first.registry.getDefinition('move'), second.registry.getDefinition('move'));
 });

@@ -40,7 +40,8 @@ test('initialization creates independent finalized empty action registries', () 
         assert.equal(result.registry.size, 0);
         assert.equal(result.registry.resolve('move'), undefined);
         assert.deepEqual(result.registry.listDefinitions(), []);
-        assert.equal(result.registry.claimNamespace('combat').diagnostics[0].code, 'REGISTRY_FINALIZED');
+        assert.equal(result.registry.claimNamespace, undefined);
+        assert.equal(result.registry.verifyIntegrity(), true);
         assert.equal(result.registry.register(Symbol(), MOVE_DEFINITION, () => {}).diagnostics[0].code,
             'REGISTRY_FINALIZED');
     }
@@ -65,20 +66,20 @@ test('public initialization keeps registry and authority out of the facade and s
     assert.ok(second.isCompleted);
     assert.notEqual(first.game, second.game);
     assert.deepEqual(Reflect.ownKeys(first.game), []);
-    for (const key of ['registry', 'actionRegistry', 'registrationAuthority', 'registrationAuthority', 'register', 'resolve']) {
+    for (const key of ['registry', 'actionRegistry', 'registrationAuthority', 'grantAuthority', 'register', 'resolve']) {
         assert.equal(key in first.game, false);
     }
     const snapshot = first.game.getStateSnapshot();
     assert.deepEqual(snapshot, second.game.getStateSnapshot());
     const serialized = JSON.stringify(snapshot);
-    for (const name of ['registry', 'actionRegistry', 'registrationAuthority', 'registrationAuthority']) {
+    for (const name of ['registry', 'actionRegistry', 'registrationAuthority', 'grantAuthority']) {
         assert.equal(serialized.includes('"' + name + '"'), false);
     }
     assert.equal(first.game.turn, 0);
 });
 
 test('initialization does not accept registry or registration configuration from callers', () => {
-    for (const options of [{ registry: {} }, { actions: [] }, { registrationAuthority: 'engine' }]) {
+    for (const options of [{ registry: {} }, { actions: [] }, { registrationAuthority: 'engine' }, { grantAuthority: 'engine' }]) {
         const result = Asterweave.initializeGame(fixture(), options);
         assert.ok(result.isRejected);
         assert.equal(result.game, undefined);
