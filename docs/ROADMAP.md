@@ -19,9 +19,9 @@ Deliver a functional, extensible, platform-independent headless gameplay engine 
 
 ### Remaining capabilities
 
-- Supported public extension architecture with restricted capabilities, validation, namespace ownership, transactional state and compatibility.
+- First-party gameplay integration through reviewed internal composition and restricted transaction capabilities.
 - Navigation, observation and shared actor-scoped access, speech, inventory and mechanical interactions; reusable standard handlers for the [planned Foundation actions](engine/contracts/STANDARD_ACTIONS.md).
-- Configurable standard actions, deterministic randomness, declarative conditions/effects and action reactions, declarative custom actions and contextual interactions.
+- Configurable standard actions, deterministic randomness, declarative conditions/effects and action reactions, declarative behavior (composition requires review) and contextual interactions.
 - Ordered turn-based events and authorized non-player actor execution without duplicate turn advancement.
 - Platform-independent versioned save capture and atomic restoration, including necessary random, event and supported extension state; storage remains host-owned.
 - Verify a complete small JSON-authored game through the public API, including completion and deterministic continuation. Keep specialized policies in game data or extensions.

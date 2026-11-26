@@ -8,7 +8,7 @@ Asterweave processes externally supplied definitions, action requests, saves and
 
 ## Decision
 
-Use explicit trust boundaries and defense in depth. Treat external data as untrusted until validated against the appropriate contract. Engine-owned state is isolated, encapsulated and changed only through authorized validated operations. Validate actor control independently of actor identifiers. Hosts establish trusted caller identity and enforce authentication, delivery authorization, transport, storage, filesystem and presentation security when applicable.
+Use explicit trust boundaries and defense in depth. Treat external data as untrusted until validated against the appropriate contract. Engine-owned state is isolated, encapsulated and changed only through authorized validated operations. Validate actor control independently of actor identifiers. First-party code exclusively supplies executable action handlers; registration authority, actor control and mutation grants remain separate. Hosts establish trusted caller identity and enforce authentication, delivery authorization, transport, storage, filesystem and presentation security when applicable.
 
 Executable gameplay behavior is provided only by trusted first-party engine code in the initial release. Canonical game data is declarative and must not select arbitrary executable code or grant authority. Future scripting requires separate review; do not promise sandboxing. Offline content protection is optional and is not DRM, tamper-proofing or secrecy from the device operator (ADR 0058). JavaScript encapsulation is not a hostile-code isolation boundary.
 

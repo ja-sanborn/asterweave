@@ -19,17 +19,14 @@ export const ACTION_CODES = Object.freeze({
     INVALID_ARGUMENT_SPECIFICATION: 'INVALID_ARGUMENT_SPECIFICATION',
     INVALID_DATA: 'INVALID_DATA',
     INVALID_HANDLER: 'INVALID_HANDLER',
-    INVALID_NAMESPACE: 'INVALID_NAMESPACE',
-    INVALID_REGISTRATION_OWNER: 'INVALID_REGISTRATION_OWNER',
+    INVALID_REGISTRATION_AUTHORITY: 'INVALID_REGISTRATION_AUTHORITY',
     INVALID_TURN_COST: 'INVALID_TURN_COST',
     INVALID_TYPE: 'INVALID_TYPE',
     INVALID_VALIDATOR: 'INVALID_VALIDATOR',
     INVALID_VALUE: 'INVALID_VALUE',
-    NAMESPACE_CONFLICT: 'NAMESPACE_CONFLICT',
     REGISTRY_BUSY: 'REGISTRY_BUSY',
     REGISTRY_FINALIZED: 'REGISTRY_FINALIZED',
     REQUIRED_FIELD: 'REQUIRED_FIELD',
-    RESERVED_NAMESPACE: 'RESERVED_NAMESPACE',
     UNKNOWN_FIELD: 'UNKNOWN_FIELD',
 });
 
@@ -38,7 +35,7 @@ export const ACTION_CODES = Object.freeze({
  * @returns {DiagnosticCollector} Independent diagnostic collector.
  */
 export function createActionCollector() {
-    return new DiagnosticCollector(['registry', 'namespace', 'definition', 'owner', 'handler', 'validator']);
+    return new DiagnosticCollector(['registry', 'definition', 'authority', 'handler', 'validator']);
 }
 
 /**
@@ -54,19 +51,14 @@ export function addActionFinding(collector, source, code, path, message) {
 }
 
 /**
- * Returns the operation's immutable result, optionally with an issued capability.
+ * Returns the operation's immutable result.
  * @param {DiagnosticCollector} collector - Operation findings.
- * @param {symbol} [owner] - Newly issued namespace capability on success only.
  * @returns {object} Completed or rejected internal result.
  */
-export function actionRegistryResult(collector, owner) {
+export function actionRegistryResult(collector) {
     const diagnostics = collector.snapshot();
     if (diagnostics.length > 0) {
         return Object.freeze({ status: 'rejected', diagnostics });
     }
-    const result = { status: 'completed', diagnostics };
-    if (owner !== undefined) {
-        result.owner = owner;
-    }
-    return Object.freeze(result);
+    return Object.freeze({ status: 'completed', diagnostics });
 }

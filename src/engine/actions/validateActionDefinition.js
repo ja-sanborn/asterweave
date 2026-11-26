@@ -18,7 +18,7 @@ import { inspectJsonData } from '../shared/jsonData.js';
 import { freezeDetachedJsonData } from '../shared/immutableData.js';
 import { isIdentifier } from '../shared/identifiers.js';
 import { isNonnegativeSafeInteger } from '../shared/safeArithmetic.js';
-import { classifyActionType } from './actionIdentifiers.js';
+import { isStandardActionType } from './actionIdentifiers.js';
 import {
     ARGUMENT_TYPES, REFERENCE_KINDS, matchesArgumentType, matchesReferenceSyntax,
 } from './argumentConstraints.js';
@@ -79,7 +79,7 @@ function validateDefinition(value, collector) {
         return;
     }
     checkFields(value, '', DEFINITION_FIELDS, DEFINITION_FIELDS, collector);
-    if (Object.hasOwn(value, 'type') && !classifyActionType(value.type)) {
+    if (Object.hasOwn(value, 'type') && !isStandardActionType(value.type)) {
         addActionFinding(collector, 'definition', C.INVALID_ACTION_IDENTIFIER, '/type',
             'Expected a supported action identifier.');
     }

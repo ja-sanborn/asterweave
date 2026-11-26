@@ -15,8 +15,6 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
     STANDARD_ACTION_TYPES,
-    classifyActionType,
-    isReservedActionNamespace,
     isStandardActionType,
 } from '../../../src/engine/actions/actionIdentifiers.js';
 
@@ -29,22 +27,13 @@ test('recognizes exactly the documented standard catalog identifiers', () => {
     assert.equal(new Set(names).size, names.length);
     for (const name of names) {
         assert.equal(isStandardActionType(name), true, name);
-        assert.deepEqual(classifyActionType(name), { classification: 'standard', namespace: null });
     }
 });
 
-test('classifies exact extension and game identifiers without claiming ownership', () => {
-    for (const [type, classification, namespace] of [
-        ['combat.attack', 'extension', 'combat'],
-        ['combat2.attackNow', 'extension', 'combat2'],
-        ['game.ringBell', 'game', 'game'],
-        ['gameTools.action', 'extension', 'gameTools'],
-        ['constructor.toString', 'extension', 'constructor'],
-        ['combat.constructor', 'extension', 'combat'],
-    ]) {
-        const identity = classifyActionType(type);
-        assert.deepEqual(identity, { classification, namespace });
-        assert.ok(Object.isFrozen(identity));
+test('rejects all qualified identifiers, including formerly supported game and extension names', () => {
+    for (const type of ['combat.attack', 'combat2.attackNow', 'game.ringBell', 'gameTools.action',
+        'constructor.toString', 'combat.constructor', 'asterweave.move']) {
+        assert.equal(isStandardActionType(type), false);
     }
 });
 
@@ -56,15 +45,6 @@ test('rejects malformed or unsupported identifiers without coercion', () => {
         'combat.attack\n', 'combat.é', 'asterweave.execute', '__proto__.attack',
         null, undefined, 1, {}, ['move'], Symbol('move'),
     ]) {
-        assert.equal(classifyActionType(type), undefined);
         assert.equal(isStandardActionType(type), false);
-    }
-});
-
-test('reserves only exact engine and game action namespace names', () => {
-    assert.equal(isReservedActionNamespace('game'), true);
-    assert.equal(isReservedActionNamespace('asterweave'), true);
-    for (const namespace of ['gameTools', 'asterweaveTools', 'combat', 'Game', null, {}]) {
-        assert.equal(isReservedActionNamespace(namespace), false);
     }
 });

@@ -6,11 +6,9 @@
  */
 
 /**
- * @fileoverview Exact action identity and namespace classification.
+ * @fileoverview Authoritative engine action identifiers.
  * @module actions/actionIdentifiers
  */
-
-import { isIdentifier } from '../shared/identifiers.js';
 
 /** @type {ReadonlyArray<string>} Recognized standard catalog names, not registrations. */
 export const STANDARD_ACTION_TYPES = Object.freeze([
@@ -38,38 +36,4 @@ export const STANDARD_ACTION_TYPES = Object.freeze([
  */
 export function isStandardActionType(type) {
     return STANDARD_ACTION_TYPES.includes(type);
-}
-
-/**
- * Checks whether a namespace is reserved from extension claims.
- * @param {unknown} namespace - Candidate namespace.
- * @returns {boolean} Whether the namespace is reserved.
- */
-export function isReservedActionNamespace(namespace) {
-    return namespace === 'game' || namespace === 'asterweave';
-}
-
-/**
- * Classifies an exact action identifier independently of registration ownership.
- * Unrecognized standard names and reserved engine-qualified names are unsupported.
- * @param {unknown} type - Candidate action type.
- * @returns {{classification: string, namespace: string|null}|undefined} Immutable identity or no match.
- */
-export function classifyActionType(type) {
-    if (typeof type !== 'string') {
-        return undefined;
-    }
-    const segments = type.split('.');
-    if (segments.length === 1 && isStandardActionType(type)) {
-        return Object.freeze({ classification: 'standard', namespace: null });
-    }
-    if (segments.length !== 2 || !segments.every(isIdentifier)) {
-        return undefined;
-    }
-    const [namespace] = segments;
-    if (namespace === 'asterweave') {
-        return undefined;
-    }
-    const classification = namespace === 'game' ? 'game' : 'extension';
-    return Object.freeze({ classification, namespace });
 }

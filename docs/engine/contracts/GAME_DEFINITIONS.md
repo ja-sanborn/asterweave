@@ -199,7 +199,7 @@ Future conceptual root sections (names tentative, not accepted fields in 3.2.0):
 | extensions | Optional capability requirements and configuration |
 | time | Optional fictional clock/calendar configuration |
 
-Planned Foundation schema revisions for action configuration, custom actions, rules, events and extension requirements define supported fields and compatibility explicitly. Do not add empty placeholders or arbitrary extension bags now. Standard action overrides and declarative actions require explicit schema contracts. Preserve existing action namespaces, trusted handler separation and independent success/failure costs under [ADR 0053](../../decisions/0053-action-architecture.md). JSON must never select arbitrary executable code or replace trusted handlers. Optional time configuration follows [ADR 0062](../../decisions/0062-game-time-and-calendar.md); committed turns remain authoritative.
+Planned Foundation schema revisions for action configuration, declarative behavior, rules, events and selected module requirements define supported fields and compatibility explicitly. Do not add empty placeholders or arbitrary extension bags now. Standard action overrides and declarative behavior require explicit schema contracts. Preserve authoritative unqualified engine action identifiers, trusted handler separation and independent success/failure costs under [ADR 0053](../../decisions/0053-action-architecture.md). JSON must never select arbitrary executable code or replace trusted handlers. Optional time configuration follows [ADR 0062](../../decisions/0062-game-time-and-calendar.md); committed turns remain authoritative.
 
 The versioned author guide will document verified usage after integrated Foundation testing.
 

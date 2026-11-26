@@ -31,7 +31,7 @@ Interaction modules such as the Text Parser and Visual Novel sit above the engin
 
 ## Planned capabilities
 
-- Foundation: a functional headless JSON-authored game through an authored conclusion; reusable navigation, observation, speech, inventory, mechanical and contextual actions; configurable and declarative custom actions; rules, events, deterministic randomness and authorized non-player execution.
+- Foundation: a functional headless JSON-authored game through an authored conclusion; reusable navigation, observation, speech, inventory, mechanical and contextual actions; configurable engine actions and declarative behavior; rules, events, deterministic randomness and authorized non-player execution.
 - Portable saves: versioned state capture and atomic restoration, independent of storage.
 - Standalone distribution: compact engine bundle and versioned protected/unprotected game packages, independently of Creator; selected modules and required dependencies only.
 - Additional gameplay and interaction: Date Time, Text Parser and Visual Novel; a text-only offline browser interface is a subsequent playable target.

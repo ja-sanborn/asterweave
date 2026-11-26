@@ -15,7 +15,7 @@ import { immutableCopy } from '../shared/immutableData.js';
 import { isRecord } from '../shared/recordShape.js';
 import { isSynchronousAssociation } from './executableAssociations.js';
 import { isIdentifier } from '../shared/identifiers.js';
-import { classifyActionType, isReservedActionNamespace } from './actionIdentifiers.js';
+import { isStandardActionType } from './actionIdentifiers.js';
 import { validateActionDefinition } from './validateActionDefinition.js';
 import {
     ACTION_CODES as C, createActionCollector, addActionFinding, actionRegistryResult,
@@ -43,14 +43,10 @@ function validGrants(grants) {
 export class ActionRegistry {
     /** @type {Map<string, object>} Validated registrations. */
     #registrations = new Map();
-    /** @type {Map<string, symbol>} Claimed extension namespace capabilities. */
-    #namespaceOwners = new Map();
-    /** @type {symbol} Standard registration authority. */
-    #engineOwner = Symbol('engine');
-    /** @type {symbol} Game registration authority. */
-    #gameOwner = Symbol('game');
+    /** @type {symbol} Engine registration authority. */
+    #registrationAuthority = Symbol('registration');
     /** @type {symbol} Independent engine mutation grant authority. */
-    #grantOwner = Symbol('mutation grants');
+    #grantAuthority = Symbol('mutation grants');
     /** @type {Map<string, object>} Engine-established executable grants. */
     #grants = new Map();
     /** @type {boolean} Whether setup has permanently ended. */
@@ -73,12 +69,12 @@ export class ActionRegistry {
     /**
      * Creates a registry and transfers setup capabilities to trusted orchestration.
      * These capabilities are never returned by lookup or exposed through the public facade.
-     * @returns {{registry: ActionRegistry, engineOwner: symbol, gameOwner: symbol, grantOwner: symbol}} Trusted setup record.
+     * @returns {{registry: ActionRegistry, registrationAuthority: symbol, grantAuthority: symbol}} Trusted setup record.
      */
     static create() {
         const registry = new ActionRegistry(CONSTRUCTION);
-        return Object.freeze({ registry, engineOwner: registry.#engineOwner, gameOwner: registry.#gameOwner,
-            grantOwner: registry.#grantOwner });
+        return Object.freeze({ registry, registrationAuthority: registry.#registrationAuthority,
+            grantAuthority: registry.#grantAuthority });
     }
 
     /** @returns {number} Current registration count. */
@@ -92,47 +88,22 @@ export class ActionRegistry {
     }
 
     /**
-     * Claims an exact extension namespace during trusted setup.
-     * @param {unknown} namespace - Candidate namespace.
-     * @returns {object} Immutable result with owner only on successful claim.
-     */
-    claimNamespace(namespace) {
-        return this.#modify((collector) => {
-            if (!isIdentifier(namespace)) {
-                addActionFinding(collector, 'namespace', C.INVALID_NAMESPACE, '', 'Invalid action namespace.');
-            } else if (isReservedActionNamespace(namespace)) {
-                addActionFinding(collector, 'namespace', C.RESERVED_NAMESPACE, '', 'Action namespace is reserved.');
-            } else if (this.#namespaceOwners.has(namespace)) {
-                addActionFinding(collector, 'namespace', C.NAMESPACE_CONFLICT, '',
-                    'Action namespace is already owned.');
-            }
-            if (collector.size > 0) {
-                return actionRegistryResult(collector);
-            }
-            const owner = Symbol(namespace);
-            const result = actionRegistryResult(collector, owner);
-            this.#namespaceOwners.set(namespace, owner);
-            return result;
-        });
-    }
-
-    /**
      * Validates and atomically associates a definition with trusted executable functions.
      * Does not execute handlers or validators. Reflective failures propagate.
-     * @param {unknown} owner - Registry-local registration capability.
+     * @param {unknown} authority - Registry-local registration capability.
      * @param {unknown} input - Candidate definition.
      * @param {unknown} handler - Trusted synchronous handler.
      * @param {unknown} [validator] - Optional trusted synchronous argument validator.
      * @returns {object} Immutable completed or rejected result.
      */
-    register(owner, input, handler, validator) {
+    register(authority, input, handler, validator) {
         return this.#modify((collector) => {
             const validation = validateActionDefinition(input);
             for (const finding of validation.diagnostics) {
                 collector.add(finding);
             }
             if (validation.status === 'completed') {
-                this.#checkOwnership(owner, validation.definition.type, collector);
+                this.#checkRegistration(authority, validation.definition.type, collector);
             }
             if (!isSynchronousAssociation(handler)) {
                 addActionFinding(collector, 'handler', C.INVALID_HANDLER, '',
@@ -227,24 +198,15 @@ export class ActionRegistry {
     }
 
     /**
-     * Checks registry-local authority and duplicate identity for valid metadata.
-     * @param {unknown} owner - Supplied capability.
+     * Checks registry-local registration authority and duplicate identity for valid metadata.
+     * @param {unknown} authority - Supplied capability.
      * @param {string} type - Validated action identifier.
      * @param {import('../diagnostics/DiagnosticCollector.js').DiagnosticCollector} collector - Findings.
      */
-    #checkOwnership(owner, type, collector) {
-        const identity = classifyActionType(type);
-        let expected;
-        if (identity.classification === 'standard') {
-            expected = this.#engineOwner;
-        } else if (identity.classification === 'game') {
-            expected = this.#gameOwner;
-        } else {
-            expected = this.#namespaceOwners.get(identity.namespace);
-        }
-        if (typeof owner !== 'symbol' || expected === undefined || owner !== expected) {
-            addActionFinding(collector, 'owner', C.INVALID_REGISTRATION_OWNER, '',
-                'Registration authority does not own this action identity.');
+    #checkRegistration(authority, type, collector) {
+        if (authority !== this.#registrationAuthority) {
+            addActionFinding(collector, 'authority', C.INVALID_REGISTRATION_AUTHORITY, '',
+                'Invalid registry-local registration authority.');
         }
         if (this.#registrations.has(type)) {
             addActionFinding(collector, 'definition', C.DUPLICATE_ACTION_TYPE, '/type',
@@ -252,14 +214,14 @@ export class ActionRegistry {
         }
     }
     /**
-     * Establishes immutable mutation grants separately from registration ownership.
+     * Establishes immutable mutation grants separately from registration authority.
      * @param {symbol} authority - Independent engine setup grant capability.
      * @param {string} type - Already registered action type.
      * @param {object} input - Closed namespace and operation grants.
      * @throws {TypeError} For invalid authority, lifecycle or grants.
      */
     establishMutationGrants(authority, type, input) {
-        if (authority !== this.#grantOwner || this.#finalized || this.#modificationInProgress
+        if (authority !== this.#grantAuthority || this.#finalized || this.#modificationInProgress
             || !this.#registrations.has(type) || this.#grants.has(type)) {
             throw new TypeError('Invalid mutation grant setup.');
         }
@@ -291,25 +253,16 @@ export class ActionRegistry {
         if (!this.#finalized || this.#modificationInProgress) {
             return false;
         }
-        const owners = new Set([this.#engineOwner, this.#gameOwner, this.#grantOwner]);
-        if (owners.size !== 3) {
+        if (typeof this.#registrationAuthority !== 'symbol' || typeof this.#grantAuthority !== 'symbol'
+            || this.#registrationAuthority === this.#grantAuthority) {
             return false;
         }
-        for (const [namespace, owner] of this.#namespaceOwners) {
-            if (!isIdentifier(namespace) || isReservedActionNamespace(namespace)
-                || typeof owner !== 'symbol' || owners.has(owner)) {
-                return false;
-            }
-            owners.add(owner);
-        }
         for (const [type, record] of this.#registrations) {
-            const identity = classifyActionType(type);
-            if (identity === undefined || record.definition.type !== type
+            if (!isStandardActionType(type) || record.definition.type !== type
                 || validateActionDefinition(record.definition).status !== 'completed'
                 || !Object.isFrozen(record) || !Object.isFrozen(record.definition)
                 || !isSynchronousAssociation(record.handler)
-                || (record.validator !== undefined && !isSynchronousAssociation(record.validator))
-                || (identity.classification === 'extension' && !this.#namespaceOwners.has(identity.namespace))) {
+                || (record.validator !== undefined && !isSynchronousAssociation(record.validator))) {
                 return false;
             }
         }

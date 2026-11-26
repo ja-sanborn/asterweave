@@ -65,20 +65,20 @@ test('public initialization keeps registry and authority out of the facade and s
     assert.ok(second.isCompleted);
     assert.notEqual(first.game, second.game);
     assert.deepEqual(Reflect.ownKeys(first.game), []);
-    for (const key of ['registry', 'actionRegistry', 'engineOwner', 'gameOwner', 'register', 'resolve']) {
+    for (const key of ['registry', 'actionRegistry', 'registrationAuthority', 'registrationAuthority', 'register', 'resolve']) {
         assert.equal(key in first.game, false);
     }
     const snapshot = first.game.getStateSnapshot();
     assert.deepEqual(snapshot, second.game.getStateSnapshot());
     const serialized = JSON.stringify(snapshot);
-    for (const name of ['registry', 'actionRegistry', 'engineOwner', 'gameOwner']) {
+    for (const name of ['registry', 'actionRegistry', 'registrationAuthority', 'registrationAuthority']) {
         assert.equal(serialized.includes('"' + name + '"'), false);
     }
     assert.equal(first.game.turn, 0);
 });
 
 test('initialization does not accept registry or registration configuration from callers', () => {
-    for (const options of [{ registry: {} }, { actions: [] }, { engineOwner: 'engine' }]) {
+    for (const options of [{ registry: {} }, { actions: [] }, { registrationAuthority: 'engine' }]) {
         const result = Asterweave.initializeGame(fixture(), options);
         assert.ok(result.isRejected);
         assert.equal(result.game, undefined);

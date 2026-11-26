@@ -24,22 +24,22 @@ test('reset restores original state and preserves registry, snapshots and identi
         import.meta.url), 'utf8'));
     const state = new RuntimeState(new GameDefinitionValidator().validate(definition).candidate,
         { player: { id: 'player', controlledActors: ['adventurer'], selectedActor: 'adventurer' } });
-    const { registry, gameOwner, grantOwner } = ActionRegistry.create();
+    const { registry, registrationAuthority, grantAuthority } = ActionRegistry.create();
     const resetter = new RuntimeResetter(state, registry);
-    registry.register(gameOwner, { type: 'game.test', enabled: true,
+    registry.register(registrationAuthority, { type: 'interact', enabled: true,
         turnCostSuccess: 1, turnCostFail: 0, arguments: {} }, (action, context) => {
         assert.equal(resetter.reset().error.code, 'RESET_UNAVAILABLE');
         context.setProperty({ scope: 'entity', id: 'brassLantern' }, 'stateFoundation.fuel', 10);
         context.revokeControl('player', 'adventurer');
         return { status: 'completed', outcome: 'success' };
     });
-    registry.establishMutationGrants(grantOwner, 'game.test',
+    registry.establishMutationGrants(grantAuthority, 'interact',
         { namespaces: ['stateFoundation'], operations: ['revokeControl'] });
     registry.finalize();
     const dispatcher = new ActionDispatcher(state, registry);
     const original = state.readEffectiveState();
     const identity = state.world.resolve('brassLantern');
-    const result = dispatcher.dispatchPlayerAction({ actorId: 'adventurer', type: 'game.test', args: {} });
+    const result = dispatcher.dispatchPlayerAction({ actorId: 'adventurer', type: 'interact', args: {} });
     assert.equal(result.status, 'completed');
     const changed = state.readEffectiveState();
     assert.equal(identity.getProperty('stateFoundation.fuel'), 10);

@@ -23,7 +23,7 @@ import { validateActionArguments } from '../../../src/engine/actions/validateAct
  */
 function definition(args) {
     const result = validateActionDefinition({
-        type: 'game.testAction', enabled: true, turnCostSuccess: 1, turnCostFail: 0, arguments: args,
+        type: 'interact', enabled: true, turnCostSuccess: 1, turnCostFail: 0, arguments: args,
     });
     assert.equal(result.status, 'completed');
     return result.definition;

@@ -13,7 +13,7 @@
 import { inspectJsonData } from '../shared/jsonData.js';
 import { freezeDetachedJsonData } from '../shared/immutableData.js';
 import { isRecord } from '../shared/recordShape.js';
-import { classifyActionType } from './actionIdentifiers.js';
+import { isStandardActionType } from './actionIdentifiers.js';
 
 /**
  * Inspects and detaches action data before runtime resolution.
@@ -26,7 +26,7 @@ export function validateActionEnvelope(input) {
         || Object.keys(value).some((key) => !['type', 'actorId', 'args', 'requestId'].includes(key))
         || !['type', 'actorId', 'args'].every((key) => Object.hasOwn(value, key))
         || typeof value.actorId !== 'string' || value.actorId.length === 0
-        || classifyActionType(value.type) === undefined || !isRecord(value.args)
+        || !isStandardActionType(value.type) || !isRecord(value.args)
         || (Object.hasOwn(value, 'requestId')
             && (typeof value.requestId !== 'string' || value.requestId.length === 0))) {
         return undefined;

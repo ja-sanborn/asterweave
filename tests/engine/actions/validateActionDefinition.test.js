@@ -131,3 +131,12 @@ test('uses own data fields for prototype-related valid argument names', () => {
     assert.equal(validateActionDefinition({ ...definition(), arguments: JSON.parse('{"__proto__":{}}') }).status,
         'rejected');
 });
+
+test('rejects formerly supported qualified action types', () => {
+    for (const type of ['game.ringBell', 'combat.attack', 'asterweave.move']) {
+        const result = validateActionDefinition({ ...definition(), type });
+        assert.equal(result.status, 'rejected');
+        assert.deepEqual(result.diagnostics.map(({ code, path }) => [code, path]),
+            [['INVALID_ACTION_IDENTIFIER', '/type']]);
+    }
+});

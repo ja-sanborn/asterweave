@@ -33,13 +33,13 @@ function setup(handler, operations = ['relocate', 'establishAssociation', 'remov
     const state = new RuntimeState(validation.candidate, {
         player: settings.player ?? { id: 'human', controlledActors: ['player'] },
     });
-    const { registry, gameOwner, grantOwner } = ActionRegistry.create();
-    assert.equal(registry.register(gameOwner, { type: 'game.test', enabled: true,
+    const { registry, registrationAuthority, grantAuthority } = ActionRegistry.create();
+    assert.equal(registry.register(registrationAuthority, { type: 'interact', enabled: true,
         turnCostSuccess: 0, turnCostFail: 1, arguments: {} }, handler).status, 'completed');
-    registry.establishMutationGrants(grantOwner, 'game.test', { namespaces: settings.namespaces ?? [], operations });
+    registry.establishMutationGrants(grantAuthority, 'interact', { namespaces: settings.namespaces ?? [], operations });
     registry.finalize();
     const dispatcher = new ActionDispatcher(state, registry, Symbol('trusted'));
-    const action = { actorId: 'player', type: 'game.test', args: {} };
+    const action = { actorId: 'player', type: 'interact', args: {} };
     return { state, run: () => dispatcher.dispatchPlayerAction(action) };
 }
 

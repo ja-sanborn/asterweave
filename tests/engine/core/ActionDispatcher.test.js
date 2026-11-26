@@ -34,17 +34,17 @@ function setup(handler, grant = true, settings = {}) {
     }
     const state = new RuntimeState(new GameDefinitionValidator().validate(definition).candidate,
         settings.options ?? { player: { id: 'player', controlledActors: ['adventurer'] } });
-    const { registry, gameOwner, grantOwner } = ActionRegistry.create();
-    assert.equal(registry.register(gameOwner, { type: 'game.test', enabled: true,
+    const { registry, registrationAuthority, grantAuthority } = ActionRegistry.create();
+    assert.equal(registry.register(registrationAuthority, { type: 'interact', enabled: true,
         turnCostSuccess: 1, turnCostFail: 2, arguments: {}, ...settings.metadata }, handler).status, 'completed');
     if (grant) {
-        registry.establishMutationGrants(grantOwner, 'game.test',
+        registry.establishMutationGrants(grantAuthority, 'interact',
             { namespaces: ['stateFoundation'], operations: [] });
     }
     registry.finalize();
     const authority = Symbol('test trusted authority');
     const dispatcher = new ActionDispatcher(state, registry, authority);
-    const action = { actorId: 'adventurer', type: 'game.test', args: {} };
+    const action = { actorId: 'adventurer', type: 'interact', args: {} };
     return { state, dispatcher, action, authority };
 }
 
@@ -173,9 +173,9 @@ test('earliest failed dispatch stage determines rejection and safe correlation',
     const before = state.readEffectiveState();
     for (const [input, code, echo] of [
         [null, 'INVALID_ACTION', undefined],
-        [{ ...action, actorId: 'missing', type: 'game.unknown' }, 'ACTOR_NOT_FOUND', undefined],
-        [{ ...action, actorId: 'guide', type: 'game.unknown' }, 'ACTION_UNAVAILABLE', undefined],
-        [{ ...action, type: 'game.unknown' }, 'UNKNOWN_ACTION_TYPE', 'adventurer'],
+        [{ ...action, actorId: 'missing', type: 'wait' }, 'ACTOR_NOT_FOUND', undefined],
+        [{ ...action, actorId: 'guide', type: 'wait' }, 'ACTION_UNAVAILABLE', undefined],
+        [{ ...action, type: 'wait' }, 'UNKNOWN_ACTION_TYPE', 'adventurer'],
         [{ ...action, args: { unexpected: true } }, 'ACTION_UNAVAILABLE', 'adventurer'],
     ]) {
         const result = dispatcher.dispatchPlayerAction(input);
