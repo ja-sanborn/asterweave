@@ -1,0 +1,64 @@
+name: Feature Request
+description: Propose a new capability or improvement to Asterweave.
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Search existing issues before submitting and use a descriptive title. Focus on the need, desired outcome and benefit. Technical suggestions are optional and nonbinding. The maintainer evaluates requests for acceptance. Do not post credentials, private content, personal information or sensitive vulnerability details.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        Summarize the proposed capability or improvement.
+    validations:
+      required: true
+  - type: textarea
+    id: problem_or_need
+    attributes:
+      label: Problem or Need
+      description: >-
+        Describe the limitation, problem or unmet need behind the request.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_capability
+    attributes:
+      label: Proposed Capability
+      description: >-
+        Describe the desired behavior, capability or outcome. A technical design is optional.
+    validations:
+      required: true
+  - type: textarea
+    id: expected_benefit
+    attributes:
+      label: Expected Benefit
+      description: >-
+        Explain who would benefit and why.
+    validations:
+      required: true
+  - type: textarea
+    id: use_cases
+    attributes:
+      label: Use Cases
+      description: >-
+        Describe situations where the capability would be useful.
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives_considered
+    attributes:
+      label: Alternatives Considered
+      description: >-
+        Mention existing approaches, workarounds or other options you know about.
+    validations:
+      required: false
+  - type: textarea
+    id: additional_information
+    attributes:
+      label: Additional Information
+      description: >-
+        Include relevant context, examples, resources or related issues.
+    validations:
+      required: false
+type: Feature Request

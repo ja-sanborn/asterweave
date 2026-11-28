@@ -1,0 +1,72 @@
+name: Bug Report
+description: Report an actual or suspected defect in Asterweave.
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Search existing issues before submitting and use a descriptive title. Share only the evidence needed to explain the problem. Do not post credentials, access tokens, private game content, personal information or sensitive vulnerability details.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        Describe the problem and its context.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: >-
+        Provide the affected version, build, branch or commit. Enter Unknown if you cannot identify it.
+    validations:
+      required: true
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: >-
+        Describe the actions and conditions that lead to the problem. If it is intermittent, describe when it occurs.
+    validations:
+      required: true
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected Behavior
+      description: >-
+        Describe what you expected to happen and link relevant documentation if available.
+    validations:
+      required: true
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual Behavior
+      description: >-
+        Describe what happened, including relevant errors or unexpected results.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: >-
+        List relevant host, operating system, browser or runtime details.
+    validations:
+      required: false
+  - type: textarea
+    id: supporting_evidence
+    attributes:
+      label: Supporting Evidence
+      description: >-
+        Share sanitized diagnostics, screenshots, non-sensitive sample content or a minimal reproduction where useful.
+    validations:
+      required: false
+  - type: textarea
+    id: additional_information
+    attributes:
+      label: Additional Information
+      description: >-
+        Include relevant frequency, regression, impact, workarounds or related issues.
+    validations:
+      required: false
+type: Bug Report

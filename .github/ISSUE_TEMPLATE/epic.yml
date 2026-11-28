@@ -1,0 +1,56 @@
+name: Epic
+description: Define a major development objective. Intended for authorized development contributors.
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Use this form for authorized maintainer work. Community proposals belong in Feature Request. Selecting a form does not grant acceptance or implementation authority. Give the issue a descriptive title for the major objective.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        Explain the context, purpose and major development area.
+    validations:
+      required: true
+  - type: textarea
+    id: objective_and_benefit
+    attributes:
+      label: Objective and Benefit
+      description: >-
+        Describe the intended outcome and why it provides value.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: >-
+        Describe the principal included capabilities or areas and their boundaries.
+    validations:
+      required: true
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of Scope
+      description: >-
+        Identify significant exclusions that clarify the boundaries.
+    validations:
+      required: false
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: >-
+        Identify material prerequisites or external conditions. Use native relationships for issue prerequisites where available.
+    validations:
+      required: false
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: >-
+        Link relevant authoritative documents, decisions, issues or resources.
+    validations:
+      required: false
+type: Epic

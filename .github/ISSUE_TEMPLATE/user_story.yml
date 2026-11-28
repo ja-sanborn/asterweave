@@ -1,0 +1,77 @@
+name: User Story
+description: Define a cohesive, independently verifiable development deliverable.
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Use this form for authorized maintainer work, including technical enablers. Community proposals belong in Feature Request. Selecting a form does not grant acceptance or implementation authority. Give the issue a descriptive, action-oriented title.
+  - type: textarea
+    id: user_story
+    attributes:
+      label: User Story
+      description: >-
+        Identify who benefits, the desired capability or deliverable, and the benefit.
+      placeholder: |-
+        As a ...
+        I want ...
+        So that ...
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        Explain the context, purpose and intended outcome.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: >-
+        Describe the included work, deliverables and boundaries.
+    validations:
+      required: true
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of Scope
+      description: >-
+        Identify significant exclusions that clarify the boundaries.
+    validations:
+      required: false
+  - type: textarea
+    id: requirements_and_constraints
+    attributes:
+      label: Requirements and Constraints
+      description: >-
+        Describe applicable functional or nonfunctional requirements and binding constraints. Link authoritative standards.
+    validations:
+      required: false
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: >-
+        Identify prerequisite issues or external conditions and explain their relevance. Use native issue relationships where available.
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: >-
+        Use an unchecked Markdown checklist of specific, objectively verifiable outcomes covering the approved scope.
+      placeholder: "- [ ] Describe a verifiable outcome"
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: >-
+        Link authoritative documents, decisions, issues or supporting resources.
+    validations:
+      required: false
+type: User Story
