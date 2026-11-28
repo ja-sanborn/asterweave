@@ -239,24 +239,26 @@ On corrective development acceptance, retain Bug Report type and the original re
 
 Native status records workflow stage, issue state records whether an issue is open or closed, closure reason describes why it closed, and disposition records the maintainer's evaluation or development decision.
 
-| Approved native status | Meaning |
+| Managed native status | Meaning |
 | --- | --- |
 | Backlog | Open and awaiting evaluation, activation or resumption. |
 | In progress | Open and undergoing authorized investigation, design, implementation or verification. |
 | Done | Closed after verified successful completion and explicit authorization. |
 | Not planned | Closed without successful development completion. |
 
-New issues enter Backlog. Authorized activation or resumption moves an issue to In progress. Authorized suspension returns it to Backlog. Successful authorized closure moves In progress to Done and retains accepted disposition. Authorized non-completion closure moves Backlog or In progress to Not planned. Authorized reopening returns a closed issue to Open / Backlog. Issues may skip stages where appropriate. Independently verify automatically applied status and closure metadata. Follow [closure and reopening rules](#story-completion-cancellation-and-reopening).
+New issues enter Backlog. Authorized activation or resumption moves an issue to In progress. Authorized suspension returns it to Backlog. Successful authorized closure moves In progress to Done and retains accepted disposition. Apply the approved closure reason and status for authorized non-completion closure. Authorized reopening returns a closed issue to Open / Backlog. Issues may skip stages where appropriate. Independently verify automatically applied status and closure metadata. Follow [closure and reopening rules](#story-completion-cancellation-and-reopening).
 
 The `blocked`, `decision required` and `needs information` labels are independent exceptions. Routine interruptions, blockers or pending decisions do not move active issues to Backlog. Active epics remain In progress during child delivery and intervals between stories, subject to explicit suspension or closure.
 
-The approved Active view uses native metadata equivalent to `is:issue is:open status:"In progress"` across all classifications, priorities and workflow exceptions. Verify the actual filter and results. Report a discrepancy for maintainer resolution before changing configuration. Use the approved native workflow statuses and avoid duplicate status labels or workflow automation.
+GitHub also exposes Todo for queued work, In review for active review and Duplicate as a native closure outcome. GitHub can change an issue's native status automatically, including through assignment or pull request linking. A native status or automatic transition conveys no maintainer authorization. Apply the approved [closure and reopening rules](#story-completion-cancellation-and-reopening) and report any mismatch with native behavior.
+
+Use the shared repository Issues view [Active work](https://github.com/ja-sanborn/asterweave/issues/views/MDQ6VmlldzM0NTQ2) with `is:issue is:open category:started`. It includes In progress and In review across classifications, priorities and workflow exceptions. GitHub's built-in Active tab also includes Todo. Verify the shared view's saved query and results. Report a discrepancy for maintainer resolution before changing configuration. Avoid duplicate status labels and project workflow automation.
 
 ## Activation and Backlog Management
 
 Accepted Epics, User Stories and confirmed and accepted Bug Reports constitute accepted development work. Investigation-only Bug Reports and unevaluated or deferred submissions remain outside that development backlog. Keep GitHub Issues as the authoritative backlog.
 
-Before development activation, verify open and accepted state, classification, identifier and metadata, sufficient objective and scope, applicable criteria, satisfied prerequisites, approved sequence, relevant predecessor decisions and handoffs, material blockers or conflicts and the applicable open, appropriately active parent. For investigation activation, verify investigation authorization and relevant prerequisites without treating it as corrective development acceptance. Obtain explicit activation authorization, set In progress, and activate the parent if required and authorized. Independently verify issue, parent and Active view membership before beginning authorized work. Record material exceptions, decisions or order changes. Routine activation may be evidenced by native metadata.
+Before development activation, verify open and accepted state, classification, identifier and metadata, sufficient objective and scope, applicable criteria, satisfied prerequisites, approved sequence, relevant predecessor decisions and handoffs, material blockers or conflicts and the applicable open, appropriately active parent. For investigation activation, verify investigation authorization and relevant prerequisites without treating it as corrective development acceptance. Obtain explicit activation authorization, set In progress, and activate the parent if required and authorized. Independently verify the issue and applicable parent in the shared Active work view before beginning authorized work. Record material exceptions, decisions or order changes. Routine activation may be evidenced by native metadata.
 
 Prefer focused sequential work, especially during foundation development. Authorized independent parallel work, urgent defect interruptions and investigations alongside development are permitted. Evaluate alternatives when active work is blocked. Assignment is optional and identifies coordination or performance responsibility. No fixed work-in-progress limit, sprint target or mandatory assignment applies.
 

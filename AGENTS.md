@@ -39,7 +39,7 @@ Follow the authoritative [language and runtime standards](LANGUAGE_RUNTIME_STAND
 
 Follow [Issue Management](ISSUE_MANAGEMENT.md). Check for duplicates and overlaps. Use approved native classifications, identifiers, labels, canonical content and sizing. Preserve issue identity, history and attribution during triage and in-place promotion. Keep sensitive vulnerability details out of public issues and distinguish investigation from corrective development acceptance.
 
-Before activation, verify approved scope, applicable criteria, prerequisite outcomes, development sequence, parent, metadata and predecessor handoffs. After authorized activation verify the native In progress status, parent and Active membership. Use native sub-issues and direct dependencies. Record prerequisite rationale and external context where needed. Apply priority, dispositions and workflow exceptions under their approved rules. Seek approval before adding planning structures.
+Before activation, verify approved scope, applicable criteria, prerequisite outcomes, development sequence, parent, metadata and predecessor handoffs. After authorized activation, verify native In progress status and confirm the issue and applicable parent appear in the shared Active work view. GitHub can change statuses automatically. Maintainer authorization governs whether work may proceed. Use native sub-issues and direct dependencies. Record prerequisite rationale and external context where needed. Apply priority, dispositions and workflow exceptions under their approved rules. Seek approval before adding planning structures.
 
 ## Working Practices
 
