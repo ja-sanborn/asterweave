@@ -344,11 +344,12 @@ Successful completion requires all approved deliverables, applicable criteria, s
 | Successful development | Completed | Done | accepted |
 | Canceled accepted work | Not planned | Not planned | canceled |
 | Rejected community submission | Not planned | Not planned | rejected |
-| Duplicate with canonical reference | Duplicate where supported, otherwise Not planned | Not planned | duplicate |
+| Duplicate with canonical reference, where native Duplicate closure is supported | Duplicate | Duplicate | duplicate |
+| Duplicate with canonical reference, where native Duplicate closure is unavailable | Not planned | Not planned | duplicate |
 | Closed deferred community submission | Not planned | Not planned | deferred |
 | Concluded unconfirmed investigation or expected behavior | Not planned | Not planned | rejected |
 
-For a concluded investigation, rejection records nonacceptance for corrective development. Verify the actual native result, including duplicate behavior where applicable, and surface discrepancies for maintainer resolution. Close only with explicit authorization.
+For a concluded investigation, rejection records nonacceptance for corrective development. Independently verify the closure reason, native status and disposition. For duplicates, verify the canonical issue reference and the native relationship where supported. Surface discrepancies for maintainer resolution. Close only with explicit authorization.
 
 Before cancellation, assess rationale, completed and outstanding deliverables, branches or PRs, dependent work, parent objectives and reassignment. Record the approved decision, retain the identifier, classification, historical evidence and criteria, and leave unfinished criteria unchecked. Continued accepted work may be suspended in Open / Backlog / accepted. A deferred community proposal may remain Open / Backlog or close as Not planned as approved, retaining deferred disposition.
 
