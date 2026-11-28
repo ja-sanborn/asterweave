@@ -11,14 +11,25 @@
 7. [Epic and User Story Sizing](#epic-and-user-story-sizing)
 8. [Canonical Issue Content and Templates](#canonical-issue-content-and-templates)
 9. [Human and Programmatic Issue Creation](#human-and-programmatic-issue-creation)
-10. [Community Submission and Promotion Principles](#community-submission-and-promotion-principles)
-11. [Legacy Issue Classification](#legacy-issue-classification)
-12. [Verification and Failure Handling](#verification-and-failure-handling)
-13. [Maintenance and Evolution](#maintenance-and-evolution)
+10. [Issue Intake and Triage](#issue-intake-and-triage)
+11. [Community Submission and Promotion Principles](#community-submission-and-promotion-principles)
+12. [Issue Lifecycle and Native Statuses](#issue-lifecycle-and-native-statuses)
+13. [Activation and Backlog Management](#activation-and-backlog-management)
+14. [Prioritization](#prioritization)
+15. [Epic Relationships, Dependencies and Sequencing](#epic-relationships-dependencies-and-sequencing)
+16. [Milestones and Projects](#milestones-and-projects)
+17. [Progress Reporting and Verification Evidence](#progress-reporting-and-verification-evidence)
+18. [Critical Decisions and Scope Amendments](#critical-decisions-and-scope-amendments)
+19. [Definition of Done](#definition-of-done)
+20. [Story Completion, Cancellation and Reopening](#story-completion-cancellation-and-reopening)
+21. [Epic Completion and Closure](#epic-completion-and-closure)
+22. [Legacy Issue Classification](#legacy-issue-classification)
+23. [Verification and Failure Handling](#verification-and-failure-handling)
+24. [Maintenance and Evolution](#maintenance-and-evolution)
 
 ## Purpose and Scope
 
-GitHub Issues are Asterweave's authoritative development backlog. This standard governs issue classification, identifiers, labels, sizing, canonical content and creation for maintainers and human and AI contributors. It establishes requirements for community submissions and permanent historical classification. Detailed lifecycle procedures and the project-wide Definition of Done are established separately.
+GitHub Issues are Asterweave's authoritative development backlog. This standard governs issue classification, identifiers, labels, sizing, canonical content, creation, lifecycle, workflow and completion for maintainers and human and AI contributors. It covers community submissions, accepted development work and permanent historical classification.
 
 ## Authority and Governing Principles
 
@@ -27,15 +38,17 @@ GitHub Issues are Asterweave's authoritative development backlog. This standard 
 | [LICENSE](LICENSE) | Licensing |
 | [README.md](README.md) | Project overview |
 | [LANGUAGE_RUNTIME_STANDARDS.md](LANGUAGE_RUNTIME_STANDARDS.md) | Language, runtime, portability and dependencies |
-| Issue Management | Issue management requirements |
+| Issue Management | Issue management, lifecycle, workflow and completion |
 | [AGENTS.md](AGENTS.md) | AI contributor instructions and navigation to authoritative references |
 | GitHub Issues | Approved scope, acceptance criteria, decisions and implementation evidence |
-| Native GitHub metadata | Actual issue identity, classification, status, closure and relationships |
+| Native GitHub metadata | Actual issue identity, classification, state, status, closure reason and relationships |
 | GitHub label configuration, forms and chooser settings | Operational implementation of this standard |
 
 Apply explicitly approved supersession. Distinguish approved requirements, implemented behavior and verified results. Raise conflicting or ambiguous authority for maintainer resolution. A timestamp or individual issue cannot silently override an applicable standard.
 
-Maintainer authorization is required for applicable issue creation, material amendments, implementation, pull requests, merge and closure. Explicit approval of a defined issue proposal covers that creation and agreed routine metadata and relationships. Acceptance, assignment, priority, status and form selection do not grant authority to implement or advance to another action.
+Human and AI contributors may inspect, research, discuss and propose work without separate approval. Maintainers retain approval authority. Obtain explicit maintainer authorization for development issue creation, community disposition, defect investigation, promotion or material reclassification, activation, material changes to priorities, scope, criteria or relationships, significant requirements or architectural decisions, repository or configuration implementation, PR creation, merge, cancellation, reopening and closure.
+
+A maintainer may authorize a defined batch, including agreed metadata and relationships. Routine execution, approved decision recording, reporting, verification and checking criteria actually verified under that authorization require no repeated approval. Surface material discoveries, risks or conflicts before exceeding scope. Acceptance, assignment, priority, disposition, status and form selection confer no implementation authority. Activation may begin design. Design approval, implementation, PR creation, merge and closure are distinct authorization gates.
 
 ## Issue Classification Model
 
@@ -194,11 +207,170 @@ Both community forms should encourage duplicate searching without a mandatory de
 
 Issue form validation checks presence. The creator must still ensure the submission is substantive. Community submissions remain descriptive and unprioritized pending evaluation, with applicable native types. Creation does not authorize activation or implementation.
 
+## Issue Intake and Triage
+
+Use the approved type and creation path. Approved major objectives enter as Epics and cohesive development deliverables as User Stories. Actual or suspected defects enter as Bug Reports and proposed capabilities or improvements as Feature Requests, regardless of reporter. Maintainer-directed approved work needs no redundant community triage.
+
+For unevaluated submissions, consider classification, information sufficiency, duplicates among open and closed issues, project alignment, benefit and impact, feasibility, material constraints and dependencies, sensitive information and proposed disposition. A maintainer or authorized contributor may triage. The maintainer approves final disposition. Record material findings and rationale, preserve attribution and link the canonical issue for duplicates. A submission may remain without a disposition until evaluated. Assign priority only to eligible work and obtain separate activation authorization.
+
+Use `needs information` for missing information and `decision required` for a significant outstanding maintainer decision. Remove these independent exceptions when resolved. Follow approved security reporting guidance when available. Escalate sensitive information to the maintainer and keep sensitive vulnerability details out of public requests and reports.
+
 ## Community Submission and Promotion Principles
 
-- **Feature requests.** Promote accepted work in place as a User Story for a cohesive deliverable or an Epic for a major objective. Preserve the original GitHub issue and URL, proposal, contributor attribution and discussion. If restructuring, keep the original material traceable and preserve the original descriptive title when substantially changed. Record approved reclassification and link related issues. For partial acceptance, document the portions excluded or deferred and use the target type's canonical content and approved metadata.
-- **Defects.** Acceptance can authorize investigation. For a confirmed and accepted defect, verify the expected behavior against approved requirements, record findings as appropriate, add bounded resolution scope and verifiable acceptance criteria, and assign BUG, one priority, accepted disposition and materially relevant labels. Keep the Bug Report type and preserve the original submission, attribution and discussion. If investigation does not confirm a defect, close with an explanatory findings comment when authorized. No separate confirmation label applies.
-- **Duplicates and decomposition.** Choose a canonical issue based on the suitability of its description, evidence and discussion. Apply duplicate disposition and reference that canonical issue on equivalent submissions. Distinct accepted requests under one initiative may be independently promoted and associated as native sub-issues of an approved epic. Create new issues only for genuinely distinct approved deliverables. Misclassified submissions may be reclassified in place. Departures from in-place promotion require explicit maintainer authorization.
+### Feature evaluation and promotion
+
+Evaluate need, beneficiaries and benefit, project objectives and approved architecture, feasibility, constraints, prerequisites, scope and overlap. Technical solutions from reporters are optional. Obtain approval for the development scope, requirements, target classification and metadata before promotion. Promote accepted requests in place to User Story for a cohesive deliverable or Epic for a coherent major objective. For partial acceptance, record excluded or deferred functionality. Rejected and deferred requests retain Feature Request classification and a recorded rationale. Link a duplicate to the canonical issue selected for its description, evidence and discussion.
+
+Before restructuring, preserve the substantive proposal in a traceable body section or comment and preserve the original descriptive title when substantially changed. Keep the issue number, URL, attribution and discussion. Apply the target type's canonical content, approved prefix and number-derived suffix, accepted disposition, relevant labels, applicable relationships and priority rules. Stories require testable acceptance criteria. Obtain separate activation authorization. Add issues only for genuinely distinct approved deliverables. Departures from in-place promotion require explicit approval.
+
+Independently verify identity and preserved history, approved scope, native type, identifier, canonical content, applicable criteria and metadata, and absence of unintended activation. Reconcile partial changes on the existing issue.
+
+### Defect investigation and development acceptance
+
+Use the existing Bug Report for investigation and correction. Suspected defects have descriptive titles without BUG identifiers or development priority. Investigation requires explicit authorization and may have provisional acceptance. Obtain separate approval for corrective development after confirmation.
+
+Compare observed behavior with approved requirements and clarify ambiguous expectations. Review version, branch or commit, runtime and environment, reproduction or credible diagnostics, impact, regression, related defects and sensitive information. Sufficient credible evidence can confirm intermittent defects. Failure to reproduce alone does not disprove a report. Record severity as impact in findings, independently of development priority.
+
+Record findings and rationale for acceptance, deferral or rejection. Request evidence, defer or propose closure when inconclusive. Explain expected behavior, link canonical duplicates and seek authorization for in-place reclassification if the report is an enhancement. For unconfirmed closure, record evidence, checks, limitations and rationale. Represent correction as complete only with verified correction evidence.
+
+On corrective development acceptance, retain Bug Report type and the original report, attribution and discussion. Apply BUG and the GitHub-derived suffix, findings, bounded corrective scope, verifiable criteria, accepted disposition, one approved priority, materially relevant labels and applicable relationships. Apply the [Definition of Done](#definition-of-done). Obtain separate activation and implementation authorization. Independently verify preservation, findings, approved scope, criteria and metadata. Use the original issue to reconcile partial failures.
+
+## Issue Lifecycle and Native Statuses
+
+Native status records workflow stage, issue state records whether an issue is open or closed, closure reason describes why it closed, and disposition records the maintainer's evaluation or development decision.
+
+| Approved native status | Meaning |
+| --- | --- |
+| Backlog | Open and awaiting evaluation, activation or resumption. |
+| In progress | Open and undergoing authorized investigation, design, implementation or verification. |
+| Done | Closed after verified successful completion and explicit authorization. |
+| Not planned | Closed without successful development completion. |
+
+New issues enter Backlog. Authorized activation or resumption moves an issue to In progress. Authorized suspension returns it to Backlog. Successful authorized closure moves In progress to Done and retains accepted disposition. Authorized non-completion closure moves Backlog or In progress to Not planned. Authorized reopening returns a closed issue to Open / Backlog. Issues may skip stages where appropriate. Independently verify automatically applied status and closure metadata. Follow [closure and reopening rules](#story-completion-cancellation-and-reopening).
+
+The `blocked`, `decision required` and `needs information` labels are independent exceptions. Routine interruptions, blockers or pending decisions do not move active issues to Backlog. Active epics remain In progress during child delivery and intervals between stories, subject to explicit suspension or closure.
+
+The approved Active view uses native metadata equivalent to `is:issue is:open status:"In progress"` across all classifications, priorities and workflow exceptions. Verify the actual filter and results. Report a discrepancy for maintainer resolution before changing configuration. Use the approved native workflow statuses and avoid duplicate status labels or workflow automation.
+
+## Activation and Backlog Management
+
+Accepted Epics, User Stories and confirmed and accepted Bug Reports constitute accepted development work. Investigation-only Bug Reports and unevaluated or deferred submissions remain outside that development backlog. Keep GitHub Issues as the authoritative backlog.
+
+Before development activation, verify open and accepted state, classification, identifier and metadata, sufficient objective and scope, applicable criteria, satisfied prerequisites, approved sequence, relevant predecessor decisions and handoffs, material blockers or conflicts and the applicable open, appropriately active parent. For investigation activation, verify investigation authorization and relevant prerequisites without treating it as corrective development acceptance. Obtain explicit activation authorization, set In progress, and activate the parent if required and authorized. Independently verify issue, parent and Active view membership before beginning authorized work. Record material exceptions, decisions or order changes. Routine activation may be evidenced by native metadata.
+
+Prefer focused sequential work, especially during foundation development. Authorized independent parallel work, urgent defect interruptions and investigations alongside development are permitted. Evaluate alternatives when active work is blocked. Assignment is optional and identifies coordination or performance responsibility. No fixed work-in-progress limit, sprint target or mandatory assignment applies.
+
+For authorized suspension, return to Backlog and record the reason, completed and outstanding work, relevant branches or artifacts and resumption conditions. Preserve scope, criteria and evidence. Review intervening changes and prerequisites before authorized resumption. Report tooling limits and use an authorized native mechanism or ask the maintainer for assistance.
+
+## Prioritization
+
+Use the approved priority meanings and eligibility in the [label catalog](#label-catalog-and-assignment-rules). P2 is the default for eligible work requiring a priority. Investigation-only defects, unaccepted submissions and retired issues receive no priority. Do not inherit priority from a parent or prerequisite.
+
+Evaluate impact, urgency, consequences of delay, project alignment, enabled work, security, reliability, integrity and development risk, workarounds and applicable commitments. Use qualitative judgment. Priority describes importance or urgency. Dependencies establish prerequisites, sequence records execution order, severity describes defect impact, status records workflow stage and authorization controls what may proceed. Escalate conflicts and trade-offs to the maintainer. Higher-priority dependent work cannot override prerequisites.
+
+Reassess after material changes in risk, requirements, impact, dependencies or objectives. Obtain approval, replace the previous label, record material rationale and sequencing consequences, and independently verify the result. Priority changes do not automatically activate, suspend or reorder work. P0 warrants prompt maintainer attention and possible interruption of scheduled work while retaining prerequisites, authorization and completion requirements. Apply sensitive issue handling where applicable.
+
+## Epic Relationships, Dependencies and Sequencing
+
+Use native sub-issues as the authoritative inventory of work contributing to an epic's approved objective and scope. Standalone stories and accepted defects are permitted. Obtain approval for material additions, removals or reassignments. Preserve historical relationships and decision evidence. Common parentage implies no dependency.
+
+Use native **Blocked by** and **Blocking** for genuine direct issue prerequisites, including cross-epic or epic prerequisites where supported. Document meaningful rationale, external conditions and prerequisites the native relationship cannot represent. Avoid parallel inventories, transitive duplication and dependencies based solely on preferred order. Prohibit self-dependencies and cycles. Retain completed links for traceability. Verify successful prerequisite completion or an explicitly approved alternative meeting the dependent requirements. Use `blocked` only for an actual impediment to meaningful progress.
+
+Record significant approved sequence and revisions in applicable issue comments. Keep relative priority, prerequisites and chosen execution order distinct. Obtain approval for material dependency changes. Verify endpoints, direction, completeness, consistency with the approved order and absence of unintended edges or cycles. Reconcile written prerequisites only after separately verifying the corresponding native links. Retain written information for unresolved links and report the limitation.
+
+## Milestones and Projects
+
+Native issues, epics, relationships, statuses, views, priorities, approved sequencing and acceptance criteria meet current foundation planning needs. Defer new milestones, assignments, Projects, custom planning fields, iterations and planning automation. Preserve existing configuration and Projects availability.
+
+Milestones may group work around a release, time-bound commitment or delivery checkpoint across epics. Projects may supplement cross-repository planning, multi-contributor coordination, roadmap visualization or complex views. Reconsider adoption when a demonstrable need arises, assess effects on this standard and obtain explicit approval. GitHub Issues govern the backlog, requirements, decisions and evidence. Milestone or Project progress does not establish acceptance, Definition of Done conformity or epic closure.
+
+## Progress Reporting and Verification Evidence
+
+The issue body records approved requirements, scope and criteria. Use issue comments for significant progress, approved decisions, evidence and final outcomes. Use native metadata for actual issue state and relationships, commits for version-controlled changes, PRs for proposals and review, and automated runs for available execution evidence. Link to existing evidence. Keep critical decisions and outcomes in GitHub Issues.
+
+Report significant milestones, blockers or partial failures, verification, implementation references, PR creation and checks, merge and resulting state, post-merge verification, final acceptance and suspension or cancellation. Consolidate related events. Include applicable deliverables, branch or configuration, criteria addressed, actual checks and results, evidence, limitations and unresolved deviations. Keep credentials, sensitive vulnerability details and unauthorized private information out of public records.
+
+Match evidence to the deliverable. Review documentation and links, independently retrieve native metadata and configuration, verify operational behavior, exercise source and architecture requirements, test defect corrections and regressions, verify compatibility in applicable environments and record research findings and limitations as appropriate. Preserve reproducibility evidence. Distinguish proposed, approved, implemented, verified, merged and completed work.
+
+| Result | Meaning |
+| --- | --- |
+| Passed | Sufficient evidence shows successful verification. |
+| Failed | The check or requirement did not succeed. |
+| Incomplete | Partial evidence is insufficient. |
+| Not performed | An applicable check was not executed. |
+| Not applicable | The requirement genuinely falls outside the deliverable or scope. |
+
+Independently retrieve resulting state after a mutation and compare it with approved requirements. Use separate evidence and follow any additional applicable independence requirements. Check criteria only when satisfied and verified within authorized scope. Leave insufficiently verified criteria unchecked. Document invalidated evidence and correct affected completion tracking with applicable authorization.
+
+## Critical Decisions and Scope Amendments
+
+Record critical or final approved decisions affecting requirements, architecture, standards, significant technical choices or dependencies, repository configuration, scope or criteria, sequencing, community disposition, cancellation or reopening, approved exceptions or final acceptance. Routine choices, editorial work and tentative discussion do not require separate records.
+
+Identify the decision, authority, constraints, alternatives, risks and trade-offs. Obtain explicit approval, including conditions, and record the approved outcome, relevant rationale, affected requirements, supersession, handoffs and authorization boundaries in the applicable issue. Independently verify the record. Assess affected artifacts and downstream work before separately authorized implementation. Preserve superseded decisions and link the approved replacement. Reconcile the current issue, standards and configuration within scope. Until approved ADR conventions exist, retain architectural decisions in applicable issues and incorporate approved requirements into authoritative documents when authorized.
+
+Editorial corrections and ordinary choices within approved constraints may proceed. For material changes to deliverables, behavior, criteria, constraints, prerequisites or disposition of approved work, assess effects on risks, dependencies, completed work and criteria. Obtain explicit approval, record rationale, reconcile current artifacts and independently verify. Address necessary in-scope corrections. Raise missing requirements, conflicting authority, unrelated suspected defects, independent improvements or future prerequisites for maintainer resolution before expanding work or creating issues. Never weaken criteria to claim completion.
+
+## Definition of Done
+
+Apply all applicable obligations to accepted User Stories and confirmed and accepted Bug Reports. Story acceptance criteria, applicable authoritative standards and this Definition of Done all apply without duplicating them in issue bodies or templates. Epics follow [epic closure requirements](#epic-completion-and-closure). Investigation-only reports and unevaluated submissions follow intake, investigation and disposition rules. Retired OLD issues are exempt.
+
+1. **Authorization and scope.** Work stays within explicit authorization. Material requirements, decisions, amendments and exceptions are approved and recorded.
+2. **Deliverable completion.** Complete every approved deliverable. Obtain approval and reconcile any change to requirements or deferral.
+3. **Acceptance criteria.** Satisfy and independently verify applicable story criteria and accurately record completion.
+4. **Standards conformity.** Meet applicable approved policies, requirements, architectural constraints and technical standards.
+5. **Quality and verification.** Perform applicable verification successfully with sufficient evidence for the deliverable and scope.
+6. **Documentation and instructions.** Review affected authoritative documentation, references and contributor instructions and update them as required.
+7. **Licensing and attribution.** Preserve applicable licensing requirements, copyright notices and creator and contributor attribution.
+8. **Security and information protection.** Satisfy approved applicable security requirements and protect credentials, sensitive information and unauthorized private content from introduction or disclosure.
+9. **Repository and configuration integrity.** Verify authorized changes in the intended repository, branch or configuration and preserve unrelated files, settings, protections and work.
+10. **Evidence and traceability.** Record significant progress, approved decisions, applicable implementation references and verification results in the relevant issue.
+11. **Limitations and exceptions.** Disclose applicable exceptions and limitations and resolve any requirement or verification failure that prevents completion.
+12. **Final acceptance and closure readiness.** Independently review and evidence final completion requirements before requesting explicit closure authorization.
+
+Apply this standard, the project [license](LICENSE), the [language and runtime standards](LANGUAGE_RUNTIME_STANDARDS.md), [AI contributor instructions](AGENTS.md) where applicable, and approved issue records. Applicable technical work follows standard ECMAScript and native ESM, finalized features supported by the applicable environments, the approved Node.js 26.x LTS development runtime, engine platform independence, boundary runtime validation, zero third-party engine runtime dependencies, explicit approval of permitted application or development dependencies, and evidence-backed compatibility claims. Use existing approved standards for applicable work.
+
+Match verification to the deliverable. Documentation requires content and reference checks. Research may require neither a commit nor a PR. Source, testing, licensing, repository and PR checks apply as relevant. Disclose limitations. Required Failed, Incomplete and Not performed checks prevent successful completion. Use Not applicable only for checks genuinely outside applicable scope. For an exception within maintainer authority, record the approved requirement, rationale, consequences, alternative or conditions, and any required follow-up. Obtain explicit approval and formally reconcile affected standards, scope or criteria where needed. Exceptions cannot waive licensing or obligations outside maintainer authority or substitute for evidence.
+
+Review this section and its references as governing requirements evolve. Preserve valid historical completions. Separately authorize any retrospective conformity work. Verify final readiness and record evidence before requesting closure.
+
+## Story Completion, Cancellation and Reopening
+
+Successful completion requires all approved deliverables, applicable criteria, standards and the [Definition of Done](#definition-of-done), with required changes incorporated in the intended target. Independently verify, record final acceptance evidence and limitations, and obtain explicit closure authorization. Close as Completed, retain accepted disposition and independently verify Closed / Completed / Done. A checked checklist, passed tests, merge or closing keyword cannot substitute for closure authorization.
+
+| Authorized closure outcome | Closure reason | Approved status | Disposition |
+| --- | --- | --- | --- |
+| Successful development | Completed | Done | accepted |
+| Canceled accepted work | Not planned | Not planned | canceled |
+| Rejected community submission | Not planned | Not planned | rejected |
+| Duplicate with canonical reference | Duplicate where supported, otherwise Not planned | Not planned | duplicate |
+| Closed deferred community submission | Not planned | Not planned | deferred |
+| Concluded unconfirmed investigation or expected behavior | Not planned | Not planned | rejected |
+
+For a concluded investigation, rejection records nonacceptance for corrective development. Verify the actual native result, including duplicate behavior where applicable, and surface discrepancies for maintainer resolution. Close only with explicit authorization.
+
+Before cancellation, assess rationale, completed and outstanding deliverables, branches or PRs, dependent work, parent objectives and reassignment. Record the approved decision, retain the identifier, classification, historical evidence and criteria, and leave unfinished criteria unchecked. Continued accepted work may be suspended in Open / Backlog / accepted. A deferred community proposal may remain Open / Backlog or close as Not planned as approved, retaining deferred disposition.
+
+When work is partial, obtain approval to continue, suspend, amend scope, split distinct remaining work with reconciled dependencies, or cancel while preserving evidence. Successful completion after an amendment requires formal scope reconciliation and verification of the revised requirements.
+
+Consider reopening if prior completion was invalid, canceled work is reconsidered, new evidence or changed requirements warrant reevaluation or investigation, or a duplicate is materially distinct. Review prior closure, evidence, requirements, dependencies and parent. Compare with creating a new issue. Prefer a new Bug Report for a later regression, a new Feature Request or authorized story for a new capability, and separately authorized conformity work for later standards. Retired OLD issues remain closed.
+
+Before reopening, obtain explicit authorization and record rationale and approved changes. Restore Open / Backlog and reconcile disposition and applicable metadata. Preserve identifier, attribution and history, reassess criteria and correct invalidated evidence. Independently verify the result. Obtain separate activation and implementation authorization. For canceled or reopened prerequisites, reassess dependent work, prior evidence and parent outcomes. Obtain applicable approval before modifying related issues.
+
+## Epic Completion and Closure
+
+Epics define objectives, benefit, scope and dependencies. Use native child relationships to identify contributing work. Detailed acceptance criteria and the Definition of Done apply to eligible child development work. Epics use these five closure requirements.
+
+1. All required child stories and accepted defects satisfy applicable completion requirements and are closed as Completed.
+2. Canceled, deferred, superseded or reassigned child work has explicit maintainer-approved disposition and leaves no required epic outcome unsatisfied.
+3. Verified collective outcomes achieve the approved objective, benefit and scope, including approved amendments.
+4. No outstanding prerequisite, missing required deliverable or material unresolved issue prevents the objective from being achieved.
+5. Final completion evidence is reviewed and recorded, and the maintainer explicitly authorizes closure.
+
+Independently retrieve native child relationships, verify child outcomes and dispositions, and assess scope, dependencies and objectives. Use actual outcomes as evidence. Assess missing outcomes after cancellation, treat suspended required work as outstanding, reconcile approved deferral, verify replacement outcomes, assess reassignment effects and revisit prior evidence when work reopens. Native child completion percentages indicate progress.
+
+Record achieved objectives and scope, verified child outcomes, approved non-completion dispositions, satisfied dependencies, limitations and their impact, and readiness. Reference child evidence. After explicit authorization, close as Completed, retain accepted disposition and independently verify Done.
+
+Apply the story rules for cancellation, suspension and reopening and assess effects on the objective and child work. Evaluate continuation, cancellation or reassignment of children during epic cancellation, active children during suspension, and required child outcomes when scope changes. Reassess prior epic completion when the epic or a child reopens. Obtain applicable authorization before changing related issues.
 
 ## Legacy Issue Classification
 
@@ -214,10 +386,14 @@ Creation, configuration and metadata changes may succeed independently. If a res
 
 Use native form validation, pre-creation review and independent verification. Confirm GitHub schema and live chooser behavior before claiming operational form conformity. Introduce no additional project dependencies, validation infrastructure or automation without approval.
 
+For workflow changes, capture the baseline and approved requirements. Verify documentation and references on the working branch, independently retrieve native relationships and verify corresponding written reconciliation, and check actual native configuration and operational behavior. Compare the scope, settings, protections, histories, forms and metadata to baseline. Verify the proposed change set before merge and independently check the target and persisted metadata after authorized merge. Record acceptance evidence and applicable completion requirements before seeking closure.
+
+Use existing operational evidence where sufficient. Obtain explicit approval for any necessary controlled lifecycle test and preserve legitimate issues and historical development outcomes. Report inaccessible configuration, gaps and partial results using the [verification result terms](#progress-reporting-and-verification-evidence).
+
 ## Maintenance and Evolution
 
-ISSUE_MANAGEMENT.md is the authoritative living issue management standard. Native types, labels, forms and chooser configuration must conform. Material changes to classifications, identifiers, prefixes, label definitions, canonical content or other governing requirements require explicit maintainer approval and a documented rationale.
+ISSUE_MANAGEMENT.md is the authoritative living issue management, workflow and completion standard. Native metadata, label configuration, forms and chooser settings must conform. Obtain explicit maintainer approval and record rationale for material changes to classifications, identifiers, labels, content, workflow, completion or other governing requirements.
 
-Assess effects on standards, [AGENTS.md](AGENTS.md), forms, configuration, active issue metadata, links and downstream work. Update only affected artifacts in scope. Maintain agent instructions incrementally through authoritative references and concise operational guidance. Reconcile supersession and surface conflicts, partial implementation and temporary discrepancies. Update and independently verify affected links on renaming, relocation or retirement.
+When approved governing requirements are established or revised, assess effects on authoritative standards, lifecycle, the [Definition of Done](#definition-of-done), [AGENTS.md](AGENTS.md), contributor guidance, forms, configuration, issue metadata, index and references, and downstream work and dependencies. Update only affected artifacts within scope. Use concise agent instructions and authoritative references. A reference may be sufficient for a new standard. Update and independently verify affected links on renaming, relocation or retirement. Reconcile approved supersession and report temporary discrepancies or partial implementation.
 
-Keep decision history, implementation evidence and material downstream handoffs in applicable issues. Subsequent work must inspect relevant predecessor requirements and handoffs. Independently verify affected documentation and configuration before claiming conformity. Report limitations and obtain approval before introducing additional governance tooling or automation.
+Record material handoffs, approved decisions and implementation evidence in the originating issue. Inspect relevant predecessor requirements and handoffs before subsequent work. Any material receiving-scope amendment requires authorization. Maintain the Definition of Done in this document. A central index provides navigation when established. Independently verify documentation and configuration before claiming conformity. Obtain approval before introducing governance tooling or automation.
